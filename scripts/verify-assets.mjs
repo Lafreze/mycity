@@ -6,7 +6,7 @@ if(!origin)throw new Error('Set VERIFY_ORIGIN to the deployed Railway URL.');
 const results=[],queue=[...m.models,...m.props];
 async function worker(){while(queue.length){const a=queue.shift();
  const r=await fetch(a.url,{headers:{Origin:origin},signal:AbortSignal.timeout(60000)});
- if(!r.ok)throw new Error(`${a.id}: HTTP ${r.status}`);
+ if(r.status!==200)throw new Error(`${a.id}: full download must return HTTP 200, got ${r.status}`);
  if(r.headers.get('access-control-allow-origin')!==origin)throw new Error(`${a.id}: CORS origin mismatch`);
  if(!/immutable/.test(r.headers.get('cache-control')||''))throw new Error(`${a.id}: missing immutable cache policy`);
  if(!(r.headers.get('content-type')||'').startsWith('model/gltf-binary'))throw new Error(`${a.id}: wrong MIME type`);

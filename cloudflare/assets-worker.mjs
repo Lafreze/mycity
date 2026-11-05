@@ -36,7 +36,7 @@ export default {
    headers.set('Content-Type','model/gltf-binary');headers.set('ETag',object.httpEtag);
    headers.set('Cache-Control','public, max-age=31536000, immutable');headers.set('Accept-Ranges','bytes');
    let status=200;
-   if(object.range){status=206;const start=object.range.offset||0;const length=object.range.length??object.size-start;headers.set('Content-Range',`bytes ${start}-${start+length-1}/${object.size}`);headers.set('Content-Length',String(length));}
+   if(range&&object.range){status=206;const start=object.range.offset||0;const length=object.range.length??object.size-start;headers.set('Content-Range',`bytes ${start}-${start+length-1}/${object.size}`);headers.set('Content-Length',String(length));}
    else headers.set('Content-Length',String(object.size));
    response=new Response(request.method==='HEAD'?null:object.body,{status,headers});
    if(request.method==='GET'&&status===200)ctx.waitUntil(cache.put(cacheKey,response.clone()));

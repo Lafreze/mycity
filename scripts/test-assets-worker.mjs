@@ -5,7 +5,7 @@ const origin='https://mycity-production-8226.up.railway.app';
 const bytes=new Uint8Array([1,2,3,4]),etag='"model-version"';
 const saved=new Map(),jobs=[];let reads=0;
 globalThis.caches={default:{async match(req){return saved.get(req.url)?.clone()},async put(req,res){saved.set(req.url,res)}}};
-const env={MODELS:{async head(){return meta()},async get(key,options){reads++;const range=options?.range?.get('Range');return {...meta(),...(range?{range:{offset:0,length:2}}:{}),body:range?bytes.slice(0,2):bytes}}}};
+const env={MODELS:{async head(){return meta()},async get(key,options){reads++;const range=options?.range?.get('Range');return {...meta(),range:{offset:0,length:range?2:4},body:range?bytes.slice(0,2):bytes}}}};
 function meta(){return {size:4,httpEtag:etag,writeHttpMetadata(headers){headers.set('Content-Type','model/gltf-binary')}};}
 const ctx={waitUntil(p){jobs.push(p)}};
 const send=(target=url,init={})=>worker.fetch(new Request(target,init),env,ctx);

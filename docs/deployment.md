@@ -20,3 +20,5 @@ Railway 使用单进程 Nginx、单副本和 Serverless。配置文件中的限�
 - https://docs.railway.com/deployments/serverless
 - https://docs.railway.com/config-as-code/reference
 - https://developers.cloudflare.com/r2/api/workers/workers-api-reference/
+
+验收：2026-11-05T13:28:50.470Z，51 个模型逐个验证完整下载 HTTP 200、SHA-256、大小、MIME、缓存、CORS、HEAD 和 Range；完整下载与分段请求分别返回 200 / 206。
