@@ -1,0 +1,14 @@
+{
+  "name": "mycity",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "check": "node --check dist/app.js && node --check dist/city3d.js && node scripts/check.mjs && node scripts/check-assets.mjs",
+    "assets:prepare": "node scripts/prepare-assets.mjs",
+    "assets:verify": "node scripts/verify-assets.mjs",
+    "assets:upload": "node scripts/upload-assets.mjs",
+    "test": "node scripts/test-assets-worker.mjs"
+  }
+}

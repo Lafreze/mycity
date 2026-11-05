@@ -1,0 +1,24 @@
+import assert from 'node:assert/strict';
+import worker from '../cloudflare/assets-worker.mjs';
+const url='https://assets.example/mycity/models/arcade.0123456789abcdef.glb';
+const origin='https://mycity-production-8226.up.railway.app';
+const bytes=new Uint8Array([1,2,3,4]),etag='"model-version"';
+const saved=new Map(),jobs=[];let reads=0;
+globalThis.caches={default:{async match(req){return saved.get(req.url)?.clone()},async put(req,res){saved.set(req.url,res)}}};
+const env={MODELS:{async head(){return meta()},async get(key,options){reads++;const range=options?.range?.get('Range');return {...meta(),...(range?{range:{offset:0,length:2}}:{}),body:range?bytes.slice(0,2):bytes}}}};
+function meta(){return {size:4,httpEtag:etag,writeHttpMetadata(headers){headers.set('Content-Type','model/gltf-binary')}};}
+const ctx={waitUntil(p){jobs.push(p)}};
+const send=(target=url,init={})=>worker.fetch(new Request(target,init),env,ctx);
+let r=await send(url,{headers:{Origin:origin}});
+assert.equal(r.status,200);assert.equal(r.headers.get('Access-Control-Allow-Origin'),origin);assert.deepEqual(new Uint8Array(await r.arrayBuffer()),bytes);await Promise.all(jobs);
+r=await send(url,{headers:{Origin:'https://unrelated.invalid'}});assert.equal(r.headers.get('Access-Control-Allow-Origin'),null);await r.arrayBuffer();assert.equal(reads,1,'Second request should use edge cache');
+r=await send(url,{headers:{Origin:origin,'If-None-Match':etag}});assert.equal(r.status,304);assert.equal(r.headers.get('Content-Length'),null);
+r=await send(url,{method:'HEAD',headers:{Origin:origin}});assert.equal(r.status,200);assert.equal(r.headers.get('Content-Length'),'4');assert.equal((await r.arrayBuffer()).byteLength,0);
+r=await send(url,{headers:{Origin:origin,Range:'bytes=0-1'}});assert.equal(r.status,206);assert.equal(r.headers.get('Content-Range'),'bytes 0-1/4');assert.equal((await r.arrayBuffer()).byteLength,2);
+r=await send(url,{method:'OPTIONS',headers:{Origin:origin}});assert.equal(r.status,204);
+assert.equal((await send(url,{method:'OPTIONS',headers:{Origin:'https://unrelated.invalid'}})).status,403);
+assert.equal((await send(url,{method:'PUT',body:'no'})).status,405);
+assert.equal((await send('https://assets.example/')).status,404);
+assert.equal((await send('https://assets.example/mycity/secrets.json')).status,404);
+assert.equal((await send('https://assets.example/mycity/models/arcade.glb')).status,404);
+console.log('Passed: asset-only routes, read-only methods, CORS isolation, cache reuse, ETag, HEAD and Range.');

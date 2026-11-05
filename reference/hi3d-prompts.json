@@ -1,0 +1,391 @@
+{
+  "buildings": {
+    "provider": "Hi3D MCP",
+    "settings": {
+      "version": "v3.0",
+      "model_type": "high_quality",
+      "generation_type": "model_with_texture",
+      "pbr": true,
+      "license": "private"
+    },
+    "buildings": [
+      {
+        "id": "arcade",
+        "prompt": "A complete standalone highly detailed miniature European chess game arcade building, warm red brick and cream carved stone facade, two floors, rounded corner entrance, red and ivory striped awning, tall arched glowing display windows, large ivory chess knight sculpture on the rooftop, elegant dark brown and gold GAME ARCADE shop sign, flowers in terracotta pots, ivy on one side, small paved sidewalk base. Cozy handmade architectural diorama with realistic PBR brick, aged brass, wood and stone, cream and terracotta palette. Entire building visible from all sides, no cutaway, no background environment, no people, no neighboring buildings. Front facade faces camera, architectural proportions, clean game-ready object.",
+        "reference_task_id": "860a854fdbba43d098891d4092a86601",
+        "reference_file": "reference/buildings/ref-arcade.png"
+      },
+      {
+        "id": "workshop",
+        "prompt": "A complete standalone highly detailed miniature European AI workshop building, three floors, ivory stucco and weathered cream stone facade, tall arched windows, green and cream striped shop awning, dark olive wood ground-floor storefront, small friendly ivory robot visible in the window, AI WORKSHOP brass sign, rooftop cafe terrace with pergola, climbing ivy and flowers, warm golden interior lighting, small paved sidewalk base. Cozy handmade architectural diorama with realistic PBR stone, brass, wood, fabric, soft warm cream and olive palette. Entire building visible from all sides, no cutaway, no background environment, no people, no neighboring buildings. Front facade faces camera, clean game-ready object.",
+        "reference_task_id": "bc7cee51d641485db2f031a2781ffc7b",
+        "reference_file": "reference/buildings/ref-workshop.png"
+      },
+      {
+        "id": "life-tools",
+        "prompt": "A complete standalone highly detailed miniature European life-tools shop, two floors with tall gabled terracotta tile roof, cream plaster and sandstone walls, sage green wooden shutters, warm dark walnut ground-floor storefront, ivory canvas awning, small crates and useful household wares beside entry, LIFE TOOLS brass sign, flowers in window boxes, lantern beside doorway, warm glowing windows, small paved sidewalk base. Cozy handmade architectural diorama with realistic PBR clay tiles, stone, wood, and fabric. Entire building visible from all sides, no cutaway, no background environment, no people, no neighboring buildings. Front facade faces camera, clean game-ready object.",
+        "reference_task_id": "ab0652411e394220a6c1344f2216e526",
+        "reference_file": "reference/buildings/ref-life-tools.png"
+      },
+      {
+        "id": "library",
+        "prompt": "A complete standalone miniature botanical conservatory library, elegant Victorian greenhouse architecture with round glass dome, oxidized dark bronze structural ribs, transparent amber tinted glass showing tall wooden bookshelves, a monumental cream stone arched entrance with LIBRARY sign and carved book emblem, warm golden light inside, short stone staircase, planters with ivy and flowers at door, small paved sidewalk base. Cozy highly detailed handmade European architectural diorama with realistic PBR bronze, glass, stone, books and wood. Entire building visible from all sides, no cutaway, no environment, no people, no neighboring buildings. Front facade faces camera, clean game-ready object.",
+        "reference_task_id": "14731b076fea4722ad74846368987ae5",
+        "reference_file": "reference/buildings/ref-library.png"
+      },
+      {
+        "id": "construction",
+        "prompt": "A complete standalone miniature European building under construction, four-story unfinished cream concrete structure about sixty percent complete, tidy wooden scaffolding and platforms, subtle yellow compact tower crane attached at side, ivory hanging canvas banner with hammer symbol, dark sage temporary construction fence, small stacks of lumber and brick, warm stone pavement base. Cozy highly detailed handmade architectural diorama, realistic PBR concrete, wood, canvas and metal, cream and muted ochre colors harmonious with historic European shop buildings. Entire construction object visible from all sides, no environment, no people, no neighboring buildings. Front facade faces camera, clean game-ready object.",
+        "reference_task_id": "cba2546a50424eea991645f349d74bde",
+        "reference_file": "reference/buildings/ref-construction.png"
+      }
+    ],
+    "imageSettings": {
+      "model_name": "Nano-Banana 2",
+      "operation": "text_to_image",
+      "aspect_ratio": "1:1",
+      "multi_view": false,
+      "points_per_image": 4
+    },
+    "imagePromptSuffix": " Full building isolated and centered against a plain light ivory studio background, three-quarter front view from slightly above, orthographic camera. Strong coherent geometry suitable as a single image-to-3D reference, entire small base visible, no cropped parts. Warm but neutral studio illumination, no cast backdrop shadows. No UI or labels beyond shop signage."
+  },
+  "props": {
+    "provider": "Hi3D MCP",
+    "imageSettings": {
+      "model_name": "Nano-Banana 2",
+      "aspect_ratio": "1:1",
+      "multi_view": false
+    },
+    "modelSettings": {
+      "version": "v3.0",
+      "model_type": "high_quality",
+      "generation_type": "model_with_texture",
+      "pbr": true,
+      "license": "private"
+    },
+    "assets": [
+      {
+        "id": "street-lamp",
+        "category": "street",
+        "prompt": "An elegant ornate cast iron street lamp with a single warm golden glass lantern, dark brown metal post, small circular foot. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-street-lamp.png",
+        "file": "props/street-lamp.glb"
+      },
+      {
+        "id": "park-bench",
+        "category": "street",
+        "prompt": "A cozy European park bench with warm walnut wood slats and curved black wrought iron legs and armrests. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-park-bench.png",
+        "file": "props/park-bench.glb"
+      },
+      {
+        "id": "litter-bin",
+        "category": "street",
+        "prompt": "An elegant cylindrical dark sage green street litter bin with antique brass trim, restrained ornamental details, closed lower body and small top opening. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-litter-bin.png",
+        "file": "props/litter-bin.glb"
+      },
+      {
+        "id": "direction-sign",
+        "category": "street",
+        "prompt": "A European street direction fingerpost with four cream and brown wooden directional arrows on a dark iron pole, subtle tiny book, coffee, chess and workshop pictograms, no long text. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-direction-sign.png",
+        "file": "props/direction-sign.glb"
+      },
+      {
+        "id": "notice-board",
+        "category": "street",
+        "prompt": "A freestanding wooden and brass town notice board with a small pitched cap and three pinned ivory update posters with tiny sketches and decorative marks, no large readable text. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-notice-board.png",
+        "file": "props/notice-board.glb"
+      },
+      {
+        "id": "cafe-set",
+        "category": "street",
+        "prompt": "One coordinated cafe furniture set: small round wood cafe table, exactly two wicker chairs, and an open ivory canvas parasol on a central pole. Compact arrangement with all parts fully visible. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-cafe-set.png",
+        "file": "props/cafe-set.glb"
+      },
+      {
+        "id": "coffee-cart",
+        "category": "street",
+        "prompt": "A charming wood and dark olive espresso pushcart on four wheels, compact brass espresso machine, stacked cream cups, cream canvas canopy and tiny coffee emblem. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-coffee-cart.png",
+        "file": "props/coffee-cart.glb"
+      },
+      {
+        "id": "flower-cart",
+        "category": "street",
+        "prompt": "A beautiful vintage wooden handcart with two large spoked wheels, filled with neatly arranged pots of soft pink and ivory flowers and green foliage. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-flower-cart.png",
+        "file": "props/flower-cart.glb"
+      },
+      {
+        "id": "book-cart",
+        "category": "street",
+        "prompt": "A charming narrow rolling book display cart made from dark walnut, two shelves with colorful old books and a small upper display rack, brass wheels. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-book-cart.png",
+        "file": "props/book-cart.glb"
+      },
+      {
+        "id": "market-crates",
+        "category": "street",
+        "prompt": "A tidy compact grouping of three rustic wooden market crates with oranges, green apples and vegetables, warm natural wood and realistic small fruit shapes. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-market-crates.png",
+        "file": "props/market-crates.glb"
+      },
+      {
+        "id": "garden-arch",
+        "category": "garden",
+        "prompt": "A complete freestanding cream wood garden entrance arch, delicate curved top and two trellis sides covered in climbing pale pink roses, ivy, and leaves. Clear open passage in center. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-garden-arch.png",
+        "file": "props/garden-arch.glb"
+      },
+      {
+        "id": "vine-trellis",
+        "category": "garden",
+        "prompt": "A freestanding wooden planter with a tall rectangular lattice trellis, lush climbing ivy, warm weathered wood, dark soil visible at base. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-vine-trellis.png",
+        "file": "props/vine-trellis.glb"
+      },
+      {
+        "id": "hydrangea-pot",
+        "category": "garden",
+        "prompt": "A large aged cream stone planter filled with lush clusters of pale pink and white hydrangeas and soft green leaves, fully rounded dense foliage. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-hydrangea-pot.png",
+        "file": "props/hydrangea-pot.glb"
+      },
+      {
+        "id": "olive-tree",
+        "category": "garden",
+        "prompt": "A small mature olive tree with slender twisted woody trunk and a rounded airy crown of muted sage leaves, planted in a broad terracotta pot. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-olive-tree.png",
+        "file": "props/olive-tree.glb"
+      },
+      {
+        "id": "plane-tree",
+        "category": "garden",
+        "prompt": "A European street shade plane tree, substantial pale mottled trunk, dense rounded green leafy crown, a small square ground-soil base with cream stone edge. Entire crown visible. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-plane-tree.png",
+        "file": "props/plane-tree.glb"
+      },
+      {
+        "id": "cypress-planter",
+        "category": "garden",
+        "prompt": "A tall slender dark green cypress tree in a square weathered cream stone planter, elegant tapered silhouette and dense foliage. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-cypress-planter.png",
+        "file": "props/cypress-planter.glb"
+      },
+      {
+        "id": "blossom-tree",
+        "category": "garden",
+        "prompt": "A charming small flowering tree with gently branching brown trunk and delicate pale pink blossoms, a round soil and stone planting base, entire crown visible. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-blossom-tree.png",
+        "file": "props/blossom-tree.glb"
+      },
+      {
+        "id": "river-railing",
+        "category": "canal",
+        "prompt": "One complete repeating segment of cream carved stone canal balustrade, two square endposts, five short classical balusters and a continuous flat top rail, straight horizontal module. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-river-railing.png",
+        "file": "props/river-railing.glb"
+      },
+      {
+        "id": "stone-bridge",
+        "category": "canal",
+        "prompt": "A small pedestrian bridge for a narrow canal, graceful single arch made of warm cream stone blocks, cobbled deck, low stone side walls, whole bridge including both ends. No water. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-stone-bridge.png",
+        "file": "props/stone-bridge.glb"
+      },
+      {
+        "id": "mooring-bollard",
+        "category": "canal",
+        "prompt": "A dark cast iron canal mooring bollard on a small square stone footing, a thick natural hemp rope loosely coiled around the base. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-mooring-bollard.png",
+        "file": "props/mooring-bollard.glb"
+      },
+      {
+        "id": "rowboat",
+        "category": "canal",
+        "prompt": "A small elegant wooden rowboat in warm varnished oak, open interior with two cross benches and exactly two oars resting along the boat sides. No water or people. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-rowboat.png",
+        "file": "props/rowboat.glb"
+      },
+      {
+        "id": "duck-family",
+        "category": "canal",
+        "prompt": "A small cohesive group of one mother duck and exactly three fluffy ducklings walking together, warm white and honey-yellow plumage, orange beaks and feet, separate readable silhouettes. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-duck-family.png",
+        "file": "props/duck-family.glb"
+      },
+      {
+        "id": "fountain",
+        "category": "canal",
+        "prompt": "A compact European courtyard fountain, circular cream stone basin, small central antique brass spout and shallow sculpted water surface, tasteful classical details. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-fountain.png",
+        "file": "props/fountain.glb"
+      },
+      {
+        "id": "cobble-tile",
+        "category": "street",
+        "prompt": "A perfectly square flat modular cobblestone road tile, irregular but orderly warm grey cream cobblestones, subtle worn edges, thin slab thickness, flat level surface, all four edges join seamlessly. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-cobble-tile.png",
+        "file": "props/cobble-tile.glb"
+      },
+      {
+        "id": "stone-steps",
+        "category": "street",
+        "prompt": "A compact modular flight of exactly four wide cream limestone street steps with a small upper landing, subtle warm weathered stone texture, no railing. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-stone-steps.png",
+        "file": "props/stone-steps.glb"
+      },
+      {
+        "id": "cargo-bike",
+        "category": "vehicle",
+        "prompt": "A vintage three-wheel cargo bicycle with a large warm wooden delivery box at front, dark brown frame, black tires, cream saddle, two front wheels and one rear wheel. No rider. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-cargo-bike.png",
+        "file": "props/cargo-bike.glb"
+      },
+      {
+        "id": "city-bike",
+        "category": "vehicle",
+        "prompt": "An elegant olive green city bicycle with cream tires, brown leather saddle, wicker front basket and brass bell, complete bicycle standing on a small kickstand. No rider. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-city-bike.png",
+        "file": "props/city-bike.glb"
+      },
+      {
+        "id": "scooter",
+        "category": "vehicle",
+        "prompt": "A charming vintage rounded sage green motor scooter with cream seat, chrome details, small round headlight, two black tires, resting upright on kickstand. No rider. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-scooter.png",
+        "file": "props/scooter.glb"
+      },
+      {
+        "id": "delivery-van",
+        "category": "vehicle",
+        "prompt": "A tiny charming cream electric delivery van with rounded corners, dark green lower trim, small warm brown cargo doors, four tires, clear simple windows and friendly headlights. No branding or people. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-delivery-van.png",
+        "file": "props/delivery-van.glb"
+      },
+      {
+        "id": "safety-barrier",
+        "category": "construction",
+        "prompt": "A compact construction safety set consisting of one yellow and charcoal striped folding barricade and exactly two small orange ivory traffic cones, all separate and readable. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-safety-barrier.png",
+        "file": "props/safety-barrier.glb"
+      },
+      {
+        "id": "building-materials",
+        "category": "construction",
+        "prompt": "A tidy construction materials grouping: neatly stacked pale lumber planks, warm red bricks on a wooden pallet, a small rolled ivory tarpaulin. Compact organized shape. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-building-materials.png",
+        "file": "props/building-materials.glb"
+      },
+      {
+        "id": "scaffold",
+        "category": "construction",
+        "prompt": "One complete small reusable construction scaffold module with four weathered steel uprights, diagonal braces, two wooden work platforms and a short attached ladder. Clean open structure, no building. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-scaffold.png",
+        "file": "props/scaffold.glb"
+      },
+      {
+        "id": "arcade-machine",
+        "category": "street",
+        "prompt": "A charming vintage arcade cabinet, dark walnut and oxblood red casing, ivory control panel with joystick and two brass buttons, glass screen showing a simple chess board motif, complete standalone cabinet. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-arcade-machine.png",
+        "file": "props/arcade-machine.glb"
+      },
+      {
+        "id": "street-clock",
+        "category": "street",
+        "prompt": "An elegant freestanding European street clock, dark brown cast iron tall pole, round double-sided ivory clock face with clear hands and Roman numerals, antique brass rim and small decorative finial. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-street-clock.png",
+        "file": "props/street-clock.glb"
+      },
+      {
+        "id": "maker",
+        "category": "person",
+        "prompt": "One adult creative maker standing casually, warm terracotta overalls over an ivory shirt, brown shoes, holding a small notebook and pencil, friendly calm face, natural relaxed pose. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. Stylized tasteful toy diorama figure with softly sculpted face and natural proportions, fully clothed, friendly and wholesome, not photorealistic, no uncanny skin, clear separate limbs, complete hands and feet, stable compact pose. ",
+        "reference_file": "ref-maker.png",
+        "file": "props/maker.glb"
+      },
+      {
+        "id": "reader",
+        "category": "person",
+        "prompt": "One adult reader in a muted olive coat and cream trousers, sitting on a small wooden stool with an open book in their lap, brown shoes, friendly serene face, include complete stool and feet. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. Stylized tasteful toy diorama figure with softly sculpted face and natural proportions, fully clothed, friendly and wholesome, not photorealistic, no uncanny skin, clear separate limbs, complete hands and feet, stable compact pose. ",
+        "reference_file": "ref-reader.png",
+        "file": "props/reader.glb"
+      },
+      {
+        "id": "barista",
+        "category": "person",
+        "prompt": "One adult barista wearing a warm brown apron over an ivory shirt and olive trousers, holding a small serving tray with two coffee cups, brown shoes, friendly welcoming face, standing naturally. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. Stylized tasteful toy diorama figure with softly sculpted face and natural proportions, fully clothed, friendly and wholesome, not photorealistic, no uncanny skin, clear separate limbs, complete hands and feet, stable compact pose. ",
+        "reference_file": "ref-barista.png",
+        "file": "props/barista.glb"
+      },
+      {
+        "id": "florist",
+        "category": "person",
+        "prompt": "One adult florist wearing a sage apron over a cream blouse and terracotta trousers, holding a bouquet of soft pink flowers, practical brown shoes, friendly face, standing naturally. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. Stylized tasteful toy diorama figure with softly sculpted face and natural proportions, fully clothed, friendly and wholesome, not photorealistic, no uncanny skin, clear separate limbs, complete hands and feet, stable compact pose. ",
+        "reference_file": "ref-florist.png",
+        "file": "props/florist.glb"
+      },
+      {
+        "id": "cyclist",
+        "category": "person",
+        "prompt": "One adult cyclist sitting naturally on a complete sage city bicycle, ivory shirt, terracotta trousers, brown shoes, simple soft brown helmet, hands on handlebars and feet on pedals. Include both entire wheels. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. Stylized tasteful toy diorama figure with softly sculpted face and natural proportions, fully clothed, friendly and wholesome, not photorealistic, no uncanny skin, clear separate limbs, complete hands and feet, stable compact pose. ",
+        "reference_file": "ref-cyclist.png",
+        "file": "props/cyclist.glb"
+      },
+      {
+        "id": "courier",
+        "category": "person",
+        "prompt": "One adult neighborhood courier wearing olive jacket and cream trousers, brown shoes, carrying one small warm brown parcel in both hands, relaxed mid-step pose and friendly face. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. Stylized tasteful toy diorama figure with softly sculpted face and natural proportions, fully clothed, friendly and wholesome, not photorealistic, no uncanny skin, clear separate limbs, complete hands and feet, stable compact pose. ",
+        "reference_file": "ref-courier.png",
+        "file": "props/courier.glb"
+      },
+      {
+        "id": "strolling-couple",
+        "category": "person",
+        "prompt": "Two adult people strolling side by side together, one in a terracotta cardigan and cream trousers, the other in an olive coat and ivory skirt, brown shoes, warm friendly faces, naturally connected group with clear individual silhouettes. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. Stylized tasteful toy diorama figure with softly sculpted face and natural proportions, fully clothed, friendly and wholesome, not photorealistic, no uncanny skin, clear separate limbs, complete hands and feet, stable compact pose. ",
+        "reference_file": "ref-strolling-couple.png",
+        "file": "props/strolling-couple.glb"
+      },
+      {
+        "id": "kite-child",
+        "category": "person",
+        "prompt": "One fully clothed cheerful child in an ivory sweater, olive dungarees and brown shoes, standing and holding a short string with a small diamond-shaped terracotta and cream kite nearby overhead. Entire child, feet, kite and string visible. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. Stylized tasteful toy diorama figure with softly sculpted face and natural proportions, fully clothed, friendly and wholesome, not photorealistic, no uncanny skin, clear separate limbs, complete hands and feet, stable compact pose. ",
+        "reference_file": "ref-kite-child.png",
+        "file": "props/kite-child.glb"
+      },
+      {
+        "id": "construction-worker",
+        "category": "person",
+        "prompt": "One adult construction worker wearing an ivory hardhat, muted ochre safety vest over an olive shirt, brown work trousers and boots, holding rolled cream blueprints, calm friendly face and relaxed standing pose. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. Stylized tasteful toy diorama figure with softly sculpted face and natural proportions, fully clothed, friendly and wholesome, not photorealistic, no uncanny skin, clear separate limbs, complete hands and feet, stable compact pose. ",
+        "reference_file": "ref-construction-worker.png",
+        "file": "props/construction-worker.glb"
+      },
+      {
+        "id": "helper-robot",
+        "category": "person",
+        "prompt": "A small friendly rounded ivory robot with antique brass joints and trim, short arms and feet, dark glossy oval face display with two warm friendly eyes, simple coherent body, standing naturally. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. Stylized tasteful toy diorama figure with softly sculpted face and natural proportions, fully clothed, friendly and wholesome, not photorealistic, no uncanny skin, clear separate limbs, complete hands and feet, stable compact pose. ",
+        "reference_file": "ref-helper-robot.png",
+        "file": "props/helper-robot.glb"
+      },
+      {
+        "id": "ginger-cat",
+        "category": "garden",
+        "prompt": "One charming curled-up sleeping ginger tabby cat on a small oval woven cream mat, subtle orange stripes, rounded ears and tucked tail, peaceful closed eyes. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. ",
+        "reference_file": "ref-ginger-cat.png",
+        "file": "props/ginger-cat.glb"
+      },
+      {
+        "id": "street-musician",
+        "category": "person",
+        "prompt": "One adult street musician in a warm brown waistcoat, cream shirt and olive trousers, brown shoes, playing a small wooden violin with a bow, friendly focused face. An open small violin case rests beside their complete feet. Coherent premium handcrafted miniature European town diorama style matching ivory limestone architecture, terracotta clay, olive green and antique brass palette. Highly readable realistic PBR material detail at miniature scale. Complete isolated object, centered, full object visible without cropping, three-quarter front view slightly from above, neutral warm studio lighting against plain light ivory background. No surrounding environment, no UI, no watermark, no neighboring buildings, no random text. Stylized tasteful toy diorama figure with softly sculpted face and natural proportions, fully clothed, friendly and wholesome, not photorealistic, no uncanny skin, clear separate limbs, complete hands and feet, stable compact pose. ",
+        "reference_file": "ref-street-musician.png",
+        "file": "props/street-musician.glb"
+      }
+    ]
+  }
+}

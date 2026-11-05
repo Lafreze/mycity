@@ -1,0 +1,26 @@
+import {readFile,writeFile,mkdir} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+const m=JSON.parse(await readFile('dist/assets/models/manifest.json','utf8'));
+const origin=process.env.VERIFY_ORIGIN;
+if(!origin)throw new Error('Set VERIFY_ORIGIN to the deployed Railway URL.');
+const results=[],queue=[...m.models,...m.props];
+async function worker(){while(queue.length){const a=queue.shift();
+ const r=await fetch(a.url,{headers:{Origin:origin},signal:AbortSignal.timeout(60000)});
+ if(!r.ok)throw new Error(`${a.id}: HTTP ${r.status}`);
+ if(r.headers.get('access-control-allow-origin')!==origin)throw new Error(`${a.id}: CORS origin mismatch`);
+ if(!/immutable/.test(r.headers.get('cache-control')||''))throw new Error(`${a.id}: missing immutable cache policy`);
+ if(!(r.headers.get('content-type')||'').startsWith('model/gltf-binary'))throw new Error(`${a.id}: wrong MIME type`);
+ const b=Buffer.from(await r.arrayBuffer());
+ if(b.length!==a.bytes || createHash('sha256').update(b).digest('hex')!==a.sha256)throw new Error(`${a.id}: content mismatch`);
+ results.push({id:a.id,bytes:b.length,status:r.status,sha256:a.sha256});
+}}
+await Promise.all([worker(),worker(),worker()]);
+const url=m.models[0].url;
+const range=await fetch(url,{headers:{Origin:origin,Range:'bytes=0-11'}});
+if(range.status!==206 || (await range.arrayBuffer()).byteLength!==12)throw new Error('R2 byte range request failed');
+const head=await fetch(url,{method:'HEAD',headers:{Origin:origin}});if(!head.ok)throw new Error('R2 HEAD failed');
+const denied=await fetch(url,{method:'HEAD',headers:{Origin:'https://unrelated.invalid'}});
+if(denied.headers.get('access-control-allow-origin'))throw new Error('Unexpected CORS for unrelated origin');
+await mkdir('output',{recursive:true});
+await writeFile('output/r2-verification.json',JSON.stringify({checkedAt:new Date().toISOString(),origin,version:m.version,models:results.length,bytes:results.reduce((n,x)=>n+x.bytes,0),range:true,head:true,originIsolation:true,results},null,2)+'\n');
+console.log(`Verified ${results.length} models: SHA-256, sizes, MIME, cache, CORS, HEAD, Range and origin isolation.`);

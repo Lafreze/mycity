@@ -1,0 +1,12 @@
+node_modules/
+.DS_Store
+.env
+.env.*
+!.env.example
+output/
+.railway/
+*.glb
+*.blend
+*.blend1
+*.tar.gz
+.wrangler/

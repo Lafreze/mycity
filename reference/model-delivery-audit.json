@@ -1,0 +1,1435 @@
+{
+  "count": 51,
+  "total_bytes": 20835180,
+  "triangles": 758166,
+  "assets": [
+    {
+      "file": "arcade.glb",
+      "bytes": 1010748,
+      "triangles": 32000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            1024,
+            1024
+          ],
+          "bytes": 210618
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            1024,
+            1024
+          ],
+          "bytes": 127058
+        }
+      ],
+      "texture_max": 1024,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "construction.glb",
+      "bytes": 944496,
+      "triangles": 32000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            1024,
+            1024
+          ],
+          "bytes": 173152
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            1024,
+            1024
+          ],
+          "bytes": 101420
+        }
+      ],
+      "texture_max": 1024,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "library.glb",
+      "bytes": 1031540,
+      "triangles": 32000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            1024,
+            1024
+          ],
+          "bytes": 179154
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            1024,
+            1024
+          ],
+          "bytes": 170698
+        }
+      ],
+      "texture_max": 1024,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "life-tools.glb",
+      "bytes": 1025044,
+      "triangles": 32000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            1024,
+            1024
+          ],
+          "bytes": 223168
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            1024,
+            1024
+          ],
+          "bytes": 131928
+        }
+      ],
+      "texture_max": 1024,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/arcade-machine.glb",
+      "bytes": 234832,
+      "triangles": 7999,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 33030
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 26290
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/barista.glb",
+      "bytes": 226108,
+      "triangles": 8000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 33736
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 15892
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/blossom-tree.glb",
+      "bytes": 1899300,
+      "triangles": 94962,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 62706
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 23628
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/book-cart.glb",
+      "bytes": 267296,
+      "triangles": 8000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 49160
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 32150
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/building-materials.glb",
+      "bytes": 285044,
+      "triangles": 8000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 49778
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 42500
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/cafe-set.glb",
+      "bytes": 285980,
+      "triangles": 10000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 52960
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 24866
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/cargo-bike.glb",
+      "bytes": 314736,
+      "triangles": 10000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 47230
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 49132
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/city-bike.glb",
+      "bytes": 509252,
+      "triangles": 21611,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 67194
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 47854
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/cobble-tile.glb",
+      "bytes": 265384,
+      "triangles": 8000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 40210
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 42930
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/coffee-cart.glb",
+      "bytes": 247748,
+      "triangles": 8000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 38918
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 26908
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/construction-worker.glb",
+      "bytes": 235412,
+      "triangles": 7999,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 38492
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 17926
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/courier.glb",
+      "bytes": 218320,
+      "triangles": 8000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 30324
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 10366
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/cyclist.glb",
+      "bytes": 312496,
+      "triangles": 10000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 41978
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 48296
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/cypress-planter.glb",
+      "bytes": 308540,
+      "triangles": 12000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 34740
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 12444
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/delivery-van.glb",
+      "bytes": 253612,
+      "triangles": 7999,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 42368
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 31700
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/direction-sign.glb",
+      "bytes": 250932,
+      "triangles": 7999,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 46942
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 33200
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/duck-family.glb",
+      "bytes": 271376,
+      "triangles": 7998,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 59170
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 29264
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/florist.glb",
+      "bytes": 228384,
+      "triangles": 8000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 36484
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 12952
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/flower-cart.glb",
+      "bytes": 270568,
+      "triangles": 7999,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 65596
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 31792
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/fountain.glb",
+      "bytes": 298364,
+      "triangles": 12976,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 56380
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 34546
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/garden-arch.glb",
+      "bytes": 346880,
+      "triangles": 12000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 66988
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 22716
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/ginger-cat.glb",
+      "bytes": 259932,
+      "triangles": 7999,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 57470
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 25448
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/helper-robot.glb",
+      "bytes": 267416,
+      "triangles": 8000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 46296
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 36786
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/hydrangea-pot.glb",
+      "bytes": 242420,
+      "triangles": 7999,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 42524
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 16974
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/kite-child.glb",
+      "bytes": 228620,
+      "triangles": 8000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 29590
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 15968
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/litter-bin.glb",
+      "bytes": 242764,
+      "triangles": 7999,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 35412
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 28540
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/maker.glb",
+      "bytes": 222524,
+      "triangles": 8000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 33964
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 11164
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/market-crates.glb",
+      "bytes": 276072,
+      "triangles": 7999,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 62282
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 31708
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/mooring-bollard.glb",
+      "bytes": 257908,
+      "triangles": 8000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 49000
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 26846
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/notice-board.glb",
+      "bytes": 270840,
+      "triangles": 7999,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 63862
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 34688
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/olive-tree.glb",
+      "bytes": 2100212,
+      "triangles": 104635,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 53712
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 42476
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/park-bench.glb",
+      "bytes": 263816,
+      "triangles": 8000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 49522
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 30222
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/plane-tree.glb",
+      "bytes": 300584,
+      "triangles": 12000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 23102
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 12858
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/reader.glb",
+      "bytes": 224340,
+      "triangles": 8000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 32572
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 8988
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/river-railing.glb",
+      "bytes": 297876,
+      "triangles": 9999,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 50600
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 26108
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/rowboat.glb",
+      "bytes": 249020,
+      "triangles": 8000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 49848
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 17762
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/safety-barrier.glb",
+      "bytes": 252460,
+      "triangles": 8000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 43758
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 29520
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/scaffold.glb",
+      "bytes": 310240,
+      "triangles": 10000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 53980
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 33626
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/scooter.glb",
+      "bytes": 253464,
+      "triangles": 7998,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 42370
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 33500
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/stone-bridge.glb",
+      "bytes": 310020,
+      "triangles": 10000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 59050
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 25796
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/stone-steps.glb",
+      "bytes": 245648,
+      "triangles": 8000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 37300
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 24344
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/street-clock.glb",
+      "bytes": 250552,
+      "triangles": 7999,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 46730
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 28996
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/street-lamp.glb",
+      "bytes": 235180,
+      "triangles": 7999,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 37932
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 28350
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/street-musician.glb",
+      "bytes": 223080,
+      "triangles": 8000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 32124
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 10488
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/strolling-couple.glb",
+      "bytes": 248644,
+      "triangles": 7999,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 45224
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 18558
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "props/vine-trellis.glb",
+      "bytes": 379548,
+      "triangles": 12000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 79718
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            512,
+            512
+          ],
+          "bytes": 44044
+        }
+      ],
+      "texture_max": 512,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    },
+    {
+      "file": "workshop.glb",
+      "bytes": 879608,
+      "triangles": 32000,
+      "embedded_images": [
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            1024,
+            1024
+          ],
+          "bytes": 141526
+        },
+        {
+          "mime": "image/webp",
+          "dimensions": [
+            1024,
+            1024
+          ],
+          "bytes": 79266
+        }
+      ],
+      "texture_max": 1024,
+      "extensions": [
+        "KHR_draco_mesh_compression",
+        "EXT_texture_webp"
+      ]
+    }
+  ]
+}

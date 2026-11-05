@@ -1,0 +1,22 @@
+[
+  {
+    "before": [
+      1.0007076263427734,
+      0.290750652551651,
+      0.5235344171524048
+    ],
+    "after": [
+      1.0007076263427734,
+      0.290750652551651,
+      0.3402973562479019
+    ],
+    "factor": 0.65,
+    "bytes": 297876,
+    "file": "props/river-railing.glb",
+    "tool": "Blender MCP execute_blender_code",
+    "operation": "Scale world vertical geometry to 65%; preserve width and depth",
+    "before_sha256": "ef68ae40f1b5bb8a34fd732f02517531d77bb8e831c08e41b904c43dc3d95953",
+    "after_sha256": "548e24921e150fdbed50764c81fb99627fbddc994d4009758bacbf5dbd658df0",
+    "adjusted_at": "2026-11-05T17:46:23+0900"
+  }
+]

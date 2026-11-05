@@ -1,0 +1,268 @@
+{
+  "provider": "Hi3D MCP",
+  "optimizedWith": "Blender MCP",
+  "models": [
+    {
+      "id": "chess",
+      "file": "arcade.glb",
+      "bytes": 1010748
+    },
+    {
+      "id": "workshop",
+      "file": "workshop.glb",
+      "bytes": 879608
+    },
+    {
+      "id": "life",
+      "file": "life-tools.glb",
+      "bytes": 1025044
+    },
+    {
+      "id": "library",
+      "file": "library.glb",
+      "bytes": 1031540
+    },
+    {
+      "id": "next",
+      "file": "construction.glb",
+      "bytes": 944496
+    }
+  ],
+  "props": [
+    {
+      "id": "street-lamp",
+      "file": "props/street-lamp.glb",
+      "bytes": 235180
+    },
+    {
+      "id": "park-bench",
+      "file": "props/park-bench.glb",
+      "bytes": 263816
+    },
+    {
+      "id": "litter-bin",
+      "file": "props/litter-bin.glb",
+      "bytes": 242764
+    },
+    {
+      "id": "direction-sign",
+      "file": "props/direction-sign.glb",
+      "bytes": 250932
+    },
+    {
+      "id": "notice-board",
+      "file": "props/notice-board.glb",
+      "bytes": 270840
+    },
+    {
+      "id": "cafe-set",
+      "file": "props/cafe-set.glb",
+      "bytes": 285980
+    },
+    {
+      "id": "coffee-cart",
+      "file": "props/coffee-cart.glb",
+      "bytes": 247748
+    },
+    {
+      "id": "flower-cart",
+      "file": "props/flower-cart.glb",
+      "bytes": 270568
+    },
+    {
+      "id": "book-cart",
+      "file": "props/book-cart.glb",
+      "bytes": 267296
+    },
+    {
+      "id": "market-crates",
+      "file": "props/market-crates.glb",
+      "bytes": 276072
+    },
+    {
+      "id": "garden-arch",
+      "file": "props/garden-arch.glb",
+      "bytes": 346880
+    },
+    {
+      "id": "vine-trellis",
+      "file": "props/vine-trellis.glb",
+      "bytes": 379548
+    },
+    {
+      "id": "hydrangea-pot",
+      "file": "props/hydrangea-pot.glb",
+      "bytes": 242420
+    },
+    {
+      "id": "olive-tree",
+      "file": "props/olive-tree.glb",
+      "bytes": 2100212
+    },
+    {
+      "id": "plane-tree",
+      "file": "props/plane-tree.glb",
+      "bytes": 300584
+    },
+    {
+      "id": "cypress-planter",
+      "file": "props/cypress-planter.glb",
+      "bytes": 308540
+    },
+    {
+      "id": "blossom-tree",
+      "file": "props/blossom-tree.glb",
+      "bytes": 1899300
+    },
+    {
+      "id": "river-railing",
+      "file": "props/river-railing.glb",
+      "bytes": 297876
+    },
+    {
+      "id": "stone-bridge",
+      "file": "props/stone-bridge.glb",
+      "bytes": 310020
+    },
+    {
+      "id": "mooring-bollard",
+      "file": "props/mooring-bollard.glb",
+      "bytes": 257908
+    },
+    {
+      "id": "rowboat",
+      "file": "props/rowboat.glb",
+      "bytes": 249020
+    },
+    {
+      "id": "duck-family",
+      "file": "props/duck-family.glb",
+      "bytes": 271376
+    },
+    {
+      "id": "fountain",
+      "file": "props/fountain.glb",
+      "bytes": 298364
+    },
+    {
+      "id": "cobble-tile",
+      "file": "props/cobble-tile.glb",
+      "bytes": 265384
+    },
+    {
+      "id": "stone-steps",
+      "file": "props/stone-steps.glb",
+      "bytes": 245648
+    },
+    {
+      "id": "cargo-bike",
+      "file": "props/cargo-bike.glb",
+      "bytes": 314736
+    },
+    {
+      "id": "city-bike",
+      "file": "props/city-bike.glb",
+      "bytes": 509252
+    },
+    {
+      "id": "scooter",
+      "file": "props/scooter.glb",
+      "bytes": 253464
+    },
+    {
+      "id": "delivery-van",
+      "file": "props/delivery-van.glb",
+      "bytes": 253612
+    },
+    {
+      "id": "safety-barrier",
+      "file": "props/safety-barrier.glb",
+      "bytes": 252460
+    },
+    {
+      "id": "building-materials",
+      "file": "props/building-materials.glb",
+      "bytes": 285044
+    },
+    {
+      "id": "scaffold",
+      "file": "props/scaffold.glb",
+      "bytes": 310240
+    },
+    {
+      "id": "arcade-machine",
+      "file": "props/arcade-machine.glb",
+      "bytes": 234832
+    },
+    {
+      "id": "street-clock",
+      "file": "props/street-clock.glb",
+      "bytes": 250552
+    },
+    {
+      "id": "maker",
+      "file": "props/maker.glb",
+      "bytes": 222524
+    },
+    {
+      "id": "reader",
+      "file": "props/reader.glb",
+      "bytes": 224340
+    },
+    {
+      "id": "barista",
+      "file": "props/barista.glb",
+      "bytes": 226108
+    },
+    {
+      "id": "florist",
+      "file": "props/florist.glb",
+      "bytes": 228384
+    },
+    {
+      "id": "cyclist",
+      "file": "props/cyclist.glb",
+      "bytes": 312496
+    },
+    {
+      "id": "courier",
+      "file": "props/courier.glb",
+      "bytes": 218320
+    },
+    {
+      "id": "strolling-couple",
+      "file": "props/strolling-couple.glb",
+      "bytes": 248644
+    },
+    {
+      "id": "kite-child",
+      "file": "props/kite-child.glb",
+      "bytes": 228620
+    },
+    {
+      "id": "construction-worker",
+      "file": "props/construction-worker.glb",
+      "bytes": 235412
+    },
+    {
+      "id": "helper-robot",
+      "file": "props/helper-robot.glb",
+      "bytes": 267416
+    },
+    {
+      "id": "ginger-cat",
+      "file": "props/ginger-cat.glb",
+      "bytes": 259932
+    },
+    {
+      "id": "street-musician",
+      "file": "props/street-musician.glb",
+      "bytes": 223080
+    }
+  ],
+  "pending": {
+    "models": 0,
+    "props": 0
+  },
+  "updatedAt": "2026-11-05T09:21:52.754108+00:00"
+}
