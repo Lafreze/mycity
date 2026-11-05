@@ -68,6 +68,7 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
     return {item,object:gltf.scene};
   }));
   if(modelResults.some(result=>result.status==='rejected')) {
+    modelResults.forEach((result,index)=>{if(result.status==='rejected')console.error('Building asset failed:',manifest.models[index].id,result.reason);});
     const resources=new Set(disposables);
     modelResults.filter(r=>r.status==='fulfilled').forEach(r=>r.value.object.traverse(o=>{
       if(o.geometry)resources.add(o.geometry);
