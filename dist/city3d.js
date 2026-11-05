@@ -6,6 +6,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { statusAt } from './products.js';
 import { CITY_PROPS } from './props.js';
 import { CANAL, boatPose } from './world.js';
+import { BOAT_WATERLINE } from './boat-waterline.js';
 
 // Building geometry comes exclusively from the Hi3D GLB assets in the manifest.
 // Simple planes provide the display plinth, street and canal, not replacement buildings.
@@ -51,15 +52,25 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   const canal=surface(40,CANAL.maxZ-CANAL.minZ,'#719b94',0,CANAL.y,8.2,.2);
   canal.material.onBeforeCompile=shader=>{
     shader.uniforms.cityWaterTime={value:0};
-    shader.vertexShader='varying vec2 cityWaterUv;\n'+shader.vertexShader.replace('#include <uv_vertex>','#include <uv_vertex>\ncityWaterUv = uv;');
-    shader.fragmentShader='varying vec2 cityWaterUv; uniform float cityWaterTime;\n'+shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
+    shader.uniforms.cityBoatXZ={value:new THREE.Vector2()};
+    shader.uniforms.cityBoatPresent={value:0};
+    // A water plane must exclude the dry interior of a floating hull, even below sea level.
+    // The mask follows the measured waterline, inset slightly to stay within the wood.
+    const hullClip=BOAT_WATERLINE.slice(0,-1).map((a,i)=>{
+      const b=BOAT_WATERLINE[i+1];
+      return `if(hull.x>=${a[0].toFixed(5)}&&hull.x<${b[0].toFixed(5)}){float t=(hull.x-(${a[0].toFixed(5)}))/${(b[0]-a[0]).toFixed(5)};vec2 sides=mix(vec2(${a[1].toFixed(5)},${a[2].toFixed(5)}),vec2(${b[1].toFixed(5)},${b[2].toFixed(5)}),t);if(hull.y>sides.x+0.015&&hull.y<sides.y-0.015)discard;}`;
+    }).join('\n');
+    shader.vertexShader='varying vec2 cityWaterUv; varying vec3 cityWaterWorld;\n'+shader.vertexShader.replace('#include <uv_vertex>','#include <uv_vertex>\ncityWaterUv = uv;').replace('#include <begin_vertex>','#include <begin_vertex>\ncityWaterWorld = (modelMatrix * vec4(transformed,1.0)).xyz;');
+    shader.fragmentShader='varying vec2 cityWaterUv; varying vec3 cityWaterWorld; uniform float cityWaterTime; uniform vec2 cityBoatXZ; uniform float cityBoatPresent;\n'+shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
+      vec2 hull=cityWaterWorld.xz-cityBoatXZ;
+      if(cityBoatPresent>0.5 && abs(hull.x)<1.4 && abs(hull.y)<0.6){${hullClip}}
       float ripple = 0.5 + 0.5 * sin(cityWaterUv.x * 240.0 - cityWaterTime * 0.72 + sin(cityWaterUv.y * 70.0 + cityWaterTime * 0.3));
       float crossRipple = 0.5 + 0.5 * sin(cityWaterUv.y * 180.0 - cityWaterTime * 0.7 + cityWaterUv.x * 20.0);
       diffuseColor.rgb += vec3(0.065, 0.075, 0.07) * pow(ripple * crossRipple, 9.0);
     `);
     canal.userData.shader=shader;
   };
-  canal.material.customProgramCacheKey=()=> 'product-city-water-v2';
+  canal.material.customProgramCacheKey=()=> 'product-city-water-v3';
   // Pavement seams stay flush with the street.
   for(let x=-16;x<17;x+=.8) surface(.012,2.1,'#c8baa1',x,-.01,4.475);
   for(let z=3.55;z<5.5;z+=.45) surface(34,.014,'#c8baa1',0,-.009,z);
@@ -178,6 +189,11 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
       const pose=boatPose(elapsed,entry.position.x);
       entry.root.position.set(pose.x,pose.y,pose.z);entry.root.rotation.x=pose.roll;
     });
+    if(canal.userData.shader){
+      const boat=streetObjects.find(o=>o.definition.id==='rowboat'),uniforms=canal.userData.shader.uniforms;
+      uniforms.cityBoatPresent.value=boat?.root.visible?1:0;
+      if(boat)uniforms.cityBoatXZ.value.set(boat.root.position.x,boat.root.position.z);
+    }
     if(flight){camera.position.lerp(flight.position,reducedMotion?1:.065);controls.target.lerp(flight.target,reducedMotion?1:.065);if(camera.position.distanceTo(flight.position)<.03)flight=null;}
     controls.update();renderer.render(scene,camera);
   }

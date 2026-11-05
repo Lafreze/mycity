@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {CITY_PROPS,WITHHELD_PROPS} from '../dist/props.js';
+import {BOAT_WATERLINE,WATERLINE_ASSET_SHA256} from '../dist/boat-waterline.js';
 import {PRODUCTS} from '../dist/products.js';
 import {CANAL,BOAT,BRIDGE,boatPose,footprint} from '../dist/world.js';
 const quality=JSON.parse(await readFile('reference/model-quality.json','utf8'));
@@ -40,6 +41,8 @@ for(const id of ['city-bike','cargo-bike','delivery-van','cyclist','rowboat']) {
   assert.ok(b.width>b.depth*1.4,`${id} is perpendicular to the street/current`);
 }
 assert.ok(Math.sin(BOAT.heading)*BOAT.forwardZ>.999,'The bow faces against the current');
+assert.equal(WATERLINE_ASSET_SHA256,models.get('rowboat').sha256,'Waterline mask must match the hull geometry');
+for(let i=0;i<BOAT_WATERLINE.length;i++){const [x,lo,hi]=BOAT_WATERLINE[i];assert.ok(lo<hi&&Math.abs(lo)<.62&&Math.abs(hi)<.62,'Water exclusion leaves the hull');if(i)assert.ok(x>BOAT_WATERLINE[i-1][0],'Waterline outline must be ordered');}
 const boat=placed.find(p=>p.id==='rowboat');
 assert.ok(boat.minZ>CANAL.minZ+.2&&boat.maxZ<CANAL.maxZ-.2,'Boat strikes riverbank');
 assert.ok(boat.minY<CANAL.y-.1&&boat.maxY>CANAL.y+.2,'Hull must straddle the waterline');
