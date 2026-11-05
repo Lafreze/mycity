@@ -148,6 +148,8 @@ $('#view-toggle').addEventListener('click',()=>toggleIndex());$('#close-index').
 $('#three-toggle').addEventListener('click',toggleThree);
 $('#orbit-toggle').addEventListener('click',()=>{const active=$('#orbit-toggle').getAttribute('aria-pressed')!=='true';$('#orbit-toggle').setAttribute('aria-pressed',active);renderer3d?.setOrbit(active);});
 $('#life-toggle').addEventListener('click',()=>{const active=$('#life-toggle').getAttribute('aria-pressed')!=='true';$('#life-toggle').setAttribute('aria-pressed',active);renderer3d?.setLife(active);});
+$('#canal-view').addEventListener('click',()=>{$('#orbit-toggle').setAttribute('aria-pressed','false');renderer3d?.view('canal');});
+$('#overhead-view').addEventListener('click',()=>{$('#orbit-toggle').setAttribute('aria-pressed','false');renderer3d?.view('overhead');});
 $('#zoom-in').addEventListener('click',()=>{if(state.three){renderer3d.zoom(.8);return;}state.zoom=Math.min(1.7,state.zoom+.15);layoutScene();});
 $('#zoom-out').addEventListener('click',()=>{if(state.three){renderer3d.zoom(1.2);return;}state.zoom=Math.max(1,state.zoom-.15);layoutScene();});
 $('#reset-scene').addEventListener('click',()=>{state.zoom=1;layoutScene();renderer3d?.reset();toggleIndex(false);state.selected=available()[0].id;renderHotspots();renderFeatured();});

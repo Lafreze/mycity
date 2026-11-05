@@ -1,6 +1,6 @@
 # Product City · 产品之城
 
-用 AI，把 idea 具现化。一条沿河街道、五栋产品建筑和记录早期尝试的旧城区。51 个 Hi3D 模型（5 栋建筑 + 46 种街道装饰与居民），通过 Blender MCP 优化，布置为 99 个实例。
+用 AI，把 idea 具现化。一条沿河街道、五栋产品建筑和记录早期尝试的旧城区。51 个 Hi3D 模型（5 栋建筑 + 46 种街道装饰与居民），通过 Blender MCP 恢复高精度几何和法线。当前场景使用 40 种道具、5 栋建筑与一栋旧城区复用建筑，共 91 个实例；6 个不适合摆放的模型保留在资源库。
 
 线上站点：https://mycity-production-8226.up.railway.app
 
@@ -33,7 +33,9 @@ VERIFY_ORIGIN=https://mycity-production-8226.up.railway.app npm run assets:verif
 
 ## 模型更新
 
-生产 GLB 包含 Draco 几何与嵌入 WebP 贴图，共约 19.9 MiB。模型几何和贴图需要修改时使用 Blender MCP。Hi3D 原始模型、可编辑 Blender 工程与下载包保留在本机原始 `product-city` 文件夹，未提交到公开仓库。
+生产 GLB 包含 Draco 几何与嵌入 WebP 贴图，共约 159.6 MiB。建筑约 50 万面，复杂道具约 35 万面，普通道具约 18 万面；建筑与复杂道具采用 2K 贴图。按近景质量判断，不再套用 8 千面 / 512 像素的统一减面模板。
+
+模型几何和贴图修改使用 Blender MCP。Hi3D 原始模型保留在本机 `product-city` 文件夹；本轮高精度模型、逐件预览、处理记录和可编辑 `product-city-quality.blend` 保存在同级 `quality-work` 文件夹，未提交到公开仓库。
 
 `reference/source-models.json` 是逻辑清单；`dist/assets/models/manifest.json` 包含本次发布绑定的 URL、SHA-256 和字节数。新增版本使用新的哈希路径，不覆盖旧资源。
 
@@ -52,7 +54,9 @@ npm run check
 
 编辑 `dist/products.js`：名称、介绍、分类、上线日期、更新记录、状态、真实 `url`、`demo` 和联系邮箱。当前仍是示例产品；URL 为空时进入产品按钮禁用。未接入真实 GitHub 产品活动。
 
-`dist/props.js` 控制街道物件与居民摆放。旧城区复用游戏厅模型；状态按时间轴变化。支持建筑详情、城市成长、日夜切换、旋转缩放、居民动态、手机和减少动态效果偏好。
+`dist/props.js` 控制街道物件与居民摆放；`dist/world.js` 定义河道、船吃水和沿 X 方向的水流。人物、停放车辆保持静止，避免未绑定骨骼的模型滑行。旧城区复用游戏厅模型；状态按时间轴变化。支持建筑详情、城市成长、日夜切换、旋转缩放、河岸 / 俯瞰视角、顺流漂船、手机和减少动态效果偏好。
+
+`reference/model-quality.json` 记录实际导出的几何、法线、贴图、哈希和桥下净空；`npm test` 检查落水、穿墙、道具穿插、桥头、车辆朝向、船首方向与 20 分钟船轨迹。浏览器隐藏时暂停动画，静态阴影只在模型加载或年份改变时更新。
 
 ## 来源
 

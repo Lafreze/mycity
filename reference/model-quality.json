@@ -1,0 +1,1231 @@
+{
+  "provider": "Hi3D MCP",
+  "editedWith": "Blender MCP",
+  "assets": [
+    {
+      "id": "chess",
+      "file": "arcade.glb",
+      "sha256": "5a0366223bdf61ac37dcc17e79180cb9a9050bfde204e6db181af45cc40ca3a9",
+      "bytes": 7329720,
+      "vertices": 511742,
+      "hasNormals": true,
+      "triangles": 499991,
+      "size": [
+        0.7959979176521301,
+        0.9994170069694519,
+        0.7674843072891235
+      ],
+      "textures": [
+        [
+          2048,
+          2048
+        ],
+        [
+          2048,
+          2048
+        ]
+      ]
+    },
+    {
+      "id": "workshop",
+      "file": "workshop.glb",
+      "sha256": "4193c614068610531e443154421b5f88f30361f260852164a8288f9d0868715a",
+      "bytes": 6289984,
+      "vertices": 497199,
+      "hasNormals": true,
+      "triangles": 499986,
+      "size": [
+        0.6054330468177795,
+        0.9996601343154907,
+        0.6277225017547607
+      ],
+      "textures": [
+        [
+          2048,
+          2048
+        ],
+        [
+          2048,
+          2048
+        ]
+      ]
+    },
+    {
+      "id": "life",
+      "file": "life-tools.glb",
+      "sha256": "6d334f4e8a16ed6a57da0b3693c5b3282fc2a3fc245ccf79bfc32d160fd157db",
+      "bytes": 7687136,
+      "vertices": 552746,
+      "hasNormals": true,
+      "triangles": 499972,
+      "size": [
+        0.8471211194992065,
+        0.9990411996841431,
+        0.7641506791114807
+      ],
+      "textures": [
+        [
+          2048,
+          2048
+        ],
+        [
+          2048,
+          2048
+        ]
+      ]
+    },
+    {
+      "id": "library",
+      "file": "library.glb",
+      "sha256": "134284a6ea9cfbf2c680740892a9b0a2e9a952c34176bd4ab466fdb94c4abec9",
+      "bytes": 7668584,
+      "vertices": 574426,
+      "hasNormals": true,
+      "triangles": 499976,
+      "size": [
+        0.9999698400497437,
+        0.9861838817596436,
+        0.9402141571044922
+      ],
+      "textures": [
+        [
+          2048,
+          2048
+        ],
+        [
+          2048,
+          2048
+        ]
+      ]
+    },
+    {
+      "id": "next",
+      "file": "construction.glb",
+      "sha256": "d37a68ed961543e66dcbf6ab002758a0e251fa5f3b14c9c58dd8c9cff8c03b1b",
+      "bytes": 6632816,
+      "vertices": 485912,
+      "hasNormals": true,
+      "triangles": 499993,
+      "size": [
+        0.8715323209762573,
+        0.9961113035678864,
+        0.797742486000061
+      ],
+      "textures": [
+        [
+          2048,
+          2048
+        ],
+        [
+          2048,
+          2048
+        ]
+      ]
+    },
+    {
+      "id": "street-lamp",
+      "file": "props/street-lamp.glb",
+      "sha256": "f1bbda8ea993cd864ec2c3acb89335a3cef7a20e8a3612ebd9a5fd73fa607742",
+      "bytes": 3180508,
+      "vertices": 201667,
+      "hasNormals": true,
+      "triangles": 350000,
+      "size": [
+        0.19126859307289124,
+        0.9938104152679443,
+        0.1890621781349182
+      ],
+      "textures": [
+        [
+          2048,
+          2048
+        ],
+        [
+          2048,
+          2048
+        ]
+      ]
+    },
+    {
+      "id": "park-bench",
+      "file": "props/park-bench.glb",
+      "sha256": "e1dad4dfd1b629ed2a9f0612302f5096097261f821d1ceb3d6cf3ce485822ed7",
+      "bytes": 1768680,
+      "vertices": 117820,
+      "hasNormals": true,
+      "triangles": 180000,
+      "size": [
+        1.0000190734863281,
+        0.7502269744873047,
+        0.6150386333465576
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "litter-bin",
+      "file": "props/litter-bin.glb",
+      "sha256": "58e11ba3b6edc954f858fb6f9309be5afd1e42226f174ddf143ac288044ecf9c",
+      "bytes": 1738496,
+      "vertices": 126427,
+      "hasNormals": true,
+      "triangles": 179999,
+      "size": [
+        0.6119183301925659,
+        0.9983203411102295,
+        0.6155933737754822
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "direction-sign",
+      "file": "props/direction-sign.glb",
+      "sha256": "7d2d4200c3d9781db3bb6869cc43d70ffc453f7f4eb8fd9b88b05504300e04ac",
+      "bytes": 2390896,
+      "vertices": 199891,
+      "hasNormals": true,
+      "triangles": 180000,
+      "size": [
+        0.6315128207206726,
+        0.9947761297225952,
+        0.22785402834415436
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "notice-board",
+      "file": "props/notice-board.glb",
+      "sha256": "67de11f49114ddd3ce4a6b50c875baf9ab53fcd42729fa6a2fa5b12b7b341986",
+      "bytes": 2140096,
+      "vertices": 151680,
+      "hasNormals": true,
+      "triangles": 179999,
+      "size": [
+        0.726574718952179,
+        0.9993571043014526,
+        0.16411013901233673
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "cafe-set",
+      "file": "props/cafe-set.glb",
+      "sha256": "79bb52970a3083dd87c6a49c9cc00ac6fd2eab8d669fe5666b476d69047d1b21",
+      "bytes": 5372004,
+      "vertices": 394460,
+      "hasNormals": true,
+      "triangles": 349990,
+      "size": [
+        0.9994882941246033,
+        0.9748464226722717,
+        0.7667917609214783
+      ],
+      "textures": [
+        [
+          2048,
+          2048
+        ],
+        [
+          2048,
+          2048
+        ]
+      ]
+    },
+    {
+      "id": "coffee-cart",
+      "file": "props/coffee-cart.glb",
+      "sha256": "d2f98748143b42c2b9ff4cf0a1a41d53cda130bea5cb446d4db65e1ff7d82e4a",
+      "bytes": 1988788,
+      "vertices": 144104,
+      "hasNormals": true,
+      "triangles": 179999,
+      "size": [
+        0.7511888742446899,
+        1.00034499168396,
+        0.4376335144042969
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "flower-cart",
+      "file": "props/flower-cart.glb",
+      "sha256": "e9faa5d1d00eebb5ee0a3a43dc5a74606217a89da12d95c3321c2c399111169f",
+      "bytes": 3685092,
+      "vertices": 292246,
+      "hasNormals": true,
+      "triangles": 180000,
+      "size": [
+        0.5782951712608337,
+        0.7414015531539917,
+        1.000191569328308
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "book-cart",
+      "file": "props/book-cart.glb",
+      "sha256": "45556ab131c75d73264a94bf9ff54dffd59a532e74362ddb075b8b53bf7c5118",
+      "bytes": 1894380,
+      "vertices": 126426,
+      "hasNormals": true,
+      "triangles": 179999,
+      "size": [
+        0.799142599105835,
+        1.0000174045562744,
+        0.4466800093650818
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "market-crates",
+      "file": "props/market-crates.glb",
+      "sha256": "549c6cb91b81f060d0794d57d97cd490299af14807cd83a707cf3563ea095de4",
+      "bytes": 2383068,
+      "vertices": 168656,
+      "hasNormals": true,
+      "triangles": 179999,
+      "size": [
+        1.0002460479736328,
+        0.38680773973464966,
+        0.4973662197589874
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "garden-arch",
+      "file": "props/garden-arch.glb",
+      "sha256": "2c4304839ec888226aef6750eaebd8394742dc8d385843800aee3ed648a53f3e",
+      "bytes": 5292844,
+      "vertices": 348789,
+      "hasNormals": true,
+      "triangles": 349997,
+      "size": [
+        0.77181476354599,
+        0.9995841979980469,
+        0.5339977145195007
+      ],
+      "textures": [
+        [
+          2048,
+          2048
+        ],
+        [
+          2048,
+          2048
+        ]
+      ]
+    },
+    {
+      "id": "vine-trellis",
+      "file": "props/vine-trellis.glb",
+      "sha256": "34fd365da03f3abeb7d649cd05b9b4e4bdf88c3eb2cdb5e35907724fb197ff58",
+      "bytes": 6090428,
+      "vertices": 386392,
+      "hasNormals": true,
+      "triangles": 349999,
+      "size": [
+        0.6608494520187378,
+        1.0000868737697601,
+        0.39408251643180847
+      ],
+      "textures": [
+        [
+          2048,
+          2048
+        ],
+        [
+          2048,
+          2048
+        ]
+      ]
+    },
+    {
+      "id": "hydrangea-pot",
+      "file": "props/hydrangea-pot.glb",
+      "sha256": "95e89941b31a23abe85e3c58bd200a7ece571e834336a6f57ac2c3efc96989b0",
+      "bytes": 2050600,
+      "vertices": 163661,
+      "hasNormals": true,
+      "triangles": 279995,
+      "size": [
+        0.8683772683143616,
+        0.9055570363998413,
+        0.9998375773429871
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "olive-tree",
+      "file": "props/olive-tree.glb",
+      "sha256": "c9d1d58e08acdccb5b2196e9aebc1c32cfa8dbb68b4ee4793a8e64dd9f37e179",
+      "bytes": 7539772,
+      "vertices": 691654,
+      "hasNormals": true,
+      "triangles": 279721,
+      "size": [
+        0.7021642923355103,
+        1.0020930767059326,
+        0.737321674823761
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "plane-tree",
+      "file": "props/plane-tree.glb",
+      "sha256": "715a7ff7ecab3e61d2ac4fa56e61d6485f2052d950dff7f2244f861514c55d88",
+      "bytes": 1761352,
+      "vertices": 156435,
+      "hasNormals": true,
+      "triangles": 279999,
+      "size": [
+        0.7500931620597839,
+        0.9999830722808838,
+        0.5156602263450623
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "cypress-planter",
+      "file": "props/cypress-planter.glb",
+      "sha256": "c9a21673219d9793f7a80be725ae26bd02dd1373542bc91e8ab1ac5b96396ecc",
+      "bytes": 3384104,
+      "vertices": 298821,
+      "hasNormals": true,
+      "triangles": 280000,
+      "size": [
+        0.26279371976852417,
+        0.9984713792800903,
+        0.26669400930404663
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "blossom-tree",
+      "file": "props/blossom-tree.glb",
+      "sha256": "62b66f57deac2c1024c70547e39f3e3656727a9522f5a8d265c1b8d7f3b37f08",
+      "bytes": 7278192,
+      "vertices": 665169,
+      "hasNormals": true,
+      "triangles": 279833,
+      "size": [
+        0.8573867678642273,
+        1.0077340602874756,
+        0.7951489686965942
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "river-railing",
+      "file": "props/river-railing.glb",
+      "sha256": "3ab5df9045247bc84af34612021aa85d9106ce8c172e7ffa5404834aacd1e391",
+      "bytes": 3800640,
+      "vertices": 231946,
+      "hasNormals": true,
+      "triangles": 350000,
+      "size": [
+        1.0000512599945068,
+        0.4056941270828247,
+        0.28871220350265503
+      ],
+      "textures": [
+        [
+          2048,
+          2048
+        ],
+        [
+          2048,
+          2048
+        ]
+      ]
+    },
+    {
+      "id": "stone-bridge",
+      "file": "props/stone-bridge.glb",
+      "sha256": "e97ba70ff33e1abe37eb276d5ede3215c1c4de98ea138790882189077fa96579",
+      "bytes": 3423544,
+      "vertices": 195797,
+      "hasNormals": true,
+      "triangles": 307905,
+      "size": [
+        1.0000009536743164,
+        0.41261106729507446,
+        0.6511127352714539
+      ],
+      "textures": [
+        [
+          2048,
+          2048
+        ],
+        [
+          2048,
+          2048
+        ]
+      ],
+      "archClearanceAtBoatBeam": 0.42461585998535156
+    },
+    {
+      "id": "mooring-bollard",
+      "file": "props/mooring-bollard.glb",
+      "sha256": "f4245b260ce0461388b1d7ad10ebe81da5fd24ed9a7466f5d86f3608f2459bc6",
+      "bytes": 1907212,
+      "vertices": 132523,
+      "hasNormals": true,
+      "triangles": 179999,
+      "size": [
+        0.7879824638366699,
+        0.8592971563339233,
+        1.0000343322753906
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "rowboat",
+      "file": "props/rowboat.glb",
+      "sha256": "5b279eb584563a27af293d6af11295d231a89f078bba4e6c6e0f2429bea62f7b",
+      "bytes": 1764504,
+      "vertices": 124937,
+      "hasNormals": true,
+      "triangles": 179999,
+      "size": [
+        0.43979567289352417,
+        0.2625245451927185,
+        1.0001158714294434
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "duck-family",
+      "file": "props/duck-family.glb",
+      "sha256": "abf062df799f122d06cafed59401eaa1a1c2fe0d36f1ee21e667057f1a366fdb",
+      "bytes": 2716584,
+      "vertices": 206142,
+      "hasNormals": true,
+      "triangles": 180000,
+      "size": [
+        0.8618120551109314,
+        0.9640626311302185,
+        1.0001593828201294
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "fountain",
+      "file": "props/fountain.glb",
+      "sha256": "8da62a29e78c83cb8fb3cb171b2fbc0b0ba88ec27f5b792800027217e209db47",
+      "bytes": 3002760,
+      "vertices": 250033,
+      "hasNormals": true,
+      "triangles": 179970,
+      "size": [
+        0.9970970153808594,
+        0.9018331170082092,
+        1.0006316900253296
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "cobble-tile",
+      "file": "props/cobble-tile.glb",
+      "sha256": "b7c37f0a95e993c7c6fb9a0e3f16716bde2711d42c54a9486f09c91517fe2717",
+      "bytes": 1573616,
+      "vertices": 106791,
+      "hasNormals": true,
+      "triangles": 179999,
+      "size": [
+        0.9988068342208862,
+        0.08623535931110382,
+        0.9985401034355164
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "stone-steps",
+      "file": "props/stone-steps.glb",
+      "sha256": "55f59ce65d30876b5d628df391dbc37890646a5152d0ee2f9584edbf0cd354e3",
+      "bytes": 1892320,
+      "vertices": 140383,
+      "hasNormals": true,
+      "triangles": 180000,
+      "size": [
+        0.570376455783844,
+        1.0000882148742676,
+        0.9686140418052673
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "cargo-bike",
+      "file": "props/cargo-bike.glb",
+      "sha256": "09067d3e2bce5783e13a59ec4b719da06a63c732c90447e66b88f49c1ab96d77",
+      "bytes": 4429460,
+      "vertices": 268757,
+      "hasNormals": true,
+      "triangles": 350000,
+      "size": [
+        0.48008349537849426,
+        0.6571507453918457,
+        1.0001710653305054
+      ],
+      "textures": [
+        [
+          2048,
+          2048
+        ],
+        [
+          2048,
+          2048
+        ]
+      ]
+    },
+    {
+      "id": "city-bike",
+      "file": "props/city-bike.glb",
+      "sha256": "fb70a68df48dd26c6c9c9e7dfb65de96d906f340e139ecf996c5ae0e36cb7899",
+      "bytes": 7543408,
+      "vertices": 578430,
+      "hasNormals": true,
+      "triangles": 349920,
+      "size": [
+        0.4162321388721466,
+        0.6566912531852722,
+        0.999645859003067
+      ],
+      "textures": [
+        [
+          2048,
+          2048
+        ],
+        [
+          2048,
+          2048
+        ]
+      ]
+    },
+    {
+      "id": "scooter",
+      "file": "props/scooter.glb",
+      "sha256": "f11b8c0a259319f9423e514cfd015e84125664d2c949cec0ffbcae423cc413c6",
+      "bytes": 2194840,
+      "vertices": 167568,
+      "hasNormals": true,
+      "triangles": 179998,
+      "size": [
+        0.45193326473236084,
+        0.7232595682144165,
+        1.0001025199890137
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "delivery-van",
+      "file": "props/delivery-van.glb",
+      "sha256": "a68f6232b65dc9686ed362d92a594151e9ec7c468ca793e1c34680f9a510aef8",
+      "bytes": 2384432,
+      "vertices": 187310,
+      "hasNormals": true,
+      "triangles": 179999,
+      "size": [
+        0.5851029753684998,
+        0.6467760801315308,
+        1.0002585649490356
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "safety-barrier",
+      "file": "props/safety-barrier.glb",
+      "sha256": "0254eaff37901f61e9b544d188766ea10489d6eddf9afc540a105d94f6a2107a",
+      "bytes": 1665508,
+      "vertices": 116765,
+      "hasNormals": true,
+      "triangles": 180000,
+      "size": [
+        1.000049352645874,
+        0.6096591949462891,
+        0.8434972763061523
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "building-materials",
+      "file": "props/building-materials.glb",
+      "sha256": "6cc45e6667db3adb85acc6cf2bb618fab7b338f941d96f67f096b8c3584d6251",
+      "bytes": 2503876,
+      "vertices": 176775,
+      "hasNormals": true,
+      "triangles": 180000,
+      "size": [
+        1.0001853704452515,
+        0.7912072539329529,
+        0.987441897392273
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "scaffold",
+      "file": "props/scaffold.glb",
+      "sha256": "82e050f02d02cdc1ac9a1a5a170c6043a97b780bec25d7fa8fc39b50252f1349",
+      "bytes": 4490348,
+      "vertices": 289172,
+      "hasNormals": true,
+      "triangles": 349999,
+      "size": [
+        0.7769719362258911,
+        0.9996454119682312,
+        0.5493830442428589
+      ],
+      "textures": [
+        [
+          2048,
+          2048
+        ],
+        [
+          2048,
+          2048
+        ]
+      ]
+    },
+    {
+      "id": "arcade-machine",
+      "file": "props/arcade-machine.glb",
+      "sha256": "c094e7662746b5fb4611b9d4fc1295ed54e26cf3b64bb44a653a59cb0df5e036",
+      "bytes": 1787028,
+      "vertices": 136865,
+      "hasNormals": true,
+      "triangles": 179993,
+      "size": [
+        0.5073941349983215,
+        1.0000437498092651,
+        0.546027421951294
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "street-clock",
+      "file": "props/street-clock.glb",
+      "sha256": "f4aceb69f41d3ba6e7698c12dfd5521fe3da6d5c14d352fdc8384dec66802b80",
+      "bytes": 1698896,
+      "vertices": 118679,
+      "hasNormals": true,
+      "triangles": 180000,
+      "size": [
+        0.3438106179237366,
+        0.999617874622345,
+        0.34638455510139465
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "maker",
+      "file": "props/maker.glb",
+      "sha256": "9729c56742ded58120b84a088099fb03f4eb40c51a0dd642ca07960dd74c4708",
+      "bytes": 1564012,
+      "vertices": 120824,
+      "hasNormals": true,
+      "triangles": 179999,
+      "size": [
+        0.34371981024742126,
+        0.9994092583656311,
+        0.3434720039367676
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "reader",
+      "file": "props/reader.glb",
+      "sha256": "91b577fe25c6d004c63c9d3327c6f53a4ee421cb55f6f4bb9dd036d84306bea3",
+      "bytes": 1647748,
+      "vertices": 127524,
+      "hasNormals": true,
+      "triangles": 179999,
+      "size": [
+        0.4580771028995514,
+        0.9996395707130432,
+        0.5959673523902893
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "barista",
+      "file": "props/barista.glb",
+      "sha256": "736af9d081f0171d721c2e5d47cc1f7a7c23e348278f74177240c59a5d6be2e2",
+      "bytes": 1558396,
+      "vertices": 119050,
+      "hasNormals": true,
+      "triangles": 179999,
+      "size": [
+        0.3286406993865967,
+        1.0001028776168823,
+        0.3488607704639435
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "florist",
+      "file": "props/florist.glb",
+      "sha256": "dd8b84690a4c61ef3827b0103863a8c3efa259562fdb18ae2f0ac4fa2db92372",
+      "bytes": 1608456,
+      "vertices": 123551,
+      "hasNormals": true,
+      "triangles": 179999,
+      "size": [
+        0.3781471848487854,
+        0.996037483215332,
+        0.4379110336303711
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "cyclist",
+      "file": "props/cyclist.glb",
+      "sha256": "b39f914e11cd113e09fbe702d79f46eb159c69dc2f0301997baff0dfa3f5fc1b",
+      "bytes": 3742940,
+      "vertices": 241664,
+      "hasNormals": true,
+      "triangles": 349999,
+      "size": [
+        0.346479594707489,
+        1.0000572204589844,
+        0.956582248210907
+      ],
+      "textures": [
+        [
+          2048,
+          2048
+        ],
+        [
+          2048,
+          2048
+        ]
+      ]
+    },
+    {
+      "id": "courier",
+      "file": "props/courier.glb",
+      "sha256": "4e2df28bb4191dd772049361b859963971412d5362ce6f1136030208191563cf",
+      "bytes": 1565636,
+      "vertices": 120079,
+      "hasNormals": true,
+      "triangles": 180000,
+      "size": [
+        0.41806551814079285,
+        0.9997805953025818,
+        0.5412040948867798
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "strolling-couple",
+      "file": "props/strolling-couple.glb",
+      "sha256": "4d308ac2d64f562f072f7020b3dad10f23e5545bf73aee357083302343ab3330",
+      "bytes": 1890432,
+      "vertices": 140513,
+      "hasNormals": true,
+      "triangles": 179999,
+      "size": [
+        1.0000418424606323,
+        0.8935418128967285,
+        1.0000799894332886
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "kite-child",
+      "file": "props/kite-child.glb",
+      "sha256": "b4e429fa523c7efdfa41582cb3294f230575f3669aabf0682d47bf75ef674431",
+      "bytes": 1576844,
+      "vertices": 123253,
+      "hasNormals": true,
+      "triangles": 179999,
+      "size": [
+        0.7055294513702393,
+        1.000068187713623,
+        0.5941323041915894
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "construction-worker",
+      "file": "props/construction-worker.glb",
+      "sha256": "8410ac8e247a4ffb4e8893c6e1f9a8c13c76ebaf97bc001b6913751975e2f11b",
+      "bytes": 1550672,
+      "vertices": 116738,
+      "hasNormals": true,
+      "triangles": 180000,
+      "size": [
+        0.3935514986515045,
+        0.9995133876800537,
+        0.4432101547718048
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "helper-robot",
+      "file": "props/helper-robot.glb",
+      "sha256": "d5d99370c5b7825765d8391964b8b1c86d7d9722d1838e5d50706f9d053b3c11",
+      "bytes": 2250452,
+      "vertices": 165936,
+      "hasNormals": true,
+      "triangles": 179999,
+      "size": [
+        0.663865864276886,
+        1.0002171993255615,
+        0.6324067115783691
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "ginger-cat",
+      "file": "props/ginger-cat.glb",
+      "sha256": "bb9628b833cf75efb4330f7d0581eacb7723809f87d5c4ea0e4ed68089dd0e1e",
+      "bytes": 2534016,
+      "vertices": 190112,
+      "hasNormals": true,
+      "triangles": 180000,
+      "size": [
+        0.9045030474662781,
+        0.9997138679027557,
+        0.838489294052124
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    },
+    {
+      "id": "street-musician",
+      "file": "props/street-musician.glb",
+      "sha256": "a78b7bf44f44a4723923f20a8e607ca5b19f502b49c15c8f7584bff22e13516d",
+      "bytes": 1540440,
+      "vertices": 121238,
+      "hasNormals": true,
+      "triangles": 180000,
+      "size": [
+        0.5561702251434326,
+        1.0002273321151733,
+        0.5665906071662903
+      ],
+      "textures": [
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ]
+      ]
+    }
+  ]
+}

@@ -14,7 +14,7 @@ export const PRODUCTS = [
     description: '一间为好奇心留灯的游戏厅。把熟悉的国际象棋，变成可以探索的微型世界。',
     launched: '2023-06-18', status: 'live', url: '', demo: true,
     tags: ['交互体验', 'Three.js', '游戏'], progress: 100,
-    position: {x: 26, y: 73}, scenePosition: [-8,0,0], model: 'arcade.glb',
+    position: {x: 26, y: 73}, scenePosition: [-9.6,0,0], model: 'arcade.glb',
     updates: [
       {date:'2023-06-18',title:'第一间店，开门了',text:'从一个棋盘开始，城市有了第一个可以被体验的想法。'},
       {date:'2024-08-12',title:'让棋子拥有自己的世界',text:'加入新的棋盘主题与沉浸式交互。'},
@@ -27,7 +27,7 @@ export const PRODUCTS = [
     description: '把散落的念头整理成可执行的下一步。在这里，AI 是一起动手的伙伴，每个想法都有机会成为作品。',
     launched: '2024-03-20', status:'live', url:'', demo:true,
     tags:['AI', '创意工具', '工作流'],progress:100,
-    position:{x:46,y:65},scenePosition:[-4,0,0],model:'workshop.glb',
+    position:{x:46,y:65},scenePosition:[-4.8,0,0],model:'workshop.glb',
     updates:[{date:'2024-03-20',title:'灵感事务所入驻',text:'一张工作台，连接灵感与第一份原型。'},{date:'2026-10-18',title:'从对话，到可以运行的原型',text:'梳理创意、拆分步骤，再把小成果积累起来。'}],
   },
   {
@@ -41,21 +41,21 @@ export const PRODUCTS = [
     id:'library',name:'The Living Library',subtitle:'让知识生长，让好奇心常在。',category:'知识项目',building:'Library',icon:'▤',
     description:'一座阳光会照进来的图书馆。把阅读、研究与实践连接起来，让收藏的知识真正成为自己的东西。',
     launched:'2025-04-23',status:'live',url:'',demo:true,tags:['知识库','阅读','数字花园'],progress:100,
-    position:{x:78,y:48},scenePosition:[4,0,0],model:'library.glb',
+    position:{x:78,y:48},scenePosition:[4.8,0,0],model:'library.glb',
     updates:[{date:'2025-04-23',title:'图书馆迎来第一位读者',text:'把零散笔记连接成可以散步的知识地图。'},{date:'2026-10-28',title:'知识，也需要一扇窗',text:'更新阅读索引，让想法之间的联系更清晰。'}],
   },
   {
     id:'next',name:'Something New',subtitle:'下一栋建筑，从一个「如果」开始。',category:'正在建造',building:'Under Construction',icon:'⚒',
     description:'这里还没有最终答案。一个新想法正在打地基、搭框架，等待变成能被使用的产品。',
     launched:'2026-07-01',status:'building',url:'',demo:true,tags:['实验中','新想法','原型'],progress:62,
-    position:{x:92,y:44},scenePosition:[8,0,0],model:'construction.glb',
+    position:{x:92,y:44},scenePosition:[9.6,0,0],model:'construction.glb',
     updates:[{date:'2026-07-01',title:'给下一个想法留块地',text:'开始验证新方向。'},{date:'2026-11-02',title:'框架正在成形',text:'核心原型完成，正在打磨第一次体验。'}],
   },
   {
     id:'archive',name:'Paper & Pixels',subtitle:'旧作品，也是这座城的一部分。',category:'旧城区',building:'Old Quarter',icon:'◷',
     description:'一个已经停止维护的早期笔记实验。它留在旧城区，记录曾经的尝试，也为之后的新作品提供养分。',
     launched:'2024-01-12',archivedAt:'2025-02-01',status:'archived',url:'',demo:true,tags:['归档','早期实验'],progress:100,
-    position:{x:12,y:81},scenePosition:[-11,0,-5],model:null,
+    position:{x:12,y:81},scenePosition:[-13,0,-5],model:null,
     updates:[{date:'2024-01-12',title:'第一本数字笔记',text:'一个关于收集与整理的早期实验。'},{date:'2025-02-01',title:'搬进旧城区',text:'停止维护，保留故事与设计记录。'}],
   },
 ];

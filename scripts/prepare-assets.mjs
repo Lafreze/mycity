@@ -18,6 +18,7 @@ for(const item of [...manifest.models,...manifest.props]){
   item.sha256=sha256;item.bytes=bytes.length;
   plan.push({id:item.id,source,key,url:item.url,bytes:bytes.length,sha256});
 }
+manifest.updatedAt=new Date().toISOString();
 manifest.version=createHash('sha256').update(JSON.stringify(plan.map(({key,sha256})=>({key,sha256})))).digest('hex').slice(0,16);
 await mkdir('output',{recursive:true});
 await writeFile('dist/assets/models/manifest.json',JSON.stringify(manifest,null,2)+'\n');
