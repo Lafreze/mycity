@@ -2,7 +2,7 @@
 
 用 AI，把 idea 具现化。一条沿河街道、五栋产品建筑和记录早期尝试的旧城区。51 个 Hi3D 模型（5 栋建筑 + 46 种街道装饰与居民），通过 Blender MCP 恢复高精度几何和法线。当前场景使用 40 种道具、5 栋建筑与一栋旧城区复用建筑，共 91 个实例；6 个不适合摆放的模型保留在资源库。
 
-线上站点：https://mycity-production-8226.up.railway.app
+线上站点：https://mycity.up.railway.app
 
 模型入口：https://mycity-assets.lafreze-city.workers.dev/mycity/ （只提供具体模型文件，不列出目录）
 
@@ -14,11 +14,11 @@
 npm run dev
 ```
 
-打开 http://127.0.0.1:4173 。直接进入三维模式：http://127.0.0.1:4173/?view=3d 。本地页面也使用远程 R2 模型，因此需要联网。
+打开 http://127.0.0.1:4173 即进入三维街区。本地页面也使用远程 R2 模型，因此需要联网。
 
 ```sh
 npm run check
-VERIFY_ORIGIN=https://mycity-production-8226.up.railway.app npm run assets:verify
+VERIFY_ORIGIN=https://mycity.up.railway.app npm run assets:verify
 ```
 
 ## 托管与空闲成本
@@ -27,7 +27,7 @@ VERIFY_ORIGIN=https://mycity-production-8226.up.railway.app npm run assets:verif
 - Railway 只运行一个 Nginx 静态服务，不运行 Node 服务、数据库、定时任务、WebSocket、保活探针或服务端 R2 代理。
 - `railway.json` 启用 `sleepApplication: true`，单副本，CPU 上限 0.5、内存上限 128 MiB。部署后无流量时可自动休眠；下一次访问会唤醒，可能有短暂冷启动。平台套餐基础费用不由休眠设置取消。
 - JS/CSS/HTML/JSON 在镜像构建时预压缩；模型按内容哈希命名，缓存一年。浏览器通过 Cloudflare 只读缓存入口请求 R2 模型，不通过 Railway 中转。
-- 只有进入 3D 模式才加载模型；建筑优先，街道资产三路并行加载。页面隐藏时暂停渲染与时间轴。
+- 首页直接启动全屏 3D；建筑优先，街道资产三路并行加载并显示简短进度。加载失败可重试，不回退到插画。页面隐藏时暂停渲染与时间轴。
 - `/healthz` 仅用于部署就绪检查，不创建外部定时探活。不要添加持续请求站点的 uptime 保活工具。
 - Railway 容器无需任何 R2 凭证；上传只在可信本机通过 Cloudflare Wrangler OAuth 进行。
 
@@ -42,7 +42,7 @@ VERIFY_ORIGIN=https://mycity-production-8226.up.railway.app npm run assets:verif
 ```sh
 npm run assets:prepare -- --source /path/to/optimized/models --base https://mycity-assets.lafreze-city.workers.dev/mycity
 R2_BUCKET_NAME=mycity-assets npm run assets:upload
-VERIFY_ORIGIN=https://mycity-production-8226.up.railway.app npm run assets:verify
+VERIFY_ORIGIN=https://mycity.up.railway.app npm run assets:verify
 npm run check
 ```
 
@@ -52,7 +52,9 @@ npm run check
 
 ## 编辑作品
 
-编辑 `dist/products.js`：名称、介绍、分类、上线日期、更新记录、状态、真实 `url`、`demo` 和联系邮箱。当前仍是示例产品；URL 为空时进入产品按钮禁用。未接入真实 GitHub 产品活动。
+编辑 `dist/products.js`：名称、介绍、分类、上线日期、更新记录、状态、真实 `url`、`demo` 和联系邮箱。当前仍是示例产品；URL 为空时显示“链接待接入”。未接入真实 GitHub 产品活动。
+
+界面仅保留作品列表、点击后的详情、年份和视角按钮；建筑名牌只在悬停或选中时显示。
 
 `dist/props.js` 控制街道物件与居民摆放；`dist/world.js` 定义河道、船吃水和沿 X 方向的水流。人物、停放车辆保持静止，避免未绑定骨骼的模型滑行。旧城区复用游戏厅模型；状态按时间轴变化。支持建筑详情、城市成长、日夜切换、旋转缩放、河岸 / 俯瞰视角、顺流漂船、手机和减少动态效果偏好。
 
@@ -60,6 +62,6 @@ npm run check
 
 ## 来源
 
-3D 模型：Hi3D MCP；模型优化与完整场景：Blender MCP。来源与生成提示词保存在 `reference/`。入口插画根据用户提供的参考图通过 ImageGen 编辑得到，和真正的 3D 漫游分开显示。
+3D 模型：Hi3D MCP；模型优化与完整场景：Blender MCP。来源与生成提示词保存在 `reference/`。网站仅保留三维街区，旧插画与缩略图不再部署。原始素材仍保存在本机归档中。
 
 Three.js 及解码器许可证随 `dist/vendor/three/` 提供。

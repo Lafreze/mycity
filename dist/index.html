@@ -2,107 +2,66 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#f7f2e9">
-  <meta name="description" content="用 AI，把 idea 具现化。一条街、五栋建筑，以及正在生长的想法。欢迎来到产品之城。">
-  <meta property="og:url" content="https://mycity-production-8226.up.railway.app">
-  <meta property="og:image" content="https://mycity-production-8226.up.railway.app/assets/city-day.webp">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#e7ddcb">
+  <meta name="description" content="MYCITY — 三维产品街区">
+  <link rel="canonical" href="https://mycity.up.railway.app/">
+  <meta property="og:url" content="https://mycity.up.railway.app/">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Product City — 把想法，建成一座城">
-  <meta property="og:description" content="每个产品都有自己的建筑，每个想法都能找到地址。探索一座用 AI 建造的微型城市。">
-  <title>Product City — 把想法，建成一座城</title>
+  <meta property="og:title" content="MYCITY">
+  <title>MYCITY</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Crect width='80' height='80' rx='20' fill='%233d3023'/%3E%3Cpath d='M17 57V33l14-13 13 13v24M44 57V39l12-10 9 10v18M12 58h58M26 58V43h10v15' fill='none' stroke='%23f4e7ce' stroke-width='4'/%3E%3C/svg%3E">
-  <link rel="preload" as="image" href="./assets/city-day.webp" fetchpriority="high">
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="preconnect" href="https://mycity-assets.lafreze-city.workers.dev" crossorigin>
+  <link rel="stylesheet" href="./styles.css?v=3d-only-2">
   <script type="importmap">{"imports":{"three":"./vendor/three/three.module.js","three/addons/":"./vendor/three/addons/"}}</script>
 </head>
-<body>
-  <a class="skip-link" href="#products">跳到产品列表</a>
-  <header class="site-header">
-    <a class="brand" href="#" aria-label="产品之城首页"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M3 29h30M6 28V13l8-7 8 7v15M22 28V18l5-5 5 5v10M11 28V18h6v10M11 13h6"/></svg><span>PRODUCT CITY<span class="brand-divider">/</span><small>A PLACE FOR IDEAS</small></span></a>
-    <nav aria-label="主导航"><a class="nav-link active" href="#products">产品街区</a><a class="nav-link" href="#journal">建城手记</a><button class="nav-link" data-dialog="about">关于这座城</button><button class="contact-link" data-dialog="contact">来坐坐 <span>↗</span></button></nav>
-    <button class="mobile-menu icon-button" aria-label="打开菜单" aria-expanded="false">☰</button>
+<body data-scene-state="loading">
+  <main id="scene3d" aria-label="三维产品街区"></main>
+  <header class="topbar">
+    <button id="home" class="brand" aria-label="回到街区全景" data-scene-control disabled>MYCITY</button>
+    <div class="glass toolbar">
+      <button id="products-toggle" aria-expanded="false" aria-controls="product-menu">作品</button>
+      <span class="divider"></span>
+      <button id="night-toggle" class="icon" aria-label="切换夜景" title="夜景" aria-pressed="false" data-scene-control disabled>☾</button>
+    </div>
   </header>
 
-  <main>
-    <section class="city-section" aria-label="交互式产品之城">
-      <div class="scene-viewport" id="scene-viewport">
-        <div class="scene" id="scene">
-          <img class="city-art" src="./assets/city-day.webp" alt="黄昏中的沿河微型街区：棋子游戏厅、AI 事务所、生活工具商店、玻璃图书馆和一处工地" fetchpriority="high" draggable="false">
-          <div class="night-shade"></div><div class="night-stars" aria-hidden="true"></div>
-          <svg class="building-outlines" viewBox="0 0 1600 1000" preserveAspectRatio="none" aria-hidden="true">
-            <path data-outline="chess" d="M137 617Q120 690 209 719L413 758Q565 769 609 685"/>
-            <path data-outline="workshop" d="M590 668L849 600"/>
-            <path data-outline="life" d="M847 605L1097 545"/>
-            <path data-outline="library" d="M1091 551L1323 489"/>
-            <path data-outline="next" d="M1319 498L1572 454"/>
-          </svg>
-          <div id="city-hotspots" class="city-hotspots"></div>
-          <div class="lamplight l1"></div><div class="lamplight l2"></div><div class="lamplight l3"></div><div class="lamplight l4"></div>
-        </div>
-        <div id="scene3d" hidden aria-label="Hi3D 建模的三维街区"></div>
-        <div class="scene-vignette"></div>
-      </div>
+  <aside id="product-menu" class="glass panel" aria-label="作品列表" hidden>
+    <div class="panel-top"><span>作品</span><button id="close-menu" class="icon" aria-label="关闭作品列表">×</button></div>
+    <div id="product-items"></div>
+  </aside>
 
-      <div class="hero-copy">
-        <p class="eyebrow"><span></span> BUILT WITH AI. MADE FOR REAL LIFE.</p>
-        <h1>A city of<br>things I build<span>.</span></h1>
-        <p class="hero-description">把一个个想法，建成可以走进去的世界。</p>
-        <button class="primary-button" id="explore">逛逛这座城 <span aria-hidden="true">⟶</span></button>
-        <p class="hero-footnote">每一栋建筑，都是一个从 0 到 1 的故事。</p>
-      </div>
-      <div class="three-title" id="three-title" hidden><p class="eyebrow">ONE IDEA. ONE ADDRESS.</p><h2>欢迎来到灵感街。</h2><p>拖动旋转 · 点击建筑，走进作品</p></div>
-
-      <div class="scene-tools" role="group" aria-label="城市场景设置">
-        <button id="night-toggle" class="tool-button" aria-label="切换夜景" aria-pressed="false"><span class="tool-icon">☾</span><span class="tool-text">入夜</span></button>
-        <span class="tool-divider"></span>
-        <button id="view-toggle" class="tool-button" aria-label="打开地图索引" aria-pressed="false"><span class="tool-icon">☷</span><span class="tool-text">地图索引</span></button>
-        <span class="tool-divider"></span>
-        <button id="three-toggle" class="tool-button" aria-label="切换 3D 漫游" aria-pressed="false"><span class="tool-icon">◇</span><span class="tool-text">3D 漫游</span></button>
-      </div>
-
-      <div class="city-index" id="city-index" hidden>
-        <div class="index-head"><p class="eyebrow">A LITTLE CITY DIRECTORY</p><button class="icon-button" id="close-index" aria-label="关闭地图索引">×</button></div>
-        <h2>选一扇门，走进去。</h2><div id="index-items"></div>
-      </div>
-
-      <div class="featured-product" id="featured-product" aria-live="polite"></div>
-      <div class="city-caption"><span class="live-dot"></span><span id="city-count">4 间已开业 · 1 间建造中</span><span class="caption-dot">·</span><span id="scene-caption">灵感街 · 黄昏</span></div>
-      <div class="three-controls" id="three-controls" hidden><button id="orbit-toggle" aria-pressed="false">◌ 慢慢环游</button><span></span><button id="life-toggle" aria-pressed="true">⌁ 水面流动</button><span></span><button id="canal-view">河岸</button><button id="overhead-view">俯瞰</button></div>
-      <div class="asset-progress" id="asset-progress" hidden role="status"></div>
-      <div class="scene-loading" id="scene-loading" hidden role="status"><span class="spinner"></span><span id="loading-label">正在走进这座城…</span></div>
-    </section>
-
-    <div class="city-timeline" aria-label="城市成长时间轴">
-      <div class="timeline-title"><span class="eyebrow">CITY’S GROWTH</span><small>一座城，慢慢长大</small></div>
-      <button id="play-timeline" class="play-button" aria-label="播放城市成长时间轴">▷</button>
-      <div class="timeline-track">
-        <div class="timeline-line"><span id="timeline-progress"></span></div>
-        <div id="year-buttons" class="year-buttons"></div>
-        <input id="year-range" type="range" min="2023" max="2026" step="1" value="2026" aria-label="城市年份">
-      </div>
-      <div class="camera-controls"><button id="zoom-out" aria-label="缩小场景">−</button><button id="zoom-in" aria-label="放大场景">＋</button><span></span><button id="reset-scene"><i>⟲</i> 复位</button></div>
+  <div class="dock" aria-label="街区控制">
+    <div class="glass timeline" role="group" aria-label="城市年份">
+      <button id="play-timeline" class="icon" aria-label="播放城市成长" aria-pressed="false" data-scene-control disabled>▷</button>
+      <div id="year-buttons"></div>
     </div>
+    <div class="glass camera" role="group" aria-label="视角">
+      <button id="canal-view" data-scene-control disabled>河岸</button>
+      <button id="overhead-view" data-scene-control disabled>俯瞰</button>
+      <button id="orbit-toggle" class="icon" title="环游" aria-label="自动环游" aria-pressed="false" data-scene-control disabled>◌</button>
+      <span class="divider"></span>
+      <button id="zoom-out" class="icon" aria-label="缩小" data-scene-control disabled>−</button>
+      <button id="zoom-in" class="icon" aria-label="放大" data-scene-control disabled>＋</button>
+      <button id="reset-scene" class="icon" title="复位" aria-label="恢复全景" data-scene-control disabled>⟲</button>
+    </div>
+  </div>
 
-    <section class="products-section content-section" id="products">
-      <div class="section-heading"><div><p class="eyebrow">THE NEIGHBORHOOD</p><h2>每个想法，都有自己的地址。</h2></div><p>从解决一个小问题开始，<br>到点亮这条街上的一扇窗。</p></div>
-      <div class="filter-row"><div class="filters" role="group" aria-label="筛选产品状态"><button class="filter active" data-filter="all" aria-pressed="true">整座城市 <span>6</span></button><button class="filter" data-filter="live" aria-pressed="false">已开业</button><button class="filter" data-filter="building" aria-pressed="false">建造中</button><button class="filter" data-filter="archived" aria-pressed="false">旧城区</button></div><span class="demo-note">概念演示 · 产品信息为示例</span></div>
-      <div id="product-grid" class="product-grid"></div>
-      <p id="empty-products" hidden>这一年的街区里，还没有这类建筑。</p>
-    </section>
+  <div id="loading" class="loading">
+    <div id="load-state" role="status"><span class="spinner" aria-hidden="true"></span><span id="loading-label">载入街区</span><progress id="loading-progress" max="5" value="0" aria-label="建筑加载进度"></progress></div>
+    <div id="load-error" hidden><p id="error-message">加载失败，请重试。</p><button id="retry" class="solid">重试</button></div>
+  </div>
+  <div id="asset-status" class="asset-status glass" role="status" hidden><span id="asset-label"></span><button id="retry-assets" hidden>重试</button></div>
 
-    <section class="journal-section content-section" id="journal">
-      <div class="section-heading"><div><p class="eyebrow">NOTES FROM THE CITY</p><h2>城市里的新鲜事。</h2></div><span class="journal-year" id="journal-year">2026 / 建城手记</span></div>
-      <div class="journal-list" id="journal-list"></div>
-    </section>
-
-    <section class="closing-section"><p class="eyebrow">ALWAYS A WORK IN PROGRESS</p><h2>下一栋建筑，<br>也许就是明天的一个念头。</h2><button class="text-button" id="back-to-city">回到街上，继续走走 <span>↗</span></button><span class="closing-mark" aria-hidden="true">✧</span></section>
-  </main>
-
-  <footer><a href="#" class="footer-brand">PRODUCT CITY</a><span>用 AI，把 idea 具现化。</span><span>一座持续生长的个人门户 <i>© 2026</i></span></footer>
-  <dialog id="product-dialog" class="product-dialog" aria-labelledby="detail-title"><button class="dialog-close icon-button" aria-label="关闭产品详情">×</button><div id="product-detail"></div></dialog>
-  <dialog id="info-dialog" class="info-dialog" aria-labelledby="info-title"><button class="dialog-close icon-button" aria-label="关闭窗口">×</button><div id="info-content"></div></dialog>
-  <div id="toast" class="toast" role="status"></div>
-  <script type="module" src="./app.js"></script>
+  <dialog id="product-dialog" aria-labelledby="detail-title">
+    <button id="close-detail" class="close icon" aria-label="关闭作品详情">×</button>
+    <p id="detail-meta" class="meta"></p>
+    <h2 id="detail-title"></h2>
+    <p id="detail-description"></p>
+    <div id="detail-update" class="update" hidden><time id="update-date"></time><span id="update-title"></span></div>
+    <div class="detail-footer"><a id="product-link" class="solid" target="_blank" rel="noopener noreferrer">进入产品 ↗</a><span id="missing-link" class="muted">链接待接入</span><small id="demo-note">示例项目</small></div>
+  </dialog>
+  <noscript>请启用 JavaScript 以打开三维街区。</noscript>
+  <script type="module" src="./app.js?v=3d-only-2"></script>
 </body>
 </html>

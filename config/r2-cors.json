@@ -1,11 +1,33 @@
 {
-  "rules": [{
-    "allowed": {
-      "origins": ["https://mycity-production-8226.up.railway.app", "http://127.0.0.1:4173", "http://localhost:4173"],
-      "methods": ["GET", "HEAD"],
-      "headers": ["Range", "Content-Type", "If-None-Match", "If-Modified-Since"]
-    },
-    "exposeHeaders": ["Content-Type", "Content-Length", "ETag", "Cache-Control", "Content-Range", "Accept-Ranges"],
-    "maxAgeSeconds": 3600
-  }]
+  "rules": [
+    {
+      "allowed": {
+        "origins": [
+          "https://mycity.up.railway.app",
+          "https://mycity-production-8226.up.railway.app",
+          "http://127.0.0.1:4173",
+          "http://localhost:4173"
+        ],
+        "methods": [
+          "GET",
+          "HEAD"
+        ],
+        "headers": [
+          "Range",
+          "Content-Type",
+          "If-None-Match",
+          "If-Modified-Since"
+        ]
+      },
+      "exposeHeaders": [
+        "Content-Type",
+        "Content-Length",
+        "ETag",
+        "Cache-Control",
+        "Content-Range",
+        "Accept-Ranges"
+      ],
+      "maxAgeSeconds": 3600
+    }
+  ]
 }

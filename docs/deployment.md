@@ -4,7 +4,7 @@
 - Railway Project：`82392fb3-2162-4336-bdee-68d095013b64`
 - Railway Service：`0bcbc763-7082-4c0b-9588-3a1ffe23f43a`
 - Railway Environment：`eeb98d60-9cba-4a60-865d-202c75636b75`（production）
-- 站点：https://mycity-production-8226.up.railway.app
+- 站点：https://mycity.up.railway.app
 - Cloudflare R2 Bucket：`mycity-assets`（APAC；私有，r2.dev 关闭）
 - 只读缓存 Worker：`mycity-assets`
 - 模型入口：https://mycity-assets.lafreze-city.workers.dev/mycity/

@@ -1,9 +1,10 @@
-const ORIGINS=new Set(['https://mycity-production-8226.up.railway.app','http://127.0.0.1:4173','http://localhost:4173']);
+const ORIGINS=new Set(['https://mycity.up.railway.app','https://mycity-production-8226.up.railway.app','http://127.0.0.1:4173','http://localhost:4173']);
 const KEY=/^mycity\/models\/(?:props\/)?[a-z0-9-]+\.[a-f0-9]{16}\.glb$/;
 function cors(response,origin){
  const headers=new Headers(response.headers);
  headers.set('Vary','Origin');
  headers.set('X-Content-Type-Options','nosniff');
+ if(origin&&!ORIGINS.has(origin))headers.set('Cache-Control','no-store');
  if(ORIGINS.has(origin)){
   headers.set('Access-Control-Allow-Origin',origin);
   headers.set('Access-Control-Expose-Headers','Content-Type, Content-Length, ETag, Cache-Control, Content-Range, Accept-Ranges');
