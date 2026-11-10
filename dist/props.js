@@ -1,4 +1,4 @@
-import {CANAL,BRIDGE,BOAT} from './world.js?v=neighbors-2';
+import {CANAL,BRIDGE,BOAT} from './world.js?v=neighbors-3';
 
 // Geometry is from Hi3D, restored and inspected through Blender MCP.
 // Unisolated dioramas remain in the asset library, not in the active street.

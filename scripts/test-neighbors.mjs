@@ -3,7 +3,7 @@ import {readFile} from 'node:fs/promises';
 import * as THREE from '../dist/vendor/three/three.module.js';
 const source=(await readFile(new URL('../dist/neighbors.js',import.meta.url),'utf8'))
   .replace("'three'",JSON.stringify(new URL('../dist/vendor/three/three.module.js',import.meta.url).href))
-  .replace("'./residents.js?v=neighbors-2'",JSON.stringify(new URL('../dist/residents.js',import.meta.url).href));
+  .replace("'./residents.js?v=neighbors-3'",JSON.stringify(new URL('../dist/residents.js',import.meta.url).href));
 const {createNeighbors}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
 const context=new Proxy({},{get:()=>()=>{},set:()=>true});
 globalThis.document={createElement:()=>({getContext:()=>context})};globalThis.location={search:''};

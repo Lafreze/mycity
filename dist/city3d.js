@@ -4,15 +4,15 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { statusAt } from './products.js';
-import { CITY_PROPS } from './props.js?v=neighbors-2';
-import { CANAL, boatPose } from './world.js?v=neighbors-2';
+import { CITY_PROPS } from './props.js?v=neighbors-3';
+import { CANAL, boatPose } from './world.js?v=neighbors-3';
 import { BOAT_WATERLINE } from './boat-waterline.js';
 import { createStaticFrame } from './static-frame.js';
 import { createPerformanceMeter } from './performance-meter.js';
-import { createWalker } from './walker.js?v=neighbors-2';
-import { createLandscape } from './landscape.js?v=neighbors-2';
-import { createNeighbors } from './neighbors.js?v=neighbors-2';
-import { DISCOVERIES } from './walking-world.js?v=neighbors-2';
+import { createWalker } from './walker.js?v=neighbors-3';
+import { createLandscape } from './landscape.js?v=neighbors-3';
+import { createNeighbors } from './neighbors.js?v=neighbors-3';
+import { DISCOVERIES } from './walking-world.js?v=neighbors-3';
 
 // Building geometry comes exclusively from the Hi3D GLB assets in the manifest.
 // Simple planes provide the display plinth, street and canal, not replacement buildings.
@@ -34,7 +34,7 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   camera.position.copy(initialPosition);
   const controls=new OrbitControls(camera,renderer.domElement);
   controls.target.copy(initialTarget);controls.enableDamping=true;controls.dampingFactor=.07;
-  controls.maxPolarAngle=Math.PI*.47;controls.minPolarAngle=.2;controls.minDistance=6;controls.maxDistance=70;
+  controls.maxPolarAngle=Math.PI*.47;controls.minPolarAngle=.2;controls.minDistance=2.2;controls.maxDistance=70;
   controls.enablePan=true;controls.autoRotate=false;
   const hemi=new THREE.HemisphereLight('#fff5d8','#6c5748',1.6);scene.add(hemi);
   const sun=new THREE.DirectionalLight('#ffe1a8',2.5);sun.position.set(-10,20,12);sun.castShadow=true;

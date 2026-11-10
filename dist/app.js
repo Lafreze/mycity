@@ -1,8 +1,8 @@
 import { CITY, PRODUCTS, STATUS, statusAt } from './products.js';
-import { createCity3D } from './city3d.js?v=neighbors-2';
-import {DISCOVERIES} from './walking-world.js?v=neighbors-2';
+import { createCity3D } from './city3d.js?v=neighbors-3';
+import {DISCOVERIES} from './walking-world.js?v=neighbors-3';
 
-import {RESIDENTS,residentById,greetingFor} from './residents.js?v=neighbors-2';
+import {RESIDENTS,residentById,greetingFor} from './residents.js?v=neighbors-3';
 
 const $=selector=>document.querySelector(selector);
 const state={year:CITY.lastYear,night:false,playing:false,selected:null};

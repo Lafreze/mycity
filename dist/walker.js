@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {WALKING,DISCOVERIES,moveWalker,safePosition,nearestInteraction} from './walking-world.js?v=neighbors-2';
+import {WALKING,DISCOVERIES,moveWalker,safePosition,nearestInteraction} from './walking-world.js?v=neighbors-3';
 
 export function createWalker({scene,camera,canvas,gltf,world,motion={},getResidents=()=>[],onDiscovery,onMode,onNearby}){
   const allColliders=world.colliders,loadedAssets=new Set();

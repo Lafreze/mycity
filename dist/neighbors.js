@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {RESIDENTS} from './residents.js?v=neighbors-2';
+import {RESIDENTS} from './residents.js?v=neighbors-3';
 
 export function createNeighbors(scene){
   const entries=new Map(),frustum=new THREE.Frustum(),projection=new THREE.Matrix4();
