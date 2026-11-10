@@ -1,6 +1,11 @@
 import * as THREE from 'three';
 import {RESIDENTS} from './residents.js?v=neighbors-3';
 
+export function residentTiming(id){
+  let hash=0;for(const letter of id)hash=(Math.imul(hash,31)+letter.charCodeAt(0))>>>0;
+  return {phase:(hash%997)/997*4,speed:.92+(hash%101)/100*.16};
+}
+
 export function createNeighbors(scene){
   const entries=new Map(),frustum=new THREE.Frustum(),projection=new THREE.Matrix4();
   let selected=null,hovered=null;
@@ -13,25 +18,28 @@ export function createNeighbors(scene){
   const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
   const shadowMaterial=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{opacity:{value:.16}},vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:'varying vec2 vUv;uniform float opacity;void main(){float a=1.-smoothstep(.12,.5,length(vUv-.5));gl_FragColor=vec4(.16,.13,.09,a*opacity);}'});
   const shadowGeometry=new THREE.PlaneGeometry(.65,.5);
-  function add({id,root,model,animations,height,firstYear,phase=0}){
+  function add({id,root,model,animations,height,firstYear,floorOffset=0,phase=residentTiming(id).phase}){
     const person=RESIDENTS.find(p=>p.id===id);if(!person)return;
     const mixer=new THREE.AnimationMixer(model),actions=new Map(animations.map(clip=>[clip.name.toLowerCase(),mixer.clipAction(clip)]));
+    const timing=residentTiming(id);mixer.timeScale=timing.speed;
     const idle=actions.get('idle');idle?.play();if(idle)idle.time=phase%idle.getClip().duration;
     const icon=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,depthWrite:false,transparent:true}));
-    icon.position.set(root.position.x,root.position.y+height+.22,root.position.z);icon.scale.setScalar(.28);icon.layers.set(1);scene.add(icon);
-    const shadow=new THREE.Mesh(shadowGeometry,shadowMaterial);shadow.rotation.x=-Math.PI/2;shadow.position.copy(root.position);shadow.position.y+=.008;shadow.layers.set(1);scene.add(shadow);
+    icon.position.set(root.position.x,root.position.y+floorOffset+height+.22,root.position.z);icon.scale.setScalar(.28);icon.layers.set(1);scene.add(icon);
+    const shadow=new THREE.Mesh(shadowGeometry,shadowMaterial);shadow.rotation.x=-Math.PI/2;shadow.position.copy(root.position);shadow.position.y+=floorOffset+.002;shadow.layers.set(1);scene.add(shadow);
     root.updateWorldMatrix(true,true);
     // Animated skin bounds can be stale before the first skeleton update. Use
     // a conservative world-space resident volume for both culling and animation.
-    const sphere=new THREE.Sphere(root.position.clone().add(new THREE.Vector3(0,height*.5,0)),height*.95);
-    entries.set(id,{person,root,model,mixer,actions,current:'idle',icon,shadow,sphere,firstYear,elapsed:0,head:model.getObjectByName('Head')});
+    const sphere=new THREE.Sphere(root.position.clone().add(new THREE.Vector3(0,floorOffset+height*.5,0)),height*.95);
+    entries.set(id,{person,root,model,mixer,actions,current:'idle',icon,shadow,sphere,firstYear,phase,elapsed:0,head:model.getObjectByName('Head')});
   }
   function setTalking(id){
     selected=id;
     for(const [key,e] of entries){
       const name=key===id?'talk':'idle';if(name===e.current)continue;
       const next=e.actions.get(name);if(!next)continue;
-      next.reset().fadeIn(.25).play();e.actions.get(e.current)?.fadeOut(.25);e.current=name;
+      next.reset().fadeIn(.25).play();
+      if(name==='idle')next.time=(e.phase+e.mixer.time)%next.getClip().duration;
+      e.actions.get(e.current)?.fadeOut(.25);e.current=name;
     }
   }
   function update(dt,camera,player,walking,year){

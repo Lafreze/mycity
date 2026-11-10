@@ -1,0 +1,215 @@
+{
+  "method": "SHA-256-checked delivered GLBs; JSON node/accessor bounds, Draco-decoded 0.5% height bands and textured front/side point projections. Cuts are mesh-local bind-space Y; parent placement transforms are accounted for at load time.",
+  "figures": [
+    {
+      "id": "hero",
+      "sha256": "ea96ea94c6c06ae3b1a694bf03971e4d3d8c4b469f914796bfe78d149fe1a2e0",
+      "mesh": "TravelerRuntime",
+      "meshCount": 1,
+      "primitiveCount": 1,
+      "bounds": {
+        "min": [
+          -0.7238732576370239,
+          -0.000007755955266475212,
+          -0.22317834198474884
+        ],
+        "max": [
+          0.7238609790802002,
+          1.5500065088272095,
+          0.2231581062078476
+        ]
+      },
+      "cutY": null,
+      "support": "Two boots; no disc."
+    },
+    {
+      "id": "maker",
+      "sha256": "567d3a8a01cd3fac8d4404c74a77fb8cce19ca66a04365be8bdb865082f3b197",
+      "mesh": "NPCMesh_maker",
+      "meshCount": 1,
+      "primitiveCount": 1,
+      "bounds": {
+        "min": [
+          -0.17187564074993134,
+          -0.5000091195106506,
+          -0.17158587276935577
+        ],
+        "max": [
+          0.17184416949748993,
+          0.49940013885498047,
+          0.1718861311674118
+        ]
+      },
+      "cutY": -0.45,
+      "support": "Circular pedestal fused into the body primitive."
+    },
+    {
+      "id": "reader",
+      "sha256": "e3969049673747e49e6fbe7ae4196f07cfbd3b26a9fea3d268be694b738816e3",
+      "mesh": "NPCMesh_reader",
+      "meshCount": 1,
+      "primitiveCount": 1,
+      "bounds": {
+        "min": [
+          -0.22901129722595215,
+          -0.5000223517417908,
+          -0.29815196990966797
+        ],
+        "max": [
+          0.22906580567359924,
+          0.49961721897125244,
+          0.29781538248062134
+        ]
+      },
+      "cutY": null,
+      "support": "Chair legs and shoes; no pedestal."
+    },
+    {
+      "id": "barista",
+      "sha256": "b8a25b66764f9e491bd528fef755c78f67fe1f76db061f126966ff8c9382bba0",
+      "mesh": "NPCMesh_barista",
+      "meshCount": 1,
+      "primitiveCount": 1,
+      "bounds": {
+        "min": [
+          -0.1643085926771164,
+          -0.5000815987586975,
+          -0.17430847883224487
+        ],
+        "max": [
+          0.16433210670948029,
+          0.5000212788581848,
+          0.1745522916316986
+        ]
+      },
+      "cutY": null,
+      "support": "Two shoes; no pedestal."
+    },
+    {
+      "id": "florist",
+      "sha256": "94809d577ec453bf28c85edd3139704e31fd2a6a4ccdf6db5021b9dc8d085002",
+      "mesh": "NPCMesh_florist",
+      "meshCount": 1,
+      "primitiveCount": 1,
+      "bounds": {
+        "min": [
+          -0.18944081664085388,
+          -0.49607494473457336,
+          -0.21887549757957458
+        ],
+        "max": [
+          0.18870636820793152,
+          0.49996253848075867,
+          0.2190355360507965
+        ]
+      },
+      "cutY": -0.468,
+      "support": "Thin circular pedestal fused into body."
+    },
+    {
+      "id": "cyclist",
+      "sha256": "2f82a57bf2942a6a077cf773f0067077ccd720a015ac073b1bd8de09bbf149cd",
+      "mesh": "NPCMesh_cyclist",
+      "meshCount": 1,
+      "primitiveCount": 1,
+      "bounds": {
+        "min": [
+          -0.17328909039497375,
+          -0.5000531673431396,
+          -0.478272944688797
+        ],
+        "max": [
+          0.17319050431251526,
+          0.5000040531158447,
+          0.47830930352211
+        ]
+      },
+      "cutY": null,
+      "support": "Bicycle tires, pedals and shoes; no pedestal."
+    },
+    {
+      "id": "courier",
+      "sha256": "8f1639f53212e240549797cf20c2eb55c7b13fba019c768b3bd05a272d37804f",
+      "mesh": "NPCMesh_courier",
+      "meshCount": 1,
+      "primitiveCount": 1,
+      "bounds": {
+        "min": [
+          -0.20906896889209747,
+          -0.5000054836273193,
+          -0.27022117376327515
+        ],
+        "max": [
+          0.20899653434753418,
+          0.49977511167526245,
+          0.27098292112350464
+        ]
+      },
+      "cutY": null,
+      "support": "Walking shoes, one raised foot; no pedestal."
+    },
+    {
+      "id": "construction-worker",
+      "sha256": "2aa30306693c460a5ca098c7d93bb6289ba242e044db7c2df61b614aa0df8588",
+      "mesh": "NPCMesh_construction-worker",
+      "meshCount": 1,
+      "primitiveCount": 1,
+      "bounds": {
+        "min": [
+          -0.1968083530664444,
+          -0.5000615119934082,
+          -0.22136183083057404
+        ],
+        "max": [
+          0.19674314558506012,
+          0.4994518756866455,
+          0.22184832394123077
+        ]
+      },
+      "cutY": null,
+      "support": "Two boots; no pedestal."
+    },
+    {
+      "id": "helper-robot",
+      "sha256": "28759e7a1c78d48208340659c5dcb5544f40b14b986e9d4fbd6362044b39b278",
+      "mesh": "NPCMesh_helper-robot",
+      "meshCount": 1,
+      "primitiveCount": 1,
+      "bounds": {
+        "min": [
+          -0.3319641947746277,
+          -0.5000730156898499,
+          -0.3162561058998108
+        ],
+        "max": [
+          0.3319016695022583,
+          0.5001441836357117,
+          0.31615060567855835
+        ]
+      },
+      "cutY": -0.409,
+      "support": "Stepped circular pedestal fused into body."
+    },
+    {
+      "id": "street-musician",
+      "sha256": "07095941107acf7936cc81741cabd67ba925e38156c84dfc3deb44fcbefaf3b1",
+      "mesh": "NPCMesh_street-musician",
+      "meshCount": 1,
+      "primitiveCount": 1,
+      "bounds": {
+        "min": [
+          -0.27809616923332214,
+          -0.5002482533454895,
+          -0.2832474112510681
+        ],
+        "max": [
+          0.2780740559101105,
+          0.49997907876968384,
+          0.28334319591522217
+        ]
+      },
+      "cutY": -0.4355,
+      "support": "Round plinth fused into body and instrument case."
+    }
+  ]
+}

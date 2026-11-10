@@ -5,7 +5,7 @@ import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { statusAt } from './products.js';
 import { CITY_PROPS } from './props.js?v=neighbors-3';
-import { CANAL, boatPose } from './world.js?v=neighbors-3';
+import { CANAL, boatPose, HORIZON_GLSL, STREET_SURFACES, streetSurfaceY } from './world.js?v=neighbors-3';
 import { BOAT_WATERLINE } from './boat-waterline.js';
 import { createStaticFrame } from './static-frame.js';
 import { createPerformanceMeter } from './performance-meter.js';
@@ -14,7 +14,8 @@ import { createLandscape } from './landscape.js?v=neighbors-3';
 import { createNeighbors } from './neighbors.js?v=neighbors-3';
 import { browserQualityProfile, includeStreetAsset } from './quality-profile.js';
 import { objectResources, disposeResources, resizeTextures, mapSettledLimit, resourceBytes, releaseStaticGeometryAfterUpload } from './asset-memory.js';
-import { DISCOVERIES } from './walking-world.js?v=neighbors-3';
+import { groundFigure, normalizeStreetModel } from './figure-grounding.js';
+import { createAmbientLife } from './ambient-life.js';
 
 // Building geometry comes exclusively from the Hi3D GLB assets in the manifest.
 // Simple planes provide the display plinth, street and canal, not replacement buildings.
@@ -90,15 +91,12 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
     const mesh=new THREE.Mesh(geometry,material);mesh.rotation.x=-Math.PI/2;mesh.position.set(x,y,z);mesh.receiveShadow=true;scene.add(mesh);disposables.push(geometry,material);return mesh;
   }
   // Two separate banks leave an actual opening at the canal. No land plane crosses the water.
-  surface(34,14.9,'#d6c6a9',0,-.025,-.55);
-  surface(34,5,'#d6c6a9',0,-.025,-10.5);
-  surface(28,1.2,'#c5b79b',0,-.018,-8.5);
-  surface(34,5,'#dfceb0',0,-.025,12);
-  surface(34,2.15,'#b6aa94',0,-.018,4.475);
-  surface(34,1.6,'#e4d4b9',0,-.014,2.6);
-  surface(420,CANAL.maxZ-CANAL.minZ,'#435955',0,-1.1,8.2);
+  for(const dimensions of STREET_SURFACES)surface(...dimensions);
+  // No infinite opaque riverbed underneath the fade: it would leave a dark stripe
+  // across the painting after the water becomes transparent.
   const canal=surface(420,CANAL.maxZ-CANAL.minZ,'#719b94',0,CANAL.y,8.2,.2);
   canal.layers.set(1);
+  canal.material.transparent=true;canal.material.depthWrite=false;
   canal.material.onBeforeCompile=shader=>{
     shader.uniforms.cityWaterTime={value:0};
     shader.uniforms.cityBoatXZ={value:new THREE.Vector2()};
@@ -110,16 +108,21 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
       return `if(hull.x>=${a[0].toFixed(5)}&&hull.x<${b[0].toFixed(5)}){float t=(hull.x-(${a[0].toFixed(5)}))/${(b[0]-a[0]).toFixed(5)};vec2 sides=mix(vec2(${a[1].toFixed(5)},${a[2].toFixed(5)}),vec2(${b[1].toFixed(5)},${b[2].toFixed(5)}),t);if(hull.y>sides.x+0.015&&hull.y<sides.y-0.015)discard;}`;
     }).join('\n');
     shader.vertexShader='varying vec2 cityWaterUv; varying vec3 cityWaterWorld;\n'+shader.vertexShader.replace('#include <uv_vertex>','#include <uv_vertex>\ncityWaterUv = uv;').replace('#include <begin_vertex>','#include <begin_vertex>\ncityWaterWorld = (modelMatrix * vec4(transformed,1.0)).xyz;');
-    shader.fragmentShader='varying vec2 cityWaterUv; varying vec3 cityWaterWorld; uniform float cityWaterTime; uniform vec2 cityBoatXZ; uniform float cityBoatPresent;\n'+shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
+    shader.fragmentShader='varying vec2 cityWaterUv; varying vec3 cityWaterWorld; uniform float cityWaterTime; uniform vec2 cityBoatXZ; uniform float cityBoatPresent;\n'+HORIZON_GLSL+'\n'+shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
       vec2 hull=cityWaterWorld.xz-cityBoatXZ;
       if(cityBoatPresent>0.5 && abs(hull.x)<1.4 && abs(hull.y)<0.6){${hullClip}}
       float ripple = 0.5 + 0.5 * sin(cityWaterWorld.x * 6.0 - cityWaterTime * 0.72 + sin(cityWaterWorld.z * 26.92 + cityWaterTime * 0.3));
       float crossRipple = 0.5 + 0.5 * sin(cityWaterWorld.z * 69.23 - cityWaterTime * 0.7 + cityWaterWorld.x * .5);
       diffuseColor.rgb += vec3(0.065, 0.075, 0.07) * pow(ripple * crossRipple, 9.0);
+      diffuseColor.a *= cityHorizonAlpha(cityWaterWorld);
+    `).replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
+      ${quality.low?'':`// Small flowing normal ripples catch the existing sun; no extra pass.
+      vec3 slope=vec3(sin(cityWaterWorld.x*3.-cityWaterTime*.72)*.025,0.,sin(cityWaterWorld.z*9.+cityWaterWorld.x-cityWaterTime*.4)*.018);
+      normal=normalize(normal+(viewMatrix*vec4(slope,0.)).xyz);`}
     `);
     canal.userData.shader=shader;
   };
-  canal.material.customProgramCacheKey=()=> 'product-city-water-v3';
+  canal.material.customProgramCacheKey=()=> 'product-city-water-v4-'+quality.name;
   // Pavement seams stay flush with the street.
   for(let x=-16;x<17;x+=.8) surface(.012,2.1,'#c8baa1',x,-.01,4.475);
   for(let z=3.55;z<5.5;z+=.45) surface(34,.014,'#c8baa1',0,-.009,z);
@@ -141,6 +144,7 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
     const gltf=await loader.loadAsync(assetURL(item));
     if(disposed||contextLost){disposeResources(objectResources(gltf.scene));throw new Error('Scene stopped');}
     modelRoots.add(gltf.scene);
+    groundFigure(gltf.scene,item);
     if(quality.low)releaseStaticGeometryAfterUpload(gltf.scene);
     const resources=objectResources(gltf.scene);
     resizeTextures([...resources].filter(r=>r.isTexture),maxTextureSize);
@@ -189,20 +193,6 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
     root.add(hit);hit.updateMatrix();hit.matrixAutoUpdate=false;pickables.push(hit);
   }
 
-  const journalCanvas=document.createElement('canvas');journalCanvas.width=512;journalCanvas.height=384;
-  const journalTexture=new THREE.CanvasTexture(journalCanvas);journalTexture.colorSpace=THREE.SRGBColorSpace;
-  const journalMaterial=new THREE.SpriteMaterial({map:journalTexture,transparent:true});
-  const journalSign=new THREE.Sprite(journalMaterial);journalSign.scale.set(1.25,.9375,1);journalSign.position.set(-3.25,1.15,2.65);scene.add(journalSign);pickables.push(journalSign);disposables.push(journalTexture,journalMaterial);
-  function updateJournal(year){
-    const update=products.flatMap(p=>p.updates.filter(u=>Number(u.date.slice(0,4))<=year).map(u=>({...u,product:p}))).sort((a,b)=>b.date.localeCompare(a.date))[0];
-    if(!update)return;
-    const ctx=journalCanvas.getContext('2d');ctx.clearRect(0,0,512,384);ctx.fillStyle='#f6edda';ctx.beginPath();ctx.roundRect(5,5,502,374,16);ctx.fill();ctx.strokeStyle='#99774a';ctx.lineWidth=4;ctx.stroke();
-    ctx.fillStyle='#9a7a4b';ctx.textAlign='center';ctx.font='21px Georgia';ctx.fillText('NOTES FROM THE CITY',256,62);ctx.fillStyle='#4b3825';ctx.font='30px "PingFang SC", sans-serif';
-    const chars=[...update.title];for(let i=0;i<chars.length;i+=12)ctx.fillText(chars.slice(i,i+12).join(''),256,135+i/12*47);
-    ctx.fillStyle='#9c8058';ctx.font='25px Georgia';ctx.fillText(update.date.replaceAll('-','.'),256,280);ctx.font='20px Georgia';ctx.fillText(update.product.name,256,330,460);
-    journalTexture.needsUpdate=true;journalSign.userData.productId=update.product.id;
-  }
-
   function addBuilding(item,object,p,archived=false) {
     improveTextureSampling(object);object.updateMatrix();
     const box=new THREE.Box3().setFromObject(object),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());
@@ -228,15 +218,15 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   if(archive&&source){const copy=source.object.clone(true);copy.position.set(0,0,0);addBuilding({...source.item,width:2.8},copy,archive,true);}
   let night=false,flight=null,hovered=null,selectedId=null,currentYear=2026,lifeEnabled=true,lifeTime=0,lastTick=0;
   const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ambient=createAmbientLife(scene,{low:quality.low,reducedMotion});disposables.push(...ambient.resources);
 
 
   function placeStreetAsset(item,object,definition,index,animations=[]) {
     improveTextureSampling(object);
-    const bounds=new THREE.Box3().setFromObject(object),size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
-    const scale=definition.height?definition.height/Math.max(size.y,.01):definition.width/Math.max(size.x,size.z,.01);
-    object.position.set(-center.x,-bounds.min.y,-center.z);
+    const {bounds,scale,contactY}=normalizeStreetModel(object,definition);
     definition.positions.forEach((position,i)=>{
       const normalized=new THREE.Group();normalized.add(i===0?object:object.clone(true));normalized.scale.setScalar(scale*(definition.varied?.93+Math.sin(i*2.1)*.07:1));normalized.rotation.y=definition.rotations?.[i]??((definition.rotation||0)+(definition.varied?i*.8:0));
+      const floorOffset=definition.person?streetSurfaceY(position[0],position[2]):0;normalized.position.y=floorOffset;
       const root=new THREE.Group();root.add(normalized);root.position.fromArray(position);scene.add(root);
       if(definition.ground)root.scale.y=.08;
       root.traverse(child=>{if(child.isMesh){child.castShadow=!definition.ground&&definition.motion!=='drift';child.receiveShadow=true;}});
@@ -250,7 +240,7 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
       const firstYear=definition.product?Number(products.find(p=>p.id===definition.product).launched.slice(0,4)):2023;
       const entry={root,definition,position:new THREE.Vector3(...position),firstYear,phase:index*.73+i};
       root.visible=currentYear>=firstYear;streetObjects.push(entry);invalidate(true);
-      if(definition.person)neighbors.add({id:item.id,root,model:normalized,animations,height:definition.height,firstYear,phase:index*.73+i});
+      if(definition.person)neighbors.add({id:item.id,root,model:normalized,animations,height:(bounds.max.y-contactY)*scale,firstYear,floorOffset});
       if(definition.glow){const light=new THREE.PointLight('#ffb852',night?8:0,5,2);light.layers.enable(1);light.position.set(position[0],position[1]+definition.height*.9,position[2]);scene.add(light);lights.push(light);entry.light=light;light.visible=night&&root.visible;}
     });
     if(item.id==='stone-bridge')walker?.setBridgeReady(true);
@@ -301,10 +291,6 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
     walker.setBridgeReady(streetObjects.some(o=>o.definition.id==='stone-bridge'));
     new Set(streetObjects.map(o=>o.definition.id)).forEach(id=>walker.setAssetReady(id));
   }
-  const markerCanvas=document.createElement('canvas');markerCanvas.width=64;markerCanvas.height=64;
-  const markerContext=markerCanvas.getContext('2d');const glow=markerContext.createRadialGradient(32,32,3,32,32,30);glow.addColorStop(0,'#fff6d8');glow.addColorStop(.3,'#eec66bcc');glow.addColorStop(1,'#eec66b00');markerContext.fillStyle=glow;markerContext.fillRect(0,0,64,64);
-  const markerTexture=new THREE.CanvasTexture(markerCanvas);markerTexture.colorSpace=THREE.SRGBColorSpace;disposables.push(markerTexture);
-  const discoveryMarkers=DISCOVERIES.map(p=>{const m=new THREE.SpriteMaterial({map:markerTexture,transparent:true,depthWrite:false});const sprite=new THREE.Sprite(m);sprite.position.set(p.x,1.9,p.z);sprite.scale.setScalar(.23);sprite.layers.set(1);sprite.visible=false;scene.add(sprite);disposables.push(m);return{place:p,sprite};});
   const fireflyGeometry=new THREE.BufferGeometry(),fireflyPositions=[];
   for(let i=0;i<32;i++){const park=i<20;fireflyPositions.push((Math.sin(i*7.7)*.5+.5)*(park?12:20)-(park?6:10),.7+(i%5)*.17,park?-9.4-Math.cos(i*2.2)*2:12+Math.sin(i*1.9));}
   fireflyGeometry.setAttribute('position',new THREE.Float32BufferAttribute(fireflyPositions,3));
@@ -316,9 +302,8 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   function tick(){if(!running||disposed||contextLost)return;frame=requestAnimationFrame(tick);
     const now=performance.now(),delta=lastTick?Math.min((now-lastTick)/1000,.1):0;lastTick=now;
     if(lifeEnabled&&!reducedMotion)lifeTime+=delta;
-    const elapsed=lifeTime;
+    const elapsed=lifeTime;ambient.update(elapsed,night);
     fireflies.visible=night;fireflyMaterial.uniforms.time.value=elapsed;
-    discoveryMarkers.forEach(({place,sprite})=>{sprite.visible=!!walker?.active&&currentYear>=place.year&&walker.root.position.distanceTo(sprite.position)<7;});
     if(lifeEnabled&&!reducedMotion&&canal.userData.shader)canal.userData.shader.uniforms.cityWaterTime.value=elapsed;
     let growing=false;
     const blend=reducedMotion?1:1-Math.exp(-8*delta);
@@ -329,7 +314,7 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
         b.growth.updateMatrix();growing=true;invalidate(true);
       }
       b.root.visible=b.target>0||b.growth.scale.y>.015;
-      b.tag.visible=b.target>0&&(hovered===b.product.id||selectedId===b.product.id);
+      b.tag.visible=!walker?.active&&b.target>0&&(hovered===b.product.id||selectedId===b.product.id);
       if(b.tag.visible){
         b.tag.material.opacity=THREE.MathUtils.clamp(b.growth.scale.y,0,1);
         const distance=camera.position.distanceTo(b.root.position);
@@ -348,7 +333,7 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
       if(boat)uniforms.cityBoatXZ.value.set(boat.root.position.x,boat.root.position.z);
     }
     const walkingChanged=walker?.update(delta)||false;
-    neighbors.update(delta,camera,walker?.root.position,!!walker?.active,currentYear);
+    neighbors.update(lifeEnabled&&!reducedMotion?delta:0,camera,walker?.root.position,!!walker?.active,currentYear);
     const flying=!!flight;
     if(flight){camera.position.lerp(flight.position,blend);controls.target.lerp(flight.target,blend);if(camera.position.distanceTo(flight.position)<.03)flight=null;}
     const cameraChanged=walker?.active?walkingChanged:controls.update(delta);
@@ -357,7 +342,7 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
     }
     renderer.info.reset();meter?.begin();staticFrame.render(cameraChanged||flying||growing);meter?.end();
   }
-  function setYear(year){invalidate(true);currentYear=year;walker?.setYear(year);buildings.forEach(b=>{const status=statusAt(b.product,year);b.target=status==='future'?0:1;if(b.baseColor)b.root.traverse(o=>{if(o.isMesh)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{if(m.userData.cityBaseColor)m.color.copy(m.userData.cityBaseColor).multiplyScalar(status==='archived'?.65:1);});});});streetObjects.forEach(o=>{o.root.visible=year>=o.firstYear;if(o.light)o.light.visible=night&&o.root.visible;});updateJournal(year);}
+  function setYear(year){invalidate(true);currentYear=year;walker?.setYear(year);buildings.forEach(b=>{const status=statusAt(b.product,year);b.target=status==='future'?0:1;if(b.baseColor)b.root.traverse(o=>{if(o.isMesh)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{if(m.userData.cityBaseColor)m.color.copy(m.userData.cityBaseColor).multiplyScalar(status==='archived'?.65:1);});});});streetObjects.forEach(o=>{o.root.visible=year>=o.firstYear;if(o.light)o.light.visible=night&&o.root.visible;});}
   function setNight(value){invalidate();night=value;landscape.setNight(value);scene.background.copy(night?nightColor:dayColor);scene.fog.color.copy(scene.background);hemi.intensity=night?.5:1.6;sun.intensity=night?.35:2.5;fill.intensity=night?.7:.6;scene.environmentIntensity=night?.28:.45;sun.color.set(night?'#a1b8ed':'#ffe1a8');renderer.toneMappingExposure=night?.9:1.05;lights.forEach(light=>{light.intensity=night?8:0;light.visible=night;});canal.material.color.set(night?'#273d55':'#789f9c');}
   function focus(id){selectedId=id;const b=buildings.get(id);if(!b||walker?.active)return;const h=Math.max(4,b.height);flight={target:b.root.position.clone().add(new THREE.Vector3(0,h*.5,0)),position:b.root.position.clone().add(new THREE.Vector3(-h*1.15,h*.95,h*1.85))};}
   function view(name){
@@ -389,6 +374,8 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
         drawingBuffer:[renderer.domElement.width,renderer.domElement.height],
         antialias:renderer.getContext().getContextAttributes()?.antialias,
         staticFrame:staticFrame.settings,shadowMap:renderer.shadowMap.enabled?sun.shadow.mapSize.toArray():null,
+        ambient:{triangles:ambient.triangles,points:ambient.points},
+        groundedFigures:[...modelRoots].filter(o=>o.userData.figureGrounding).map(o=>o.userData.figureGrounding),
         residents:streetObjects.filter(o=>o.definition.person).map(o=>o.definition.id)};
     },frame(){return {render:{...renderer.info.render},cacheRebuilds:staticFrame.settings.rebuilds||0};},loseContext:()=>renderer.forceContextLoss(),restoreContext:()=>renderer.forceContextRestore(),dispose};
     window.__mycityDebug=debug;streetReady.then(()=>{debug.ready=!disposed&&!contextLost;});

@@ -2,6 +2,12 @@
 
 Date: 2026-11-10. Original high baseline: `676b1eb`; first low mode committed as `36df435`; this follow-up is an uncommitted revision on `codex/mobile-memory`. No deployment, upload, model conversion, or asset manifest change.
 
+## Natural-scene follow-up (local, after `043d341`)
+
+The sections below record the preceding mobile-memory work and its historical measurements. The local natural-scene changes now also affect high mode; no fresh browser measurements are claimed here. See [natural-scene.md](natural-scene.md) for the figure/painting inspection and before/after screenshot procedure.
+
+Memory limits, render targets, selected low assets and regression budgets are unchanged. Water/bank fading adds no textures or geometry; the infinite riverbed and floating journal/discovery sprites are removed. Four exact-hash figure materials discard fused pedestals and adjust contact height without copying model buffers, replacing GLBs or changing triangle budgets. The external screenshot review exposed a skin-space grounding bug, now corrected by a one-time scan of the surviving skinned vertices at load. Real cached-GLB Node tests cover all four figures, both animation clips and scaled placement against the pavement Y (±1 cm); no per-frame work or new geometry buffers are added. Fresh screenshots of this correction are pending. High adds at most two draws, six bird triangles and twenty drifting seed points, all on the dynamic layer; low and reduced-motion allocate none. Dense trees remain cached. Resident phase/tempo and camera gaze smoothing do not invalidate the static street; unit checks verify cache reuse and camera settling. The existing `measure-mobile.mjs --faults` thresholds remain applicable; `shoot-scene.mjs` adds fixed close-ups and per-view metrics for external review. No physical-phone or GPU test has been run for these changes.
+
 ## Follow-up: cheap cache and CPU geometry release
 
 The `36df435` measurements below remain historical: **280.10 MiB JS heap, 269.44 MiB geometry, 121.44 MiB scene textures, 97 calls and 10.11M triangles/frame**. No new browser measurements were run for this follow-up. The dev server is off; the updated measurement script is ready for the user's external run.

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { resizeTextures, mapSettledLimit, disposeResources } from './asset-memory.js';
+import { HORIZON, HORIZON_GLSL } from './world.js?v=neighbors-3';
 
 // A painted distant landscape surrounds the playable 3D street. The river and
 // both banks continue out to it; the painting never replaces walkable geometry.
@@ -9,13 +10,14 @@ export function createLandscape(scene,canal,quality={low:false,landscapeTextureS
     uniforms:{night,stone:{value:new THREE.Color('#e2d4b7')},grass:{value:new THREE.Color('#adb68a')}},
     vertexShader:'varying vec3 landscapeWorld;void main(){landscapeWorld=(modelMatrix*vec4(position,1.)).xyz;gl_Position=projectionMatrix*viewMatrix*vec4(landscapeWorld,1.);}',
     fragmentShader:`varying vec3 landscapeWorld;uniform float night;uniform vec3 stone;uniform vec3 grass;
+    ${HORIZON_GLSL}
     void main(){
       vec2 p=landscapeWorld.xz;
       float edge=max(max(abs(p.x)-17.0,-13.0-p.y),p.y-14.5);
       float grain=fract(sin(dot(floor(p*12.),vec2(12.9898,78.233)))*43758.5453);
       vec3 color=mix(stone,grass*(.97+.06*grain),smoothstep(0.,9.,edge));
       color=mix(color,color*vec3(.10,.14,.27),night);
-      float fade=1.-smoothstep(35.,90.,length(landscapeWorld.xz-cameraPosition.xz));
+      float fade=cityHorizonAlpha(landscapeWorld);
       gl_FragColor=vec4(color,fade);
       #include <colorspace_fragment>
     }`});
@@ -37,11 +39,17 @@ export function createLandscape(scene,canal,quality={low:false,landscapeTextureS
       }
       void main(){
         vec3 d=normalize(domePosition);float angle=asin(d.y);
-        vec2 uv=vec2(fract(atan(d.x,d.z)/6.2831853+.58),clamp(.38+angle*1.3,.002,.998));
+        // +X is downstream. At that heading the valley's painted river is at
+        // u=.54, v=.38, instead of the former village hillside (u=.43).
+        vec2 uv=vec2(fract(atan(d.x,d.z)/6.2831853+${HORIZON.paintingYaw}),clamp(.38+angle*1.3,.002,.998));
         float sector=floor(uv.x*4.),x=fract(uv.x*4.);
         // Overlap neighboring edges. Four detailed views cover the full horizon.
         vec3 color=panel(sector,vec2(.18+x*.82,uv.y));
         color=mix(color,panel(mod(sector+1.,4.),vec2(max(0.,x-.82),uv.y)),smoothstep(.82,1.,x));
+        // The opposite mouth also dissolves into a river, using the same valley
+        // texture in a feathered sector. No extra image/GPU texture is allocated.
+        float upstream=step(d.x,0.)*(1.-smoothstep(.08,.40,abs(d.z)));
+        color=mix(color,panel(2.,vec2(clamp(.54-d.z*1.25,.002,.998),uv.y)),upstream);
         color=mix(vec3(.65,.73,.74),color,hasPainting);
         color=mix(color,vec3(.43,.58,.64),smoothstep(.44,.75,angle));
         color=mix(color,color*vec3(.10,.14,.27),night);

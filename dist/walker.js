@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import {WALKING,DISCOVERIES,moveWalker,safePosition,nearestInteraction} from './walking-world.js?v=neighbors-3';
+import {contactFloorY} from './world.js?v=neighbors-3';
 
 export function createWalker({scene,camera,canvas,gltf,world,motion={},getResidents=()=>[],onDiscovery,onMode,onNearby}){
   const allColliders=world.colliders,loadedAssets=new Set();
@@ -8,6 +9,7 @@ export function createWalker({scene,camera,canvas,gltf,world,motion={},getReside
   const bounds=new THREE.Box3().setFromObject(model),size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
   const scale=1.55/size.y;
   model.position.set(-center.x*scale,(-bounds.min.y+(motion.groundOffset||0))*scale,-center.z*scale);model.scale.setScalar(scale);
+  const modelGroundY=model.position.y;
   root.add(model);scene.add(root);
   root.traverse(o=>{o.layers.set(1);if(o.isMesh){o.castShadow=false;o.receiveShadow=true;if(o.isSkinnedMesh)o.frustumCulled=false;}});
   const animationSpeed={walk:(motion.walkSpeed||WALKING.walkSpeed/scale)*scale,run:(motion.runSpeed||WALKING.runSpeed/scale)*scale};
@@ -26,7 +28,7 @@ export function createWalker({scene,camera,canvas,gltf,world,motion={},getReside
   let active=false,year=2026,bridgeReady=false,position={...WALKING.spawn,y:0},yaw=-Math.PI/2,pitch=.28,distance=4.5,heading=Math.PI/2,nearby=null,muted=false;
   let heldRun=false,drag=null,joystickId=null,joy={x:0,y:0},visitSignature='',conversation=null;
   const debug=new URLSearchParams(location.search).has('perf');
-  const keys=new Set(),listeners=[],cameraPosition=new THREE.Vector3(),cameraTarget=new THREE.Vector3(),offset=new THREE.Vector3(),previousCamera=new THREE.Vector3(),ray=new THREE.Ray(),hit=new THREE.Vector3();
+  const keys=new Set(),listeners=[],cameraPosition=new THREE.Vector3(),cameraTarget=new THREE.Vector3(),lookTarget=new THREE.Vector3(),offset=new THREE.Vector3(),previousCamera=new THREE.Vector3(),previousLook=new THREE.Vector3(),ray=new THREE.Ray(),hit=new THREE.Vector3();
   const cameraBoxes=allColliders.filter(b=>b.camera).map(b=>{const c=b.cameraBounds||b;return {...b,box:new THREE.Box3(new THREE.Vector3(c.minX-.12,c.minY||0,c.minZ-.12),new THREE.Vector3(c.maxX+.12,c.maxY+.12,c.maxZ+.12))};});
   const listen=(target,name,fn,options)=>{target.addEventListener(name,fn,options);listeners.push(()=>target.removeEventListener(name,fn,options));};
   const stick=document.querySelector('#walk-stick'),thumb=document.querySelector('#walk-thumb');
@@ -73,8 +75,14 @@ export function createWalker({scene,camera,canvas,gltf,world,motion={},getReside
     // Clamp the smoothed camera too: it must not briefly slide through a wall or tree.
     offset.copy(camera.position).sub(cameraTarget);let safeDistance=offset.length();offset.normalize();ray.set(cameraTarget,offset);
     for(const b of cameraBoxes){if(b.firstYear>year||(b.requiresAsset&&!loadedAssets.has(b.requiresAsset)))continue;if(ray.intersectBox(b.box,hit))safeDistance=Math.min(safeDistance,Math.max(.3,cameraTarget.distanceTo(hit)-.18));}
-    camera.position.copy(cameraTarget).addScaledVector(offset,safeDistance);camera.lookAt(cameraTarget);
-    return previousCamera.distanceToSquared(camera.position)>1e-9;
+    camera.position.copy(cameraTarget).addScaledVector(offset,safeDistance);
+    // Smooth the gaze as well as the boom, especially on bridge steps. The boom
+    // collision checks still use the real player target, never a lagging target.
+    previousLook.copy(lookTarget);lookTarget.lerp(cameraTarget,snap?1:1-Math.exp(-10*dt));
+    if(lookTarget.distanceToSquared(cameraTarget)<1e-8)lookTarget.copy(cameraTarget);
+    if(camera.position.distanceToSquared(cameraPosition)<1e-8)camera.position.copy(cameraPosition);
+    camera.lookAt(lookTarget);
+    return previousCamera.distanceToSquared(camera.position)>1e-12||previousLook.distanceToSquared(lookTarget)>1e-12;
   }
   function update(dt){
     if(!active){mixer.update(dt);return false;}
@@ -93,7 +101,9 @@ export function createWalker({scene,camera,canvas,gltf,world,motion={},getReside
       animate(run?'run':'walk',THREE.MathUtils.clamp(moved/Math.max(.001,dt)/(run?animationSpeed.run:animationSpeed.walk),.15,2.5));
     }else animate('idle');
     position=next;root.position.set(position.x,position.y,position.z);root.rotation.y=heading;
-    shadow.position.set(position.x,position.y+.006,position.z);mixer.update(dt);
+    const floorY=contactFloorY(position,bridgeReady?world.bridge:null);
+    model.position.y=modelGroundY+floorY-position.y;
+    shadow.position.set(position.x,floorY+.002,position.z);mixer.update(dt);
     nearby=nearestInteraction(position,year,DISCOVERIES,getResidents(root.position,year));
     if((nearby?.id||'')!==visitSignature){visitSignature=nearby?.id||'';onNearby(nearby);}
     const movedCamera=updateCamera(dt);

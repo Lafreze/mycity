@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "node scripts/serve.mjs",
-    "check": "node --check dist/app.js && node --check dist/city3d.js && node --check dist/walker.js && node --check dist/walking-world.js && node --check dist/neighbors.js && node --check dist/residents.js && node --check dist/landscape.js && node --check dist/quality-profile.js && node --check dist/asset-memory.js && node --check dist/static-frame.js && node scripts/check.mjs && node scripts/check-assets.mjs",
+    "check": "node --check dist/app.js && node --check dist/city3d.js && node --check dist/walker.js && node --check dist/walking-world.js && node --check dist/neighbors.js && node --check dist/residents.js && node --check dist/landscape.js && node --check dist/quality-profile.js && node --check dist/asset-memory.js && node --check dist/static-frame.js && node --check dist/figure-grounding.js && node --check dist/ambient-life.js && node --check scripts/shoot-scene.mjs && node --check scripts/scene-shot-hooks.mjs && node --check scripts/scene-shot-runner.mjs && node --check scripts/scene-shot-views.mjs && node --check scripts/lib/node-gltf.mjs && node --check scripts/lib/skin-bounds.mjs && node --check scripts/test-figure-grounding.mjs && node --check scripts/test-scene-shot-framing.mjs && node scripts/check.mjs && node scripts/check-assets.mjs",
     "assets:prepare": "node scripts/prepare-assets.mjs",
     "assets:verify": "node scripts/verify-assets.mjs",
     "assets:upload": "node scripts/upload-assets.mjs",
-    "test": "node scripts/test-assets-worker.mjs && node scripts/test-world.mjs && node scripts/test-static-frame.mjs && node scripts/test-walking.mjs && node scripts/test-neighbors.mjs && node scripts/test-mobile-memory.mjs && node scripts/test-city-lifecycle.mjs && node scripts/test-geometry-memory.mjs",
+    "test": "node scripts/test-assets-worker.mjs && node scripts/test-world.mjs && node scripts/test-static-frame.mjs && node scripts/test-walking.mjs && node scripts/test-neighbors.mjs && node scripts/test-mobile-memory.mjs && node scripts/test-city-lifecycle.mjs && node scripts/test-geometry-memory.mjs && node scripts/test-natural-scene.mjs && node scripts/test-scene-shot-runner.mjs && node scripts/test-figure-grounding.mjs && node scripts/test-scene-shot-framing.mjs",
     "navigation:build": "node scripts/build-navigation.mjs"
   }
 }

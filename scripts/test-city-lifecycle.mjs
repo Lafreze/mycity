@@ -2,14 +2,18 @@
 // This checks ownership and async races; it is not a browser/GPU benchmark.
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
+import {execFileSync,spawnSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
+import {relative} from 'node:path';
 import * as THREE from '../dist/vendor/three/three.module.js';
 import {selectQualityProfile} from '../dist/quality-profile.js';
 import {PRODUCTS} from '../dist/products.js';
+import {instrumentCity,instrumentWalker,instrumentNeighbors} from './scene-shot-hooks.mjs';
 let renderer,heldResolve,holdProp=false,rejectBuilding=false,released=0,closed=0,decoderDisposals=0,environmentBakes=0;
 const context=new Proxy({createRadialGradient:()=>({addColorStop(){}})},{get:(o,k)=>o[k]||(()=>{})});
 class Canvas extends EventTarget {constructor(){super();this.tagName='CANVAS';this.style={};}getContext(){return context;}remove(){this.removed=true;}}
-globalThis.document={createElement:()=>new Canvas()};
-globalThis.window={innerWidth:390};globalThis.devicePixelRatio=3;globalThis.location={search:'?debug=1',href:'http://127.0.0.1:4173/'};
+globalThis.document={createElement:()=>new Canvas(),querySelector:()=>null};
+globalThis.window=Object.assign(new EventTarget(),{innerWidth:390});globalThis.devicePixelRatio=3;globalThis.location={search:'?debug=1',href:'http://127.0.0.1:4173/'};
 globalThis.matchMedia=()=>({matches:false});globalThis.ResizeObserver=class{observe(){}disconnect(){}};
 globalThis.requestAnimationFrame=()=>1;globalThis.cancelAnimationFrame=()=>{};
 const world=JSON.parse(await readFile('dist/navigation.json','utf8'));globalThis.fetch=async()=>({ok:true,json:async()=>world});
@@ -43,17 +47,27 @@ const stubs=new Map([
   ['three/addons/controls/OrbitControls.js',['OrbitControls','Controls']],['three/addons/environments/RoomEnvironment.js',['RoomEnvironment','Environment']]
 ]);
 const cache=new Map();
-async function moduleSource(url){
-  if(cache.has(url.href))return cache.get(url.href);
-  let source=await readFile(url,'utf8');
+const repository=fileURLToPath(new URL('../',import.meta.url));
+const transforms=new Map([['city3d.js',instrumentCity],['walker.js',instrumentWalker],['neighbors.js',instrumentNeighbors]]);
+async function moduleSource(url,{revision='working',instrument=false}={}){
+  const cacheKey=`${revision}:${instrument}:${url.href}`;
+  if(cache.has(cacheKey))return cache.get(cacheKey);
+  const path=relative(repository,fileURLToPath(url));
+  let source=revision==='working'?await readFile(url,'utf8'):execFileSync('git',['show',`${revision}:${path}`],{cwd:repository,encoding:'utf8'});
+  const transform=transforms.get(path.split('/').at(-1));
+  if(instrument&&transform){
+    source=transform(source);
+    const checked=spawnSync(process.execPath,['--check','--input-type=module'],{input:source,encoding:'utf8'});
+    assert.equal(checked.status,0,`${revision}:${path}: ${checked.stderr}`);
+  }
   for(const match of [...source.matchAll(/from\s+(['"])([^'"]+)\1/g)]){
     const spec=match[2];let target;
     if(spec==='three')target=url.pathname.endsWith('/city3d.js')?threeStub:realThree;
     else if(stubs.has(spec)){const [name,key]=stubs.get(spec);target=moduleURL(`export const ${name}=globalThis.cityTestDoubles.${key};`);}
-    else target=await moduleSource(new URL(spec,url));
+    else target=await moduleSource(new URL(spec,url),{revision,instrument});
     source=source.replace(match[0],`from ${JSON.stringify(target)}`);
   }
-  const result=moduleURL(source);cache.set(url.href,result);return result;
+  const result=moduleURL(source);cache.set(cacheKey,result);return result;
 }
 const {createCity3D}=await import(await moduleSource(new URL('../dist/city3d.js',import.meta.url)));
 const container={clientWidth:390,clientHeight:844,appendChild(){}};
@@ -84,3 +98,28 @@ try{await assert.rejects(create(),/could not be loaded/);}finally{console.error=
 assert.equal(expectedErrors.length,1);assert.equal(renderer.disposed,true);assert.equal(renderer.domElement.removed,true);
 rejectBuilding=false;city=await create();await city.streetReady;city.resume();assert.ok(renderer.renders>0);city.dispose();
 console.log('Passed: scene startup, context loss/restoration pause, retry, initial failure cleanup, idempotent disposal and late GLTF ownership.');
+
+// Execute BOTH complete transformed module graphs, including git show main's
+// city3d.js. V8 parses them and real Three cameras exercise lexical lookup; a
+// syntax-only check cannot detect a helper outside camera's try-block scope.
+for(const revision of ['main','working']){
+  const {createCity3D:createInstrumented}=await import(await moduleSource(new URL('../dist/city3d.js',import.meta.url),{revision,instrument:true}));
+  const instrumentedManifest={...manifest,characters:[{id:'hero',url:'https://example.test/hero.glb'}],props:[{id:'maker',url:'https://example.test/maker.glb'}]};
+  const testCity=await createInstrumented(container,instrumentedManifest,PRODUCTS,()=>{},()=>{},{quality});
+  try{
+    await testCity.streetReady;testCity.setYear(2026);
+    const shot=window.__mycityDebug.sceneShot;
+    shot.set({player:[-8.8,0,4.7],camera:null,time:null});
+    for(const position of [[13,2.35,8.2],[-13,2.35,8.2]]){
+      const actual=shot.set({player:[-8.8,0,4.7],camera:{position,target:[position[0]*6,0,8.2],fov:48},time:12});
+      assert.deepEqual(actual.camera.position,position,`${revision}: explicit camera setter resolves the actual scene camera`);
+      assert.equal(actual.camera.fov,48);
+      testCity.resume();testCity.pause(); // Also exercise applySceneShotCamera inside tick.
+      assert.deepEqual(shot.state().camera.position,position);
+    }
+    const reset=shot.set({camera:null,player:[-8.8,0,4.7],time:null});
+    assert.notDeepEqual(reset.camera.position,[-13,2.35,8.2],`${revision}: default shot clears a prior camera lock`);
+    assert.equal(reset.time,null);
+  }finally{testCity.dispose();}
+}
+console.log('Passed: transformed main and working city/walker/neighbors parse and execute default, east/west camera, fixed animation, render and reset hooks in the real lexical scope.');
