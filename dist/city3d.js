@@ -13,7 +13,7 @@ import { createWalker } from './walker.js?v=neighbors-3';
 import { createLandscape } from './landscape.js?v=neighbors-3';
 import { createNeighbors } from './neighbors.js?v=neighbors-3';
 import { browserQualityProfile, includeStreetAsset } from './quality-profile.js';
-import { objectResources, disposeResources, resizeTextures, mapSettledLimit, resourceBytes } from './asset-memory.js';
+import { objectResources, disposeResources, resizeTextures, mapSettledLimit, resourceBytes, releaseStaticGeometryAfterUpload } from './asset-memory.js';
 import { DISCOVERIES } from './walking-world.js?v=neighbors-3';
 
 // Building geometry comes exclusively from the Hi3D GLB assets in the manifest.
@@ -55,15 +55,21 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   const sun=new THREE.DirectionalLight('#ffe1a8',2.5);sun.position.set(-10,20,12);sun.castShadow=quality.shadows;
   sun.shadow.mapSize.set(quality.shadowMapSize,quality.shadowMapSize);Object.assign(sun.shadow.camera,{left:-25,right:25,top:24,bottom:-24,near:.5,far:65});sun.shadow.bias=-.0005;scene.add(sun);
   const fill=new THREE.DirectionalLight('#b6d6ee',.6);fill.position.set(10,8,-9);scene.add(fill);
-  const pmrem=new THREE.PMREMGenerator(renderer);const room=new RoomEnvironment();
-  const env=pmrem.fromScene(room,.04);scene.environment=env.texture;scene.environmentIntensity=.45;room.dispose();pmrem.dispose();cleanup.push(()=>{sun.shadow.dispose();env.dispose();});
+  // Low mode must also avoid the HDR environment bake on devices without float
+  // color targets. Hemisphere/sun/fill lighting still renders the complete scene.
+  let env={texture:null,dispose(){}};
+  if(!quality.low||renderer.extensions.has('EXT_color_buffer_float')){
+    const pmrem=new THREE.PMREMGenerator(renderer);const room=new RoomEnvironment();
+    env=pmrem.fromScene(room,.04);room.dispose();pmrem.dispose();
+  }
+  scene.environment=env.texture;scene.environmentIntensity=.45;cleanup.push(()=>{sun.shadow.dispose();env.dispose();});
 
   const neighbors=createNeighbors(scene);disposables.push(...neighbors.resources);cleanup.push(()=>neighbors.dispose());
   landscape=createLandscape(scene,CANAL,quality);
   cleanup.push(()=>landscape.dispose(false));
   const loadLandscape=()=>landscape.load(manifest.environment).then(()=>null,error=>error);
   const landscapeRequest=quality.low?null:loadLandscape();
-  const staticFrame=createStaticFrame(renderer,scene,camera,{enabled:quality.staticFrame});cleanup.push(()=>staticFrame.dispose());
+  const staticFrame=createStaticFrame(renderer,scene,camera,{enabled:quality.staticFrame,low:quality.low});cleanup.push(()=>staticFrame.dispose());
   for(const light of [hemi,sun,fill])light.layers.enable(1);
   let shadowDirty=true,lastShadowUpdate=-Infinity;
   const invalidate=(shadow=false)=>{staticFrame.invalidate();shadowDirty ||= shadow;};
@@ -135,6 +141,7 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
     const gltf=await loader.loadAsync(assetURL(item));
     if(disposed||contextLost){disposeResources(objectResources(gltf.scene));throw new Error('Scene stopped');}
     modelRoots.add(gltf.scene);
+    if(quality.low)releaseStaticGeometryAfterUpload(gltf.scene);
     const resources=objectResources(gltf.scene);
     resizeTextures([...resources].filter(r=>r.isTexture),maxTextureSize);
     if(debugEnabled)assetStats.push({id:item.id,...resourceBytes(resources)});
@@ -383,7 +390,7 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
         antialias:renderer.getContext().getContextAttributes()?.antialias,
         staticFrame:staticFrame.settings,shadowMap:renderer.shadowMap.enabled?sun.shadow.mapSize.toArray():null,
         residents:streetObjects.filter(o=>o.definition.person).map(o=>o.definition.id)};
-    },loseContext:()=>renderer.forceContextLoss(),restoreContext:()=>renderer.forceContextRestore(),dispose};
+    },frame(){return {render:{...renderer.info.render},cacheRebuilds:staticFrame.settings.rebuilds||0};},loseContext:()=>renderer.forceContextLoss(),restoreContext:()=>renderer.forceContextRestore(),dispose};
     window.__mycityDebug=debug;streetReady.then(()=>{debug.ready=!disposed&&!contextLost;});
     cleanup.push(()=>{if(window.__mycityDebug===debug)delete window.__mycityDebug;});
   }

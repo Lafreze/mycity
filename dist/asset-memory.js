@@ -37,10 +37,51 @@ export async function mapSettledLimit(items,limit,work){
   async function worker(){while(next<items.length){const index=next++;try{results[index]={status:'fulfilled',value:await work(items[index],index)};}catch(reason){results[index]={status:'rejected',reason};}}}
   await Promise.all(Array.from({length:Math.min(items.length,limit)},worker));return results;
 }
+// Numbers only: never retain the released TypedArray through a debug closure.
+const uploadedBuffers=new WeakMap();
+const geometryBuffers=geometry=>[geometry.index,...Object.values(geometry.attributes),...Object.values(geometry.morphAttributes).flat()].filter(Boolean).map(a=>a.isInterleavedBufferAttribute?a.data:a);
+
+// Call only for low-mode GLTFs. Picking uses separate boxes and navigation uses
+// JSON colliders. Skinning/morphs, dynamic attributes and shared unsafe buffers
+// retain their CPU arrays. Bounds must exist before the first upload.
+export function releaseStaticGeometryAfterUpload(object){
+  const eligible=new Set(),protectedBuffers=new Set();
+  object.traverse(o=>{
+    const g=o.geometry;if(!g)return;
+    const buffers=geometryBuffers(g);
+    const safe=o.isMesh&&!o.isSkinnedMesh&&!o.isInstancedMesh&&!o.userData.pickProxy&&
+      !Object.values(g.morphAttributes).some(a=>a.length)&&
+      !(Array.isArray(o.material)?o.material:[o.material]).some(m=>m?.wireframe)&&
+      buffers.every(a=>a.array&&a.usage===35044&&!a.isInterleavedBuffer); // STATIC_DRAW
+    if(safe)eligible.add(g);else buffers.forEach(a=>protectedBuffers.add(a));
+  });
+  for(const geometry of eligible){
+    geometry.computeBoundingBox();geometry.computeBoundingSphere();
+    for(const attribute of geometryBuffers(geometry)){
+      if(protectedBuffers.has(attribute)||uploadedBuffers.has(attribute))continue;
+      uploadedBuffers.set(attribute,{bytes:attribute.array.byteLength,released:false});
+      const previous=attribute.onUploadCallback;
+      attribute.onUpload(function(){
+        previous.call(this);
+        // count/itemSize/normalization stay intact. WebGLAttributes retains GPU
+        // type/stride/size and will reuse the unchanged buffer version.
+        const record=uploadedBuffers.get(this);record.released=true;this.array=null;
+      });
+    }
+  }
+}
+
 export function resourceBytes(resources){
-  const arrays=new Set(),sources=new Set();let geometryBytes=0,textureBytes=0;
+  const buffers=new Set(),cpuArrays=new Set(),sources=new Set();
+  let geometryBytes=0,geometryCPUBytes=0,releasedGeometryBytes=0,textureBytes=0;
   for(const r of resources){
-    if(r.isBufferGeometry){for(const a of [r.index,...Object.values(r.attributes),...Object.values(r.morphAttributes).flat()]){const array=a?.array||a?.data?.array;if(array&&!arrays.has(array)){arrays.add(array);geometryBytes+=array.byteLength;}}}
+    if(r.isBufferGeometry)for(const buffer of geometryBuffers(r)){
+      if(buffers.has(buffer))continue;buffers.add(buffer);
+      const record=uploadedBuffers.get(buffer);
+      geometryBytes+=record?.bytes??buffer.array?.byteLength??0;
+      if(record?.released)releasedGeometryBytes+=record.bytes;
+      if(buffer.array&&!cpuArrays.has(buffer.array)){cpuArrays.add(buffer.array);geometryCPUBytes+=buffer.array.byteLength;}
+    }
     if(r.isTexture&&r.image&&!sources.has(r.source)){sources.add(r.source);textureBytes+=(r.image.width||0)*(r.image.height||0)*4*(r.generateMipmaps?4/3:1);}
-  }return {geometryBytes,textureBytes};
+  }return {geometryBytes,geometryCPUBytes,releasedGeometryBytes,textureBytes};
 }

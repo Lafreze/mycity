@@ -5,7 +5,7 @@ import {readFile} from 'node:fs/promises';
 import * as THREE from '../dist/vendor/three/three.module.js';
 import {selectQualityProfile} from '../dist/quality-profile.js';
 import {PRODUCTS} from '../dist/products.js';
-let renderer,heldResolve,holdProp=false,rejectBuilding=false,released=0,closed=0,decoderDisposals=0;
+let renderer,heldResolve,holdProp=false,rejectBuilding=false,released=0,closed=0,decoderDisposals=0,environmentBakes=0;
 const context=new Proxy({createRadialGradient:()=>({addColorStop(){}})},{get:(o,k)=>o[k]||(()=>{})});
 class Canvas extends EventTarget {constructor(){super();this.tagName='CANVAS';this.style={};}getContext(){return context;}remove(){this.removed=true;}}
 globalThis.document={createElement:()=>new Canvas()};
@@ -16,6 +16,7 @@ const world=JSON.parse(await readFile('dist/navigation.json','utf8'));globalThis
 class Renderer{
   constructor(options){renderer=this;this.options=options;this.domElement=new Canvas();this.shadowMap={};this.capabilities={getMaxAnisotropy:()=>8};this.extensions={has:()=>false};this.info={memory:{},render:{},reset(){}};this.renders=0;}
   setPixelRatio(value){this.ratio=value;}setSize(w,h){this.domElement.width=w*this.ratio;this.domElement.height=h*this.ratio;}
+  setRenderTarget(){}getDrawingBufferSize(value){return value.set(this.domElement.width,this.domElement.height);}
   render(){this.renders++;}dispose(){this.disposed=true;}forceContextLoss(){}forceContextRestore(){}
   getContext(){return{getContextAttributes:()=>({antialias:this.options.antialias})};}
 }
@@ -23,7 +24,7 @@ class Loader{
   setDRACOLoader(){}
   async loadAsync(url){
     if(rejectBuilding&&url.includes('chess'))throw new Error('Simulated network failure');
-    if(holdProp&&url.includes('bench'))await new Promise(resolve=>heldResolve=resolve);
+    if(holdProp&&url.includes('coffee'))await new Promise(resolve=>heldResolve=resolve);
     const scene=new THREE.Group(),geometry=new THREE.BoxGeometry(),texture=new THREE.Texture({width:2048,height:2048,close(){closed++;}}),material=new THREE.MeshStandardMaterial({map:texture});
     for(const resource of [geometry,texture,material])resource.addEventListener('dispose',()=>released++);
     scene.add(new THREE.Mesh(geometry,material));return {scene,animations:[]};
@@ -32,7 +33,7 @@ class Loader{
 class Draco{setWorkerLimit(){}setDecoderPath(){}dispose(){decoderDisposals++;}}
 class Controls{constructor(){this.target=new THREE.Vector3();}update(){return false;}dispose(){}}
 class Environment{dispose(){}}
-class PMREM{fromScene(){return {texture:new THREE.Texture(),dispose(){}};}dispose(){}}
+class PMREM{fromScene(){environmentBakes++;return {texture:new THREE.Texture(),dispose(){}};}dispose(){}}
 globalThis.cityTestDoubles={Renderer,Loader,Draco,Controls,Environment,PMREM};
 const moduleURL=code=>'data:text/javascript;base64,'+Buffer.from(code).toString('base64');
 const realThree=new URL('../dist/vendor/three/three.module.js',import.meta.url).href;
@@ -56,11 +57,12 @@ async function moduleSource(url){
 }
 const {createCity3D}=await import(await moduleSource(new URL('../dist/city3d.js',import.meta.url)));
 const container={clientWidth:390,clientHeight:844,appendChild(){}};
-const manifest={models:[{id:'chess',url:'https://example.test/chess.glb'}],props:[{id:'park-bench',url:'https://example.test/bench.glb'}]};
+const manifest={models:[{id:'chess',url:'https://example.test/chess.glb'}],props:[{id:'coffee-cart',url:'https://example.test/coffee.glb'}]};
 const quality=selectQualityProfile({search:'?quality=low'});
 let losses=0,restorations=0;
 const create=()=>createCity3D(container,manifest,PRODUCTS,()=>{},()=>{},{quality,onContextLost(){losses++;},onContextRestored(){restorations++;}});
 let city=await create();await city.streetReady;city.setYear(2026);city.resume();
+assert.equal(environmentBakes,0,'No float-target environment bake when unsupported in low mode');
 assert.equal(renderer.options.antialias,false);assert.equal(renderer.ratio,1);assert.equal(renderer.shadowMap.enabled,false);
 assert.equal(window.__mycityDebug.snapshot().loadedProps,1);
 assert.equal(closed,2,'Decoded originals are closed before rendering');
