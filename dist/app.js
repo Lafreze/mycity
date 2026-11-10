@@ -1,5 +1,5 @@
 import { CITY, PRODUCTS, STATUS, statusAt } from './products.js';
-import { createCity3D } from './city3d.js?v=3d-only-2';
+import { createCity3D } from './city3d.js?v=render-cache-1';
 
 const $=selector=>document.querySelector(selector);
 const state={year:CITY.lastYear,night:false,playing:false,selected:null};

@@ -13,7 +13,7 @@ const archived=PRODUCTS.find(p=>p.status==='archived');
 assert.equal(statusAt(archived,2024),'live');
 assert.equal(statusAt(archived,2025),'archived');
 assert.equal(PRODUCTS.filter(p=>statusAt(p,CITY.lastYear)==='building').length,1);
-for(const file of ['index.html','app.js','styles.css','city3d.js','vendor/three/three.module.js','vendor/three/addons/loaders/GLTFLoader.js']) await access(`dist/${file}`);
+for(const file of ['index.html','app.js','styles.css','city3d.js','static-frame.js','performance-meter.js','vendor/three/three.module.js','vendor/three/addons/loaders/GLTFLoader.js']) await access(`dist/${file}`);
 console.log('Passed: product data, lifecycle timeline, safe product URLs, and required assets.');
 
 const html=await readFile('dist/index.html','utf8');

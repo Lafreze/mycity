@@ -9,6 +9,6 @@
     "assets:prepare": "node scripts/prepare-assets.mjs",
     "assets:verify": "node scripts/verify-assets.mjs",
     "assets:upload": "node scripts/upload-assets.mjs",
-    "test": "node scripts/test-assets-worker.mjs && node scripts/test-world.mjs"
+    "test": "node scripts/test-assets-worker.mjs && node scripts/test-world.mjs && node scripts/test-static-frame.mjs"
   }
 }
