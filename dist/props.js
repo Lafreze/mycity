@@ -1,4 +1,4 @@
-import {CANAL,BRIDGE,BOAT} from './world.js?v=walking-1';
+import {CANAL,BRIDGE,BOAT} from './world.js?v=neighbors-2';
 
 // Geometry is from Hi3D, restored and inspected through Blender MCP.
 // Unisolated dioramas remain in the asset library, not in the active street.
@@ -11,13 +11,13 @@ export const CITY_PROPS = [
   {id:'direction-sign',height:2.4,positions:[[-14.2,0,2.4],[-15.5,0,-7.7]]},
   {id:'notice-board',height:1.6,positions:[[-3.25,0,2.45]],product:'workshop'},
   {id:'cafe-set',width:2.8,positions:[[-4.7,0,12],[.2,0,12],[-10.5,0,-10.5]]},
-  {id:'coffee-cart',height:1.7,positions:[[-7,0,13.15]],product:'workshop'},
+  {id:'coffee-cart',height:1.7,positions:[[-7,0,12.85]],product:'workshop'},
   {id:'flower-cart',width:1.4,positions:[[1.55,0,2.8]],product:'life'},
   {id:'book-cart',height:1.2,positions:[[3.25,0,2.35]],product:'library'},
   {id:'market-crates',width:1.25,positions:[[-1.5,0,2.25]],product:'life'},
   {id:'garden-arch',height:2.7,positions:[[-13,0,-2.4]]},
   {id:'vine-trellis',height:2.4,positions:[[-4.8,0,-3],[4.8,0,-3]]},
-  {id:'hydrangea-pot',height:.8,positions:[[-11.1,0,2.6],[-12.9,0,2.1],[-2.4,0,13.4],[-11.7,0,11.2],[-2.5,0,11.1],[-1.7,0,-12],[1.7,0,-12]]},
+  {id:'hydrangea-pot',height:.8,positions:[[-11.1,0,2.6],[-12.9,0,2.1],[15.6,0,13.3],[-11.7,0,11.2],[-2.5,0,11.1],[-1.7,0,-12],[1.7,0,-12]]},
   {id:'olive-tree',height:2.6,positions:[[-16,0,4.6],[15,0,2.5],[14.5,0,12.2]]},
   {id:'plane-tree',height:5.5,varied:true,positions:[[-7,0,-5.3],[0,0,-5.5],[7.4,0,-5.3],[14,0,-5.4]]},
   {id:'cypress-planter',height:2.5,positions:[[-9.8,0,-3.5],[9.8,0,-3.5],[-7.4,0,-10.5],[7.4,0,-10.5]]},

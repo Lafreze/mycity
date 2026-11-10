@@ -8,19 +8,23 @@ const base=new URL(values.base.replace(/\/$/,'')+'/');
 if(base.protocol!=='https:' || base.username || base.password || base.search || base.hash) throw new Error('Use a public HTTPS asset base without credentials.');
 const manifest=JSON.parse(await readFile('reference/source-models.json','utf8'));
 const plan=[];
-for(const item of [...manifest.models,...manifest.props,...(manifest.characters||[])]){
-  if(!/^[a-z0-9/-]+\.glb$/.test(item.file) || item.file.includes('..')) throw new Error('Invalid model path');
+for(const item of [...manifest.models,...manifest.props,...(manifest.characters||[]),...(manifest.environment||[])]){
+  const painting=item.file.startsWith('landscapes/');
+  if(!/^[a-z0-9/-]+\.(glb|png)$/.test(item.file) || item.file.includes('..')) throw new Error('Invalid asset path');
   const source=path.resolve(values.source,item.file),bytes=await readFile(source);
-  if(bytes.readUInt32LE(0)!==0x46546c67 || bytes.readUInt32LE(4)!==2 || bytes.readUInt32LE(8)!==bytes.length) throw new Error(`Invalid GLB: ${item.file}`);
+  if(painting){
+    if(bytes.subarray(0,8).toString('hex')!=='89504e470d0a1a0a')throw new Error(`Invalid PNG: ${item.file}`);
+    item.width=bytes.readUInt32BE(16);item.height=bytes.readUInt32BE(20);item.mimeType='image/png';
+  }else if(bytes.readUInt32LE(0)!==0x46546c67 || bytes.readUInt32LE(4)!==2 || bytes.readUInt32LE(8)!==bytes.length) throw new Error(`Invalid GLB: ${item.file}`);
   const sha256=createHash('sha256').update(bytes).digest('hex');
-  const key=`mycity/models/${item.file.replace(/\.glb$/,`.${sha256.slice(0,16)}.glb`)}`;
+  const key=`mycity/${painting?'':'models/'}${item.file.replace(/\.(glb|png)$/,`.${sha256.slice(0,16)}.$1`)}`;
   item.url=new URL(key.slice('mycity/'.length),base).href;
   item.sha256=sha256;item.bytes=bytes.length;
-  plan.push({id:item.id,source,key,url:item.url,bytes:bytes.length,sha256});
+  plan.push({id:item.id,source,key,url:item.url,bytes:bytes.length,sha256,mimeType:painting?'image/png':'model/gltf-binary'});
 }
 manifest.updatedAt=new Date().toISOString();
 manifest.version=createHash('sha256').update(JSON.stringify(plan.map(({key,sha256})=>({key,sha256})))).digest('hex').slice(0,16);
 await mkdir('output',{recursive:true});
 await writeFile('dist/assets/models/manifest.json',JSON.stringify(manifest,null,2)+'\n');
 await writeFile('output/r2-upload-plan.json',JSON.stringify(plan,null,2)+'\n');
-console.log(`Prepared ${plan.length} content-addressed models, ${(plan.reduce((n,x)=>n+x.bytes,0)/1048576).toFixed(2)} MiB; version ${manifest.version}`);
+console.log(`Prepared ${plan.length} content-addressed assets, ${(plan.reduce((n,x)=>n+x.bytes,0)/1048576).toFixed(2)} MiB; version ${manifest.version}`);

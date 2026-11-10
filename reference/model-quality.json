@@ -942,9 +942,9 @@
     {
       "id": "maker",
       "file": "props/maker.glb",
-      "sha256": "9729c56742ded58120b84a088099fb03f4eb40c51a0dd642ca07960dd74c4708",
-      "bytes": 1564012,
-      "vertices": 120824,
+      "sha256": "567d3a8a01cd3fac8d4404c74a77fb8cce19ca66a04365be8bdb865082f3b197",
+      "bytes": 1774828,
+      "vertices": 120861,
       "hasNormals": true,
       "triangles": 179999,
       "size": [
@@ -961,14 +961,53 @@
           1024,
           1024
         ]
-      ]
+      ],
+      "hasSkin": true,
+      "animations": [
+        {
+          "name": "Idle",
+          "duration": 4
+        },
+        {
+          "name": "Talk",
+          "duration": 3
+        }
+      ],
+      "headBone": "Head",
+      "headLocalUp": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "headLocalForward": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "groundOffset": 0,
+      "behavior": "Looks around the workshop, breathes and gestures with her free hand; sketchbook and pencil remain supported.",
+      "bones": 10,
+      "animationValidation": {
+        "Idle": {
+          "duration": 4.0,
+          "loopSeamMax": 0.0,
+          "finite": true,
+          "maximumStaticAnchorDelta": 0
+        },
+        "Talk": {
+          "duration": 3.0,
+          "loopSeamMax": 0.0,
+          "finite": true,
+          "maximumStaticAnchorDelta": 0
+        }
+      }
     },
     {
       "id": "reader",
       "file": "props/reader.glb",
-      "sha256": "91b577fe25c6d004c63c9d3327c6f53a4ee421cb55f6f4bb9dd036d84306bea3",
-      "bytes": 1647748,
-      "vertices": 127524,
+      "sha256": "e3969049673747e49e6fbe7ae4196f07cfbd3b26a9fea3d268be694b738816e3",
+      "bytes": 1878144,
+      "vertices": 127530,
       "hasNormals": true,
       "triangles": 179999,
       "size": [
@@ -985,14 +1024,53 @@
           1024,
           1024
         ]
-      ]
+      ],
+      "hasSkin": true,
+      "animations": [
+        {
+          "name": "Idle",
+          "duration": 4
+        },
+        {
+          "name": "Talk",
+          "duration": 3
+        }
+      ],
+      "headBone": "Head",
+      "headLocalUp": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "headLocalForward": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "groundOffset": 0,
+      "behavior": "Reads with subtle book and hand adjustments, then looks up and nods to answer; stool and feet remain still.",
+      "bones": 11,
+      "animationValidation": {
+        "Idle": {
+          "duration": 4.0,
+          "loopSeamMax": 3.637978807091713e-12,
+          "finite": true,
+          "maximumStaticAnchorDelta": 0
+        },
+        "Talk": {
+          "duration": 3.0,
+          "loopSeamMax": 3.637978807091713e-12,
+          "finite": true,
+          "maximumStaticAnchorDelta": 0
+        }
+      }
     },
     {
       "id": "barista",
       "file": "props/barista.glb",
-      "sha256": "736af9d081f0171d721c2e5d47cc1f7a7c23e348278f74177240c59a5d6be2e2",
-      "bytes": 1558396,
-      "vertices": 119050,
+      "sha256": "b8a25b66764f9e491bd528fef755c78f67fe1f76db061f126966ff8c9382bba0",
+      "bytes": 1758360,
+      "vertices": 119066,
       "hasNormals": true,
       "triangles": 179999,
       "size": [
@@ -1009,14 +1087,53 @@
           1024,
           1024
         ]
-      ]
+      ],
+      "hasSkin": true,
+      "animations": [
+        {
+          "name": "Idle",
+          "duration": 4
+        },
+        {
+          "name": "Talk",
+          "duration": 3
+        }
+      ],
+      "headBone": "Head",
+      "headLocalUp": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "headLocalForward": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "groundOffset": 0,
+      "behavior": "Checks the cups, balances the tray level and offers a friendly nod; cups and saucers move together without spilling.",
+      "bones": 11,
+      "animationValidation": {
+        "Idle": {
+          "duration": 4.0,
+          "loopSeamMax": 0.0,
+          "finite": true,
+          "maximumStaticAnchorDelta": 0
+        },
+        "Talk": {
+          "duration": 3.0,
+          "loopSeamMax": 0.0,
+          "finite": true,
+          "maximumStaticAnchorDelta": 0
+        }
+      }
     },
     {
       "id": "florist",
       "file": "props/florist.glb",
-      "sha256": "dd8b84690a4c61ef3827b0103863a8c3efa259562fdb18ae2f0ac4fa2db92372",
-      "bytes": 1608456,
-      "vertices": 123551,
+      "sha256": "94809d577ec453bf28c85edd3139704e31fd2a6a4ccdf6db5021b9dc8d085002",
+      "bytes": 1820748,
+      "vertices": 123567,
       "hasNormals": true,
       "triangles": 179999,
       "size": [
@@ -1033,14 +1150,53 @@
           1024,
           1024
         ]
-      ]
+      ],
+      "hasSkin": true,
+      "animations": [
+        {
+          "name": "Idle",
+          "duration": 4
+        },
+        {
+          "name": "Talk",
+          "duration": 3
+        }
+      ],
+      "headBone": "Head",
+      "headLocalUp": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "headLocalForward": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "groundOffset": 0,
+      "behavior": "Gently adjusts and presents the bouquet while checking its arrangement, then turns attention to the visitor.",
+      "bones": 11,
+      "animationValidation": {
+        "Idle": {
+          "duration": 4.0,
+          "loopSeamMax": 0.0,
+          "finite": true,
+          "maximumStaticAnchorDelta": 0
+        },
+        "Talk": {
+          "duration": 3.0,
+          "loopSeamMax": 0.0,
+          "finite": true,
+          "maximumStaticAnchorDelta": 0
+        }
+      }
     },
     {
       "id": "cyclist",
       "file": "props/cyclist.glb",
-      "sha256": "b39f914e11cd113e09fbe702d79f46eb159c69dc2f0301997baff0dfa3f5fc1b",
-      "bytes": 3742940,
-      "vertices": 241664,
+      "sha256": "2f82a57bf2942a6a077cf773f0067077ccd720a015ac073b1bd8de09bbf149cd",
+      "bytes": 3915016,
+      "vertices": 241666,
       "hasNormals": true,
       "triangles": 349999,
       "size": [
@@ -1057,13 +1213,52 @@
           2048,
           2048
         ]
-      ]
+      ],
+      "hasSkin": true,
+      "animations": [
+        {
+          "name": "Idle",
+          "duration": 4
+        },
+        {
+          "name": "Talk",
+          "duration": 3
+        }
+      ],
+      "headBone": "Head",
+      "headLocalUp": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "headLocalForward": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "groundOffset": 0,
+      "behavior": "Balances in place and glances around, then turns the head to talk; both hands remain on the handlebar and the bicycle never slides.",
+      "bones": 10,
+      "animationValidation": {
+        "Idle": {
+          "duration": 4.0,
+          "loopSeamMax": 0.0,
+          "finite": true,
+          "maximumStaticAnchorDelta": 0
+        },
+        "Talk": {
+          "duration": 3.0,
+          "loopSeamMax": 0.0,
+          "finite": true,
+          "maximumStaticAnchorDelta": 0
+        }
+      }
     },
     {
       "id": "courier",
       "file": "props/courier.glb",
-      "sha256": "4e2df28bb4191dd772049361b859963971412d5362ce6f1136030208191563cf",
-      "bytes": 1565636,
+      "sha256": "8f1639f53212e240549797cf20c2eb55c7b13fba019c768b3bd05a272d37804f",
+      "bytes": 1996416,
       "vertices": 120079,
       "hasNormals": true,
       "triangles": 180000,
@@ -1081,7 +1276,46 @@
           1024,
           1024
         ]
-      ]
+      ],
+      "hasSkin": true,
+      "animations": [
+        {
+          "name": "Idle",
+          "duration": 4
+        },
+        {
+          "name": "Talk",
+          "duration": 3
+        }
+      ],
+      "headBone": "Head",
+      "headLocalUp": [
+        0.0,
+        0.99931483,
+        -0.03701164
+      ],
+      "headLocalForward": [
+        0.0,
+        0.03701164,
+        0.99931483
+      ],
+      "groundOffset": 0,
+      "behavior": "Pauses with both boots planted, breathes and checks the parcel; nods and turns the head during conversation while both forearms keep the package supported.",
+      "bones": 16,
+      "animationValidation": {
+        "Idle": {
+          "duration": 4.0,
+          "loopSeamMax": 0.0,
+          "finite": true,
+          "maximumStaticAnchorDelta": 3.7152651088945277e-07
+        },
+        "Talk": {
+          "duration": 3.0,
+          "loopSeamMax": 0.0,
+          "finite": true,
+          "maximumStaticAnchorDelta": 2.6264541475029546e-07
+        }
+      }
     },
     {
       "id": "strolling-couple",
@@ -1134,9 +1368,9 @@
     {
       "id": "construction-worker",
       "file": "props/construction-worker.glb",
-      "sha256": "8410ac8e247a4ffb4e8893c6e1f9a8c13c76ebaf97bc001b6913751975e2f11b",
-      "bytes": 1550672,
-      "vertices": 116738,
+      "sha256": "2aa30306693c460a5ca098c7d93bb6289ba242e044db7c2df61b614aa0df8588",
+      "bytes": 1769888,
+      "vertices": 116740,
       "hasNormals": true,
       "triangles": 180000,
       "size": [
@@ -1153,14 +1387,53 @@
           1024,
           1024
         ]
-      ]
+      ],
+      "hasSkin": true,
+      "animations": [
+        {
+          "name": "Idle",
+          "duration": 4
+        },
+        {
+          "name": "Talk",
+          "duration": 3
+        }
+      ],
+      "headBone": "Head",
+      "headLocalUp": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "headLocalForward": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "groundOffset": 0,
+      "behavior": "Surveys the construction site and gives a short explanation with the free hand; blueprint roll stays supported.",
+      "bones": 10,
+      "animationValidation": {
+        "Idle": {
+          "duration": 4.0,
+          "loopSeamMax": 0.0,
+          "finite": true,
+          "maximumStaticAnchorDelta": 0
+        },
+        "Talk": {
+          "duration": 3.0,
+          "loopSeamMax": 0.0,
+          "finite": true,
+          "maximumStaticAnchorDelta": 0
+        }
+      }
     },
     {
       "id": "helper-robot",
       "file": "props/helper-robot.glb",
-      "sha256": "d5d99370c5b7825765d8391964b8b1c86d7d9722d1838e5d50706f9d053b3c11",
-      "bytes": 2250452,
-      "vertices": 165936,
+      "sha256": "28759e7a1c78d48208340659c5dcb5544f40b14b986e9d4fbd6362044b39b278",
+      "bytes": 2585848,
+      "vertices": 165940,
       "hasNormals": true,
       "triangles": 179999,
       "size": [
@@ -1177,7 +1450,46 @@
           1024,
           1024
         ]
-      ]
+      ],
+      "hasSkin": true,
+      "animations": [
+        {
+          "name": "Idle",
+          "duration": 4
+        },
+        {
+          "name": "Talk",
+          "duration": 3
+        }
+      ],
+      "headBone": "Head",
+      "headLocalUp": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "headLocalForward": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "groundOffset": 0,
+      "behavior": "Scans the street with its independently moving head and greets visitors with the twig-holding hand; lantern, feet and stone base remain still.",
+      "bones": 10,
+      "animationValidation": {
+        "Idle": {
+          "duration": 4.0,
+          "loopSeamMax": 0.0,
+          "finite": true,
+          "maximumStaticAnchorDelta": 0
+        },
+        "Talk": {
+          "duration": 3.0,
+          "loopSeamMax": 0.0,
+          "finite": true,
+          "maximumStaticAnchorDelta": 0
+        }
+      }
     },
     {
       "id": "ginger-cat",
@@ -1206,9 +1518,9 @@
     {
       "id": "street-musician",
       "file": "props/street-musician.glb",
-      "sha256": "a78b7bf44f44a4723923f20a8e607ca5b19f502b49c15c8f7584bff22e13516d",
-      "bytes": 1540440,
-      "vertices": 121238,
+      "sha256": "07095941107acf7936cc81741cabd67ba925e38156c84dfc3deb44fcbefaf3b1",
+      "bytes": 1756952,
+      "vertices": 121253,
       "hasNormals": true,
       "triangles": 180000,
       "size": [
@@ -1225,7 +1537,46 @@
           1024,
           1024
         ]
-      ]
+      ],
+      "hasSkin": true,
+      "animations": [
+        {
+          "name": "Idle",
+          "duration": 4
+        },
+        {
+          "name": "Talk",
+          "duration": 3
+        }
+      ],
+      "headBone": "Head",
+      "headLocalUp": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "headLocalForward": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "groundOffset": 0,
+      "behavior": "Makes short controlled violin bow strokes with the bow hand and forearm; violin follows the chest, case and platform stay planted. Pauses bowing and acknowledges the visitor during Talk.",
+      "bones": 12,
+      "animationValidation": {
+        "Idle": {
+          "duration": 4.0,
+          "loopSeamMax": 0.0,
+          "finite": true,
+          "maximumStaticAnchorDelta": 0
+        },
+        "Talk": {
+          "duration": 3.0,
+          "loopSeamMax": 0.0,
+          "finite": true,
+          "maximumStaticAnchorDelta": 0
+        }
+      }
     },
     {
       "id": "hero",
@@ -1282,7 +1633,7 @@
       "qa": {
         "Idle": {
           "duration": 2,
-          "minimumFloor": -0.000008033831363718491,
+          "minimumFloor": -8.033831363718491e-06,
           "loopSeamMax": 0,
           "finite": true
         },
@@ -1302,27 +1653,27 @@
       "surfaceErrorMeters": {
         "face": {
           "samples": 10000,
-          "maxMeters": 0.00005993709419271909,
-          "p99Meters": 0.0000390306746703573,
-          "meanMeters": 0.000012948908471633613
+          "maxMeters": 5.993709419271909e-05,
+          "p99Meters": 3.90306746703573e-05,
+          "meanMeters": 1.2948908471633613e-05
         },
         "hands": {
           "samples": 10000,
-          "maxMeters": 0.00006751494947820902,
-          "p99Meters": 0.00003968747427279597,
-          "meanMeters": 0.000012647812754943998
+          "maxMeters": 6.751494947820902e-05,
+          "p99Meters": 3.968747427279597e-05,
+          "meanMeters": 1.2647812754943998e-05
         },
         "boots": {
           "samples": 10000,
           "maxMeters": 0.00011310813715681434,
-          "p99Meters": 0.000054355950851459104,
-          "meanMeters": 0.000013902780161336558
+          "p99Meters": 5.4355950851459104e-05,
+          "meanMeters": 1.3902780161336558e-05
         },
         "whole": {
           "samples": 10000,
-          "maxMeters": 0.00008136362885124981,
-          "p99Meters": 0.000044357799561112186,
-          "meanMeters": 0.0000121184401650674
+          "maxMeters": 8.136362885124981e-05,
+          "p99Meters": 4.4357799561112186e-05,
+          "meanMeters": 1.21184401650674e-05
         }
       },
       "notes": [

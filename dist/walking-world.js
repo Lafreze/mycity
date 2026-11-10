@@ -66,3 +66,7 @@ export const DISCOVERIES=[
   {id:'cafe',label:'河畔咖啡',x:-2.2,z:12.2,year:2023,message:'沿河走累了，就在这里歇一会儿。'},
   {id:'river',label:'顺流而下',x:-4.9,z:5.7,year:2023,message:'每个小小的开始，都有自己的去处。'}
 ];
+
+export function nearestInteraction(position,year,places=DISCOVERIES,residents=[]){
+  return [...places,...residents].filter(p=>p.year<=year).map(p=>({p,d:Math.hypot(p.x-position.x,p.z-position.z)})).filter(({p,d})=>d<(p.radius||1.55)).sort((a,b)=>(a.d-(a.p.priority||0))-(b.d-(b.p.priority||0)))[0]?.p||null;
+}

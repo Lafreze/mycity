@@ -1,23 +1,46 @@
 import { CITY, PRODUCTS, STATUS, statusAt } from './products.js';
-import { createCity3D } from './city3d.js?v=walking-1';
-import {DISCOVERIES} from './walking-world.js?v=walking-1';
+import { createCity3D } from './city3d.js?v=neighbors-2';
+import {DISCOVERIES} from './walking-world.js?v=neighbors-2';
+
+import {RESIDENTS,residentById,greetingFor} from './residents.js?v=neighbors-2';
 
 const $=selector=>document.querySelector(selector);
 const state={year:CITY.lastYear,night:false,playing:false,selected:null};
 let city,loading=false,timer,lastTrigger;
-let walking=false,toastTimer;
+let walking=false,toastTimer,currentResident=null;
+const met=new Set();
+try{const saved=JSON.parse(localStorage.getItem('mycity-neighbors')||'[]');if(Array.isArray(saved))saved.filter(id=>residentById(id)).forEach(id=>met.add(id));}catch{}
 const visited=new Set();
 try{const saved=JSON.parse(localStorage.getItem('mycity-walk-stamps')||'[]');if(Array.isArray(saved))saved.filter(id=>DISCOVERIES.some(p=>p.id===id)).forEach(id=>visited.add(id));}catch{}
-function updateWalkProgress(){$('#walk-progress').textContent=`足迹 ${visited.size} / ${DISCOVERIES.length}`;}
+function updateWalkProgress(){$('#walk-progress').textContent=`足迹 ${visited.size}/${DISCOVERIES.length} · 邻里 ${met.size}/${RESIDENTS.length}`;}
 function walkingMode(value){walking=value;document.body.classList.toggle('walking',value);$('#walk-hud').hidden=!value;$('#walk-toggle').setAttribute('aria-pressed',String(value));$('#walk-toggle').textContent=value?'全景':'漫游';$('#walk-toggle').setAttribute('aria-label',value?'切换街区全景':'第三人称漫游');$('#orbit-toggle').setAttribute('aria-pressed','false');if(value)stopTimeline();else{clearTimeout(toastTimer);$('#walk-toast').hidden=true;}}
 function nearbyPlace(place){$('#walk-interact').hidden=!place;if(place)$('#walk-place').textContent=place.label;}
 function discover(place){
+  if(place.resident){showResident(place.resident);return;}
   const first=!visited.has(place.id);visited.add(place.id);updateWalkProgress();
   try{localStorage.setItem('mycity-walk-stamps',JSON.stringify([...visited]));}catch{}
   if(place.product){showProduct(place.product);return;}
   $('#walk-toast').textContent=visited.size===DISCOVERIES.length&&first?'你走遍了这座小城。下一栋楼，等你来建。':place.message;
   $('#walk-toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#walk-toast').hidden=true,4500);
 }
+function showResident(id){
+  const person=residentById(id);if(!person)return;
+  stopTimeline();
+  const known=met.has(id);met.add(id);updateWalkProgress();
+  try{localStorage.setItem('mycity-neighbors',JSON.stringify([...met]));}catch{}
+  currentResident=person;toggleMenu(false);city?.setMuted(true);city?.setTalking(id);document.body.classList.add('talking');
+  $('#resident-name').textContent=person.name;$('#resident-role').textContent=person.role;
+  $('#resident-line').textContent=greetingFor(person,{night:state.night,known});
+  $('#resident-options').replaceChildren(...person.topics.map(topic=>{
+    const b=document.createElement('button');b.textContent=topic.label;
+    b.addEventListener('click',()=>{$('#resident-line').textContent=topic.reply;city?.setTalking(id);});return b;
+  }));
+  $('#resident-product').hidden=!person.product;
+  $('#resident-dialog').showModal();
+}
+$('#close-resident').addEventListener('click',()=>$('#resident-dialog').close());
+$('#resident-dialog').addEventListener('close',()=>{currentResident=null;document.body.classList.remove('talking');city?.setTalking(null);city?.setMuted(false);});
+$('#resident-product').addEventListener('click',()=>{const id=currentResident?.product;$('#resident-dialog').close();if(id)showProduct(id);});
 const available=()=>PRODUCTS.filter(p=>statusAt(p,state.year)!=='future');
 const safeLink=value=>{try{const u=new URL(value);return ['https:','http:'].includes(u.protocol)?u.href:null;}catch{return null;}};
 
@@ -66,7 +89,7 @@ function reportProgress(p){
   $('#retry-assets').hidden=!complete||!p.failed;
 }
 async function boot(){
-  if(loading)return;loading=true;stopTimeline();city?.dispose();city=null;walkingMode(false);nearbyPlace(null);
+  if(loading)return;loading=true;if($('#resident-dialog').open)$('#resident-dialog').close();stopTimeline();city?.dispose();city=null;walkingMode(false);nearbyPlace(null);
   document.body.dataset.sceneState='loading';$('#loading').hidden=false;$('#load-state').hidden=false;$('#load-error').hidden=true;$('#asset-status').hidden=true;
   $('#loading-label').textContent='载入街区';$('#loading-progress').value=0;
   document.querySelectorAll('[data-scene-control]').forEach(b=>b.disabled=true);
@@ -74,7 +97,7 @@ async function boot(){
     const response=await fetch('./assets/models/manifest.json',{cache:'no-cache'});
     if(!response.ok)throw new Error(`Manifest: HTTP ${response.status}`);
     const manifest=await response.json();if(!manifest.models?.length)throw new Error('No buildings in manifest');
-    city=await createCity3D($('#scene3d'),manifest,PRODUCTS,showProduct,reportProgress,{onMode:walkingMode,onDiscovery:discover,onNearby:nearbyPlace});
+    city=await createCity3D($('#scene3d'),manifest,PRODUCTS,showProduct,reportProgress,{onMode:walkingMode,onDiscovery:discover,onNearby:nearbyPlace,onResident:showResident});
     city.setYear(state.year);city.setNight(state.night);city.setWalking(true);if(state.selected)city.focus(state.selected);if(!document.hidden)city.resume();
     $('#loading').hidden=true;document.body.dataset.sceneState='ready';
     document.querySelectorAll('[data-scene-control]').forEach(b=>b.disabled=false);

@@ -4,13 +4,15 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { statusAt } from './products.js';
-import { CITY_PROPS } from './props.js?v=walking-1';
-import { CANAL, boatPose } from './world.js?v=walking-1';
+import { CITY_PROPS } from './props.js?v=neighbors-2';
+import { CANAL, boatPose } from './world.js?v=neighbors-2';
 import { BOAT_WATERLINE } from './boat-waterline.js';
 import { createStaticFrame } from './static-frame.js';
 import { createPerformanceMeter } from './performance-meter.js';
-import { createWalker } from './walker.js?v=walking-1';
-import { DISCOVERIES } from './walking-world.js?v=walking-1';
+import { createWalker } from './walker.js?v=neighbors-2';
+import { createLandscape } from './landscape.js?v=neighbors-2';
+import { createNeighbors } from './neighbors.js?v=neighbors-2';
+import { DISCOVERIES } from './walking-world.js?v=neighbors-2';
 
 // Building geometry comes exclusively from the Hi3D GLB assets in the manifest.
 // Simple planes provide the display plinth, street and canal, not replacement buildings.
@@ -26,7 +28,7 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
   renderer.outputColorSpace=THREE.SRGBColorSpace;
   container.appendChild(renderer.domElement);
-  const camera=new THREE.PerspectiveCamera(38,1,.1,160);
+  const camera=new THREE.PerspectiveCamera(38,1,.1,360);
   const initialPosition=new THREE.Vector3(mobile?-46:-19,mobile?31:17,mobile?40:32);
   const initialTarget=new THREE.Vector3(0,1,3.3);
   camera.position.copy(initialPosition);
@@ -42,6 +44,9 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   const env=pmrem.fromScene(room,.04);scene.environment=env.texture;scene.environmentIntensity=.45;room.dispose();pmrem.dispose();
 
   const disposables=[];
+  const neighbors=createNeighbors(scene);disposables.push(...neighbors.resources);
+  const landscape=createLandscape(scene,CANAL);
+  const landscapeRequest=landscape.load(manifest.environment).then(()=>null,error=>error);
   const staticFrame=createStaticFrame(renderer,scene,camera);
   for(const light of [hemi,sun,fill])light.layers.enable(1);
   let shadowDirty=true,lastShadowUpdate=-Infinity;
@@ -62,8 +67,8 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   surface(34,5,'#dfceb0',0,-.025,12);
   surface(34,2.15,'#b6aa94',0,-.018,4.475);
   surface(34,1.6,'#e4d4b9',0,-.014,2.6);
-  surface(40,CANAL.maxZ-CANAL.minZ,'#435955',0,-1.1,8.2);
-  const canal=surface(40,CANAL.maxZ-CANAL.minZ,'#719b94',0,CANAL.y,8.2,.2);
+  surface(420,CANAL.maxZ-CANAL.minZ,'#435955',0,-1.1,8.2);
+  const canal=surface(420,CANAL.maxZ-CANAL.minZ,'#719b94',0,CANAL.y,8.2,.2);
   canal.layers.set(1);
   canal.material.onBeforeCompile=shader=>{
     shader.uniforms.cityWaterTime={value:0};
@@ -79,8 +84,8 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
     shader.fragmentShader='varying vec2 cityWaterUv; varying vec3 cityWaterWorld; uniform float cityWaterTime; uniform vec2 cityBoatXZ; uniform float cityBoatPresent;\n'+shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
       vec2 hull=cityWaterWorld.xz-cityBoatXZ;
       if(cityBoatPresent>0.5 && abs(hull.x)<1.4 && abs(hull.y)<0.6){${hullClip}}
-      float ripple = 0.5 + 0.5 * sin(cityWaterUv.x * 240.0 - cityWaterTime * 0.72 + sin(cityWaterUv.y * 70.0 + cityWaterTime * 0.3));
-      float crossRipple = 0.5 + 0.5 * sin(cityWaterUv.y * 180.0 - cityWaterTime * 0.7 + cityWaterUv.x * 20.0);
+      float ripple = 0.5 + 0.5 * sin(cityWaterWorld.x * 6.0 - cityWaterTime * 0.72 + sin(cityWaterWorld.z * 26.92 + cityWaterTime * 0.3));
+      float crossRipple = 0.5 + 0.5 * sin(cityWaterWorld.z * 69.23 - cityWaterTime * 0.7 + cityWaterWorld.x * .5);
       diffuseColor.rgb += vec3(0.065, 0.075, 0.07) * pow(ripple * crossRipple, 9.0);
     `);
     canal.userData.shader=shader;
@@ -106,12 +111,13 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   let walker=null;
   let loadedBuildings=0;
   onProgress({stage:'buildings',loaded:0,total:modelItems.length,failed:0});
-  const [modelResults,worldResult]=await Promise.all([Promise.allSettled(modelItems.map(async item=>{
+  const [modelResults,worldResult,landscapeError]=await Promise.all([Promise.allSettled(modelItems.map(async item=>{
     const gltf=await loader.loadAsync(assetURL(item));
     onProgress({stage:'buildings',loaded:++loadedBuildings,total:modelItems.length,failed:0});
     return {item,object:gltf.scene,gltf};
-  })),worldRequest.then(world=>({world}),error=>({error}))]);
-  if(worldResult.error||modelResults.some(result=>result.status==='rejected')) {
+  })),worldRequest.then(world=>({world}),error=>({error})),landscapeRequest]);
+  disposables.push(...landscape.resources);
+  if(landscapeError||worldResult.error||modelResults.some(result=>result.status==='rejected')) {
     modelResults.forEach((result,index)=>{if(result.status==='rejected')console.error('City asset failed:',modelItems[index].id,result.reason);});
     const resources=new Set(disposables);
     modelResults.filter(r=>r.status==='fulfilled').forEach(r=>r.value.object.traverse(o=>{
@@ -119,7 +125,7 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
       if(o.material)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{resources.add(m);Object.values(m).forEach(v=>{if(v?.isTexture)resources.add(v);});});
     }));
     resources.forEach(resource=>resource.dispose());staticFrame.dispose();draco.dispose();env.dispose();controls.dispose();renderer.dispose();renderer.domElement.remove();
-    throw worldResult.error||new Error('One or more city models could not be loaded');
+    throw landscapeError||worldResult.error||new Error('One or more city models could not be loaded');
   }
   const meshes=modelResults.map(result=>result.value);
 
@@ -137,11 +143,11 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   // They never replace the visible Hi3D geometry or participate in physical layout.
   const hitGeometry=new THREE.BoxGeometry(1,1,1),hitMaterial=new THREE.MeshBasicMaterial();
   disposables.push(hitGeometry,hitMaterial);
-  function addHitVolume(root,content,id){
+  function addHitVolume(root,content,id,resident=false){
     root.updateWorldMatrix(true,true);
     const bounds=new THREE.Box3().setFromObject(content),center=bounds.getCenter(new THREE.Vector3());
     const hit=new THREE.Mesh(hitGeometry,hitMaterial);hit.scale.copy(bounds.getSize(new THREE.Vector3()));
-    hit.position.copy(root.worldToLocal(center));hit.visible=false;hit.userData={productId:id,pickProxy:true};
+    hit.position.copy(root.worldToLocal(center));hit.visible=false;hit.userData={...(resident?{residentId:id}:{productId:id}),pickProxy:true};
     root.add(hit);hit.updateMatrix();hit.matrixAutoUpdate=false;pickables.push(hit);
   }
 
@@ -186,7 +192,7 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 
-  function placeStreetAsset(item,object,definition,index) {
+  function placeStreetAsset(item,object,definition,index,animations=[]) {
     improveTextureSampling(object);allModels.push(object);
     const bounds=new THREE.Box3().setFromObject(object),size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
     const scale=definition.height?definition.height/Math.max(size.y,.01):definition.width/Math.max(size.x,size.z,.01);
@@ -196,12 +202,17 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
       const root=new THREE.Group();root.add(normalized);root.position.fromArray(position);scene.add(root);
       if(definition.ground)root.scale.y=.08;
       root.traverse(child=>{if(child.isMesh){child.castShadow=!definition.ground&&definition.motion!=='drift';child.receiveShadow=true;}});
-      if(definition.product)addHitVolume(root,normalized,definition.product);
-      freezeLocal(root);
+      if(definition.person)addHitVolume(root,normalized,item.id,true);
+      else if(definition.product)addHitVolume(root,normalized,definition.product);
+      if(definition.person){
+        root.updateMatrix();root.matrixAutoUpdate=false;normalized.updateMatrix();normalized.matrixAutoUpdate=false;
+        root.traverse(o=>{o.layers.set(1);if(o.isMesh){o.castShadow=false;if(o.isSkinnedMesh)o.frustumCulled=false;}});
+      }else freezeLocal(root);
       if(definition.motion==='drift'){root.matrixAutoUpdate=true;root.traverse(o=>o.layers.set(1));}
       const firstYear=definition.product?Number(products.find(p=>p.id===definition.product).launched.slice(0,4)):2023;
       const entry={root,definition,position:new THREE.Vector3(...position),firstYear,phase:index*.73+i};
       root.visible=currentYear>=firstYear;streetObjects.push(entry);invalidate(true);
+      if(definition.person)neighbors.add({id:item.id,root,model:normalized,animations,height:definition.height,firstYear,phase:index*.73+i});
       if(definition.glow){const light=new THREE.PointLight('#ffb852',night?8:0,5,2);light.layers.enable(1);light.position.set(position[0],position[1]+definition.height*.9,position[2]);scene.add(light);lights.push(light);entry.light=light;light.visible=night&&root.visible;}
     });
     if(item.id==='stone-bridge')walker?.setBridgeReady(true);
@@ -209,16 +220,23 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   }
   // The first view appears as soon as the buildings load. Props stream in three at a time.
   const propQueue=(manifest.props||[]).filter(item=>CITY_PROPS.some(p=>p.id===item.id));const totalProps=propQueue.length;let loadedProps=0,failedProps=0;
-  async function propWorker(){while(propQueue.length&&!disposed){const item=propQueue.shift();try{const definition=CITY_PROPS.find(p=>p.id===item.id);if(!definition)continue;const gltf=await loader.loadAsync(assetURL(item));if(disposed){gltf.scene.traverse(o=>{o.geometry?.dispose();if(o.material)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{Object.values(m).forEach(v=>{if(v?.isTexture)v.dispose();});m.dispose();});});return;}placeStreetAsset(item,gltf.scene,definition,CITY_PROPS.indexOf(definition));loadedProps++;}catch(error){failedProps++;console.warn('Street asset unavailable:',item.id,error);}onProgress({stage:'street',loaded:loadedProps,total:totalProps,failed:failedProps});}}
+  async function propWorker(){while(propQueue.length&&!disposed){const item=propQueue.shift();try{const definition=CITY_PROPS.find(p=>p.id===item.id);if(!definition)continue;const gltf=await loader.loadAsync(assetURL(item));if(disposed){gltf.scene.traverse(o=>{o.geometry?.dispose();if(o.material)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{Object.values(m).forEach(v=>{if(v?.isTexture)v.dispose();});m.dispose();});});return;}placeStreetAsset(item,gltf.scene,definition,CITY_PROPS.indexOf(definition),gltf.animations);loadedProps++;}catch(error){failedProps++;console.warn('Street asset unavailable:',item.id,error);}onProgress({stage:'street',loaded:loadedProps,total:totalProps,failed:failedProps});}}
   const streetReady=Promise.all([propWorker(),propWorker(),propWorker()]).finally(()=>{draco.dispose();invalidate(true);});
   const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
   raycaster.layers.enable(1);
   const down={x:0,y:0,active:false};
-  function pick(event){const rect=renderer.domElement.getBoundingClientRect();pointer.set((event.clientX-rect.left)/rect.width*2-1,-(event.clientY-rect.top)/rect.height*2+1);raycaster.setFromCamera(pointer,camera);return raycaster.intersectObjects(pickables,false).find(hit=>{const id=hit.object.userData.productId;return buildings.get(id)?.target>0&&(hit.object.visible||hit.object.userData.pickProxy);})?.object.userData.productId;}
+  function pick(event){
+    const rect=renderer.domElement.getBoundingClientRect();pointer.set((event.clientX-rect.left)/rect.width*2-1,-(event.clientY-rect.top)/rect.height*2+1);raycaster.setFromCamera(pointer,camera);
+    for(const hit of raycaster.intersectObjects(pickables,false)){
+      const {productId,residentId,pickProxy}=hit.object.userData;
+      if(residentId&&neighbors.getTarget(residentId))return `resident:${residentId}`;
+      if(productId&&buildings.get(productId)?.target>0&&(hit.object.visible||pickProxy))return productId;
+    }
+  }
   const pointerDown=e=>{down.x=e.clientX;down.y=e.clientY;down.active=true;flight=null;};
-  const pointerUp=e=>{down.active=false;if(walker?.active)return;if(Math.hypot(e.clientX-down.x,e.clientY-down.y)>7)return;const id=pick(e);if(id)onSelect(id);};
+  const pointerUp=e=>{down.active=false;if(walker?.active)return;if(Math.hypot(e.clientX-down.x,e.clientY-down.y)>7)return;const id=pick(e);if(id?.startsWith('resident:'))hooks.onResident?.(id.slice(9));else if(id)onSelect(id);};
   const pointerCancel=()=>{down.active=false;};
-  let hoverAt=0;const pointerMove=e=>{if(walker?.active||down.active||e.pointerType==='touch'||performance.now()-hoverAt<90)return;hoverAt=performance.now();const id=pick(e);renderer.domElement.style.cursor=id?'pointer':'grab';if(id!==hovered){buildings.forEach((b,key)=>b.tag.material.color.set(key===id?'#ffe0a0':'#ffffff'));hovered=id;}};
+  let hoverAt=0;const pointerMove=e=>{if(walker?.active||down.active||e.pointerType==='touch'||performance.now()-hoverAt<90)return;hoverAt=performance.now();const id=pick(e);renderer.domElement.style.cursor=id?'pointer':'grab';if(id!==hovered){buildings.forEach((b,key)=>b.tag.material.color.set(key===id?'#ffe0a0':'#ffffff'));hovered=id;neighbors.setHovered(id?.startsWith('resident:')?id.slice(9):null);}};
   renderer.domElement.addEventListener('pointerdown',pointerDown);renderer.domElement.addEventListener('pointerup',pointerUp);renderer.domElement.addEventListener('pointermove',pointerMove);
   renderer.domElement.addEventListener('pointercancel',pointerCancel);
 
@@ -227,7 +245,7 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   const world=worldResult.world,hero=meshes.find(m=>m.item.id==='hero');
   if(hero){
     improveTextureSampling(hero.object);
-    walker=createWalker({scene,camera,canvas:renderer.domElement,gltf:hero.gltf,world,motion:hero.item.locomotion,
+    walker=createWalker({scene,camera,canvas:renderer.domElement,gltf:hero.gltf,world,motion:hero.item.locomotion,getResidents:(p,y)=>neighbors.nearby(p,y),
       onMode:value=>{controls.enabled=!value;controls.autoRotate=false;flight=null;camera.fov=value?52:38;camera.updateProjectionMatrix();invalidate();hooks.onMode?.(value);},
       onDiscovery:place=>hooks.onDiscovery?.(place),onNearby:place=>hooks.onNearby?.(place)});
     walker.setBridgeReady(streetObjects.some(o=>o.definition.id==='stone-bridge'));
@@ -279,6 +297,7 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
       if(boat)uniforms.cityBoatXZ.value.set(boat.root.position.x,boat.root.position.z);
     }
     const walkingChanged=walker?.update(delta)||false;
+    neighbors.update(delta,camera,walker?.root.position,!!walker?.active,currentYear);
     const flying=!!flight;
     if(flight){camera.position.lerp(flight.position,blend);controls.target.lerp(flight.target,blend);if(camera.position.distanceTo(flight.position)<.03)flight=null;}
     const cameraChanged=walker?.active?walkingChanged:controls.update(delta);
@@ -288,7 +307,7 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
     renderer.info.reset();meter?.begin();staticFrame.render(cameraChanged||flying||growing);meter?.end();
   }
   function setYear(year){invalidate(true);currentYear=year;walker?.setYear(year);buildings.forEach(b=>{const status=statusAt(b.product,year);b.target=status==='future'?0:1;if(b.baseColor)b.root.traverse(o=>{if(o.isMesh)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{if(m.userData.cityBaseColor)m.color.copy(m.userData.cityBaseColor).multiplyScalar(status==='archived'?.65:1);});});});streetObjects.forEach(o=>{o.root.visible=year>=o.firstYear;if(o.light)o.light.visible=night&&o.root.visible;});updateJournal(year);}
-  function setNight(value){invalidate();night=value;scene.background.copy(night?nightColor:dayColor);scene.fog.color.copy(scene.background);hemi.intensity=night?.5:1.6;sun.intensity=night?.35:2.5;fill.intensity=night?.7:.6;scene.environmentIntensity=night?.28:.45;sun.color.set(night?'#a1b8ed':'#ffe1a8');renderer.toneMappingExposure=night?.9:1.05;lights.forEach(light=>{light.intensity=night?8:0;light.visible=night;});canal.material.color.set(night?'#273d55':'#789f9c');}
+  function setNight(value){invalidate();night=value;landscape.setNight(value);scene.background.copy(night?nightColor:dayColor);scene.fog.color.copy(scene.background);hemi.intensity=night?.5:1.6;sun.intensity=night?.35:2.5;fill.intensity=night?.7:.6;scene.environmentIntensity=night?.28:.45;sun.color.set(night?'#a1b8ed':'#ffe1a8');renderer.toneMappingExposure=night?.9:1.05;lights.forEach(light=>{light.intensity=night?8:0;light.visible=night;});canal.material.color.set(night?'#273d55':'#789f9c');}
   function focus(id){selectedId=id;const b=buildings.get(id);if(!b||walker?.active)return;const h=Math.max(4,b.height);flight={target:b.root.position.clone().add(new THREE.Vector3(0,h*.5,0)),position:b.root.position.clone().add(new THREE.Vector3(-h*1.15,h*.95,h*1.85))};}
   function view(name){
     walker?.setActive(false);
@@ -302,9 +321,15 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   function zoom(factor){if(walker?.active){walker.zoom(factor);return;}const delta=camera.position.clone().sub(controls.target).multiplyScalar(factor);const length=THREE.MathUtils.clamp(delta.length(),controls.minDistance,controls.maxDistance);flight={position:controls.target.clone().add(delta.setLength(length)),target:controls.target.clone()};}
   function resume(){if(running||disposed)return;running=true;lastTick=0;resize();tick();}
   function pause(){running=false;walker?.pause();cancelAnimationFrame(frame);}
-  function dispose(){pause();disposed=true;renderer.domElement.removeEventListener('webglcontextrestored',contextRestored);resizeObserver.disconnect();controls.dispose();renderer.domElement.removeEventListener('pointerdown',pointerDown);renderer.domElement.removeEventListener('pointerup',pointerUp);renderer.domElement.removeEventListener('pointermove',pointerMove);renderer.domElement.removeEventListener('pointercancel',pointerCancel);meter?.dispose();staticFrame.dispose();const resources=new Set(disposables);scene.traverse(o=>{if(o.geometry)resources.add(o.geometry);if(o.material)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{resources.add(m);Object.values(m).forEach(v=>{if(v?.isTexture)resources.add(v);});});});resources.forEach(r=>r.dispose());walker?.dispose();env.dispose();renderer.dispose();renderer.domElement.remove();}
+  function dispose(){pause();disposed=true;renderer.domElement.removeEventListener('webglcontextrestored',contextRestored);resizeObserver.disconnect();controls.dispose();renderer.domElement.removeEventListener('pointerdown',pointerDown);renderer.domElement.removeEventListener('pointerup',pointerUp);renderer.domElement.removeEventListener('pointermove',pointerMove);renderer.domElement.removeEventListener('pointercancel',pointerCancel);meter?.dispose();staticFrame.dispose();const resources=new Set(disposables);scene.traverse(o=>{if(o.geometry)resources.add(o.geometry);if(o.material)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{resources.add(m);Object.values(m).forEach(v=>{if(v?.isTexture)resources.add(v);});});});resources.forEach(r=>r.dispose());neighbors.dispose();walker?.dispose();env.dispose();renderer.dispose();renderer.domElement.remove();}
+  function setTalking(id){
+    neighbors.setTalking(id);
+    const person=id&&neighbors.getTarget(id);
+    walker?.setConversation(person?.root.position);
+    if(person&&!walker?.active){controls.autoRotate=false;flight={target:person.root.position.clone().add(new THREE.Vector3(0,.9,0)),position:person.root.position.clone().add(new THREE.Vector3(-2.2,2,3.6))};}
+  }
   function setLife(value){lifeEnabled=value;}
   function setOrbit(value){if(value)walker?.setActive(false);controls.autoRotate=value;controls.autoRotateSpeed=.28;}
   function setWalking(value){if(!walker)return false;if(value)walker.setActive(true);else reset();return true;}
-  return {setYear,setNight,focus,reset,zoom,resume,pause,dispose,setLife,setOrbit,view,streetReady,setWalking,interact:()=>walker?.interact(),setMuted:value=>walker?.setMuted(value),setRun:value=>walker?.setRun(value)};
+  return {setYear,setNight,focus,reset,zoom,resume,pause,dispose,setLife,setOrbit,view,streetReady,setWalking,setTalking,interact:()=>walker?.interact(),setMuted:value=>walker?.setMuted(value),setRun:value=>walker?.setRun(value)};
 }

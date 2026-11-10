@@ -1,5 +1,6 @@
 const ORIGINS=new Set(['https://mycity.up.railway.app','https://mycity-production-8226.up.railway.app','http://127.0.0.1:4173','http://localhost:4173']);
-const KEY=/^mycity\/models\/(?:props\/)?[a-z0-9-]+\.[a-f0-9]{16}\.glb$/;
+const KEY=/^mycity\/(?:models\/(?:props\/)?[a-z0-9-]+\.[a-f0-9]{16}\.glb|landscapes\/[a-z0-9-]+\.[a-f0-9]{16}\.(?:png|webp|jpg))$/;
+const MIME={glb:'model/gltf-binary',png:'image/png',webp:'image/webp',jpg:'image/jpeg'};
 function cors(response,origin){
  const headers=new Headers(response.headers);
  headers.set('Vary','Origin');
@@ -34,7 +35,7 @@ export default {
    catch{ return cors(error(range?416:502),origin); }
    if(!object)return cors(error(404),origin);
    const headers=new Headers();object.writeHttpMetadata(headers);
-   headers.set('Content-Type','model/gltf-binary');headers.set('ETag',object.httpEtag);
+   headers.set('Content-Type',MIME[key.split('.').at(-1)]);headers.set('ETag',object.httpEtag);
    headers.set('Cache-Control','public, max-age=31536000, immutable');headers.set('Accept-Ranges','bytes');
    let status=200;
    if(range&&object.range){status=206;const start=object.range.offset||0;const length=object.range.length??object.size-start;headers.set('Content-Range',`bytes ${start}-${start+length-1}/${object.size}`);headers.set('Content-Length',String(length));}

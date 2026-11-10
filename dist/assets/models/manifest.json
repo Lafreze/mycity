@@ -280,44 +280,50 @@
     {
       "id": "maker",
       "file": "props/maker.glb",
-      "bytes": 1564012,
-      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/models/props/maker.9729c56742ded581.glb",
-      "sha256": "9729c56742ded58120b84a088099fb03f4eb40c51a0dd642ca07960dd74c4708"
+      "bytes": 1774828,
+      "animated": true,
+      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/models/props/maker.567d3a8a01cd3fac.glb",
+      "sha256": "567d3a8a01cd3fac8d4404c74a77fb8cce19ca66a04365be8bdb865082f3b197"
     },
     {
       "id": "reader",
       "file": "props/reader.glb",
-      "bytes": 1647748,
-      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/models/props/reader.91b577fe25c6d004.glb",
-      "sha256": "91b577fe25c6d004c63c9d3327c6f53a4ee421cb55f6f4bb9dd036d84306bea3"
+      "bytes": 1878144,
+      "animated": true,
+      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/models/props/reader.e3969049673747e4.glb",
+      "sha256": "e3969049673747e49e6fbe7ae4196f07cfbd3b26a9fea3d268be694b738816e3"
     },
     {
       "id": "barista",
       "file": "props/barista.glb",
-      "bytes": 1558396,
-      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/models/props/barista.736af9d081f0171d.glb",
-      "sha256": "736af9d081f0171d721c2e5d47cc1f7a7c23e348278f74177240c59a5d6be2e2"
+      "bytes": 1758360,
+      "animated": true,
+      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/models/props/barista.b8a25b66764f9e49.glb",
+      "sha256": "b8a25b66764f9e491bd528fef755c78f67fe1f76db061f126966ff8c9382bba0"
     },
     {
       "id": "florist",
       "file": "props/florist.glb",
-      "bytes": 1608456,
-      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/models/props/florist.dd8b84690a4c61ef.glb",
-      "sha256": "dd8b84690a4c61ef3827b0103863a8c3efa259562fdb18ae2f0ac4fa2db92372"
+      "bytes": 1820748,
+      "animated": true,
+      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/models/props/florist.94809d577ec453bf.glb",
+      "sha256": "94809d577ec453bf28c85edd3139704e31fd2a6a4ccdf6db5021b9dc8d085002"
     },
     {
       "id": "cyclist",
       "file": "props/cyclist.glb",
-      "bytes": 3742940,
-      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/models/props/cyclist.b39f914e11cd113e.glb",
-      "sha256": "b39f914e11cd113e09fbe702d79f46eb159c69dc2f0301997baff0dfa3f5fc1b"
+      "bytes": 3915016,
+      "animated": true,
+      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/models/props/cyclist.2f82a57bf2942a6a.glb",
+      "sha256": "2f82a57bf2942a6a077cf773f0067077ccd720a015ac073b1bd8de09bbf149cd"
     },
     {
       "id": "courier",
       "file": "props/courier.glb",
-      "bytes": 1565636,
-      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/models/props/courier.4e2df28bb4191dd7.glb",
-      "sha256": "4e2df28bb4191dd772049361b859963971412d5362ce6f1136030208191563cf"
+      "bytes": 1996416,
+      "animated": true,
+      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/models/props/courier.8f1639f53212e240.glb",
+      "sha256": "8f1639f53212e240549797cf20c2eb55c7b13fba019c768b3bd05a272d37804f"
     },
     {
       "id": "strolling-couple",
@@ -336,16 +342,18 @@
     {
       "id": "construction-worker",
       "file": "props/construction-worker.glb",
-      "bytes": 1550672,
-      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/models/props/construction-worker.8410ac8e247a4ffb.glb",
-      "sha256": "8410ac8e247a4ffb4e8893c6e1f9a8c13c76ebaf97bc001b6913751975e2f11b"
+      "bytes": 1769888,
+      "animated": true,
+      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/models/props/construction-worker.2aa30306693c460a.glb",
+      "sha256": "2aa30306693c460a5ca098c7d93bb6289ba242e044db7c2df61b614aa0df8588"
     },
     {
       "id": "helper-robot",
       "file": "props/helper-robot.glb",
-      "bytes": 2250452,
-      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/models/props/helper-robot.d5d99370c5b78257.glb",
-      "sha256": "d5d99370c5b7825765d8391964b8b1c86d7d9722d1838e5d50706f9d053b3c11"
+      "bytes": 2585848,
+      "animated": true,
+      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/models/props/helper-robot.28759e7a1c78d482.glb",
+      "sha256": "28759e7a1c78d48208340659c5dcb5544f40b14b986e9d4fbd6362044b39b278"
     },
     {
       "id": "ginger-cat",
@@ -357,24 +365,22 @@
     {
       "id": "street-musician",
       "file": "props/street-musician.glb",
-      "bytes": 1540440,
-      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/models/props/street-musician.a78b7bf44f44a472.glb",
-      "sha256": "a78b7bf44f44a4723923f20a8e607ca5b19f502b49c15c8f7584bff22e13516d"
+      "bytes": 1756952,
+      "animated": true,
+      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/models/props/street-musician.07095941107acf79.glb",
+      "sha256": "07095941107acf7936cc81741cabd67ba925e38156c84dfc3deb44fcbefaf3b1"
     }
   ],
   "pending": {
     "models": 0,
     "props": 0
   },
-  "updatedAt": "2026-11-10T07:51:07.030Z",
-  "version": "545cd46a7c3c2a22",
+  "updatedAt": "2026-11-10T08:32:04.205Z",
   "characters": [
     {
       "id": "hero",
       "file": "hero.glb",
       "bytes": 5061236,
-      "sha256": "ea96ea94c6c06ae3b1a694bf03971e4d3d8c4b469f914796bfe78d149fe1a2e0",
-      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/models/hero.ea96ea94c6c06ae3.glb",
       "locomotion": {
         "walkSpeed": 1.3166144200626961,
         "runSpeed": 2.666666666666667,
@@ -384,7 +390,60 @@
         "walkCycleTravel": 0.9655172413793105,
         "runCycleDuration": 0.6,
         "runCycleTravel": 1.5999999999999999
-      }
+      },
+      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/models/hero.ea96ea94c6c06ae3.glb",
+      "sha256": "ea96ea94c6c06ae3b1a694bf03971e4d3d8c4b469f914796bfe78d149fe1a2e0"
     }
-  ]
+  ],
+  "environment": [
+    {
+      "id": "distant-town",
+      "file": "landscapes/distant-town.png",
+      "provider": "Hi3D MCP",
+      "role": "painted distant landscape",
+      "width": 1376,
+      "height": 768,
+      "mimeType": "image/png",
+      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/landscapes/distant-town.17affc4c0e05e0d7.png",
+      "sha256": "17affc4c0e05e0d72f462db7b80fb53d0bc0a08af61b046c09e43378cf199d2f",
+      "bytes": 1335710
+    },
+    {
+      "id": "orchards",
+      "file": "landscapes/orchards.png",
+      "provider": "Hi3D MCP",
+      "role": "painted distant landscape",
+      "width": 1376,
+      "height": 768,
+      "mimeType": "image/png",
+      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/landscapes/orchards.2931cb526e61d803.png",
+      "sha256": "2931cb526e61d803e888a377c2024afa4579d0bc42910035c60ad2a79ec1c8ac",
+      "bytes": 1518303
+    },
+    {
+      "id": "valley",
+      "file": "landscapes/valley.png",
+      "provider": "Hi3D MCP",
+      "role": "painted distant landscape",
+      "width": 1376,
+      "height": 768,
+      "mimeType": "image/png",
+      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/landscapes/valley.932381f810244d4b.png",
+      "sha256": "932381f810244d4b875220a64ae98a126ea284cde6f1df2f030af91991f2ca5d",
+      "bytes": 1422248
+    },
+    {
+      "id": "village",
+      "file": "landscapes/village.png",
+      "provider": "Hi3D MCP",
+      "role": "painted distant landscape",
+      "width": 1376,
+      "height": 768,
+      "mimeType": "image/png",
+      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/landscapes/village.a552195d7a988286.png",
+      "sha256": "a552195d7a988286c9403417bcc9582c88b49e40d398f9061384f017f67ed0df",
+      "bytes": 1310170
+    }
+  ],
+  "version": "a31463f073af189e"
 }

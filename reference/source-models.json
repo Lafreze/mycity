@@ -202,32 +202,38 @@
     {
       "id": "maker",
       "file": "props/maker.glb",
-      "bytes": 222524
+      "bytes": 1774828,
+      "animated": true
     },
     {
       "id": "reader",
       "file": "props/reader.glb",
-      "bytes": 224340
+      "bytes": 1878144,
+      "animated": true
     },
     {
       "id": "barista",
       "file": "props/barista.glb",
-      "bytes": 226108
+      "bytes": 1758360,
+      "animated": true
     },
     {
       "id": "florist",
       "file": "props/florist.glb",
-      "bytes": 228384
+      "bytes": 1820748,
+      "animated": true
     },
     {
       "id": "cyclist",
       "file": "props/cyclist.glb",
-      "bytes": 312496
+      "bytes": 3915016,
+      "animated": true
     },
     {
       "id": "courier",
       "file": "props/courier.glb",
-      "bytes": 218320
+      "bytes": 1996416,
+      "animated": true
     },
     {
       "id": "strolling-couple",
@@ -242,12 +248,14 @@
     {
       "id": "construction-worker",
       "file": "props/construction-worker.glb",
-      "bytes": 235412
+      "bytes": 1769888,
+      "animated": true
     },
     {
       "id": "helper-robot",
       "file": "props/helper-robot.glb",
-      "bytes": 267416
+      "bytes": 2585848,
+      "animated": true
     },
     {
       "id": "ginger-cat",
@@ -257,7 +265,8 @@
     {
       "id": "street-musician",
       "file": "props/street-musician.glb",
-      "bytes": 223080
+      "bytes": 1756952,
+      "animated": true
     }
   ],
   "pending": {
@@ -280,6 +289,32 @@
         "runCycleDuration": 0.6,
         "runCycleTravel": 1.5999999999999999
       }
+    }
+  ],
+  "environment": [
+    {
+      "id": "distant-town",
+      "file": "landscapes/distant-town.png",
+      "provider": "Hi3D MCP",
+      "role": "painted distant landscape"
+    },
+    {
+      "id": "orchards",
+      "file": "landscapes/orchards.png",
+      "provider": "Hi3D MCP",
+      "role": "painted distant landscape"
+    },
+    {
+      "id": "valley",
+      "file": "landscapes/valley.png",
+      "provider": "Hi3D MCP",
+      "role": "painted distant landscape"
+    },
+    {
+      "id": "village",
+      "file": "landscapes/village.png",
+      "provider": "Hi3D MCP",
+      "role": "painted distant landscape"
     }
   ]
 }

@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
-import {WALKING,DISCOVERIES,floorHeight,blockedAt,moveWalker,safePosition} from '../dist/walking-world.js';
+import {WALKING,DISCOVERIES,floorHeight,blockedAt,moveWalker,safePosition,nearestInteraction} from '../dist/walking-world.js';
+import {CITY_PROPS} from '../dist/props.js';
+import {RESIDENTS,greetingFor} from '../dist/residents.js';
+import {PRODUCTS} from '../dist/products.js';
 const world=JSON.parse(await readFile('dist/navigation.json','utf8'));
 const sourceHash=createHash('sha256');
 for(const file of ['dist/world.js','dist/walking-world.js','dist/props.js','dist/products.js','reference/model-quality.json','reference/bridge-walkable.json'])sourceHash.update(await readFile(file));
@@ -29,9 +32,12 @@ const step=.2,minX=-16.4,minZ=-12.2,nx=165,nz=132;
 const at=(ix,iz)=>({x:minX+ix*step,z:minZ+iz*step});
 const origin=[Math.round((WALKING.spawn.x-minX)/step),Math.round((WALKING.spawn.z-minZ)/step)];
 const queue=[origin],seen=new Set([origin.join(',')]),reached=new Set();
+const residents=CITY_PROPS.filter(p=>p.person).map(p=>({id:`resident:${p.id}`,resident:p.id,x:p.positions[0][0],z:p.positions[0][2],year:p.product?Number(PRODUCTS.find(x=>x.id===p.product).launched.slice(0,4)):2023,radius:1.9,priority:.35}));
+const neighborsReached=new Set();
 for(let q=0;q<queue.length;q++){
   const [ix,iz]=queue[q],pos=at(ix,iz),y=floorHeight(pos.x,pos.z,world.bridge);
   for(const d of DISCOVERIES)if(Math.hypot(d.x-pos.x,d.z-pos.z)<1.3)reached.add(d.id);
+  const selected=nearestInteraction(pos,2026,DISCOVERIES,residents);if(selected?.resident)neighborsReached.add(selected.resident);
   for(const [dx,dz] of [[1,0],[-1,0],[0,1],[0,-1]]){
     const xx=ix+dx,zz=iz+dz,key=`${xx},${zz}`;if(xx<0||xx>=nx||zz<0||zz>=nz||seen.has(key))continue;
     const b=at(xx,zz),h=floorHeight(b.x,b.z,world.bridge);
@@ -40,4 +46,9 @@ for(let q=0;q<queue.length;q++){
   }
 }
 assert.deepEqual([...reached].sort(),DISCOVERIES.map(d=>d.id).sort(),'Every discovery must be reachable without crossing water/walls');
-console.log(`Passed: collision sliding, high-speed walls, dry banks, stairs/bridge, safe recovery and ${reached.size} reachable discoveries (${seen.size} walkable samples).`);
+assert.deepEqual([...neighborsReached].sort(),RESIDENTS.map(r=>r.id).sort(),'Every resident must be selectable from reachable ground, even beside a product hotspot');
+assert.equal(nearestInteraction({x:0,z:0},2023,[],[{x:0,z:0,year:2025}]),null,'Future residents cannot be selected');
+assert.equal(nearestInteraction({x:0,z:0},2026,[],[]),null,'Unloaded residents cannot be selected');
+assert.equal(RESIDENTS.length,9);assert.equal(new Set(RESIDENTS.map(r=>r.id)).size,9);
+for(const r of RESIDENTS){assert.equal(r.topics.length,2);assert.ok(r.topics.every(t=>t.label&&t.reply));assert.equal(greetingFor(r,{known:true}),r.returnGreeting);assert.equal(greetingFor(r,{known:true,night:true}),r.nightGreeting);if(r.product)assert.ok(PRODUCTS.some(p=>p.id===r.product));}
+console.log(`Passed: collision sliding, walls, dry banks, bridge, recovery, ${reached.size} discoveries and all ${neighborsReached.size} conversations reachable (${seen.size} walkable samples).`);

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import {WALKING,DISCOVERIES,moveWalker,safePosition} from './walking-world.js?v=walking-1';
+import {WALKING,DISCOVERIES,moveWalker,safePosition,nearestInteraction} from './walking-world.js?v=neighbors-2';
 
-export function createWalker({scene,camera,canvas,gltf,world,motion={},onDiscovery,onMode,onNearby}){
+export function createWalker({scene,camera,canvas,gltf,world,motion={},getResidents=()=>[],onDiscovery,onMode,onNearby}){
   const allColliders=world.colliders,loadedAssets=new Set();
   world={...world,colliders:allColliders.filter(b=>!b.requiresAsset)};
   const root=new THREE.Group(),model=gltf.scene;
@@ -23,8 +23,8 @@ export function createWalker({scene,camera,canvas,gltf,world,motion={},onDiscove
   // A small, soft contact shadow moves with the character without redrawing city shadows.
   const shadowMaterial=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{opacity:{value:.2}},vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:'varying vec2 vUv;uniform float opacity;void main(){float a=1.-smoothstep(.12,.5,length(vUv-.5));gl_FragColor=vec4(.16,.13,.09,a*opacity);}'});
   const shadow=new THREE.Mesh(new THREE.PlaneGeometry(.75,.55),shadowMaterial);shadow.rotation.x=-Math.PI/2;shadow.layers.set(1);scene.add(shadow);
-  let active=false,year=2026,bridgeReady=false,position={...WALKING.spawn,y:0},yaw=-Math.PI/2,pitch=.43,distance=4.5,heading=Math.PI/2,nearby=null,muted=false;
-  let heldRun=false,drag=null,joystickId=null,joy={x:0,y:0},visitSignature='';
+  let active=false,year=2026,bridgeReady=false,position={...WALKING.spawn,y:0},yaw=-Math.PI/2,pitch=.28,distance=4.5,heading=Math.PI/2,nearby=null,muted=false;
+  let heldRun=false,drag=null,joystickId=null,joy={x:0,y:0},visitSignature='',conversation=null;
   const debug=new URLSearchParams(location.search).has('perf');
   const keys=new Set(),listeners=[],cameraPosition=new THREE.Vector3(),cameraTarget=new THREE.Vector3(),offset=new THREE.Vector3(),previousCamera=new THREE.Vector3(),ray=new THREE.Ray(),hit=new THREE.Vector3();
   const cameraBoxes=allColliders.filter(b=>b.camera).map(b=>{const c=b.cameraBounds||b;return {...b,box:new THREE.Box3(new THREE.Vector3(c.minX-.12,c.minY||0,c.minZ-.12),new THREE.Vector3(c.maxX+.12,c.maxY+.12,c.maxZ+.12))};});
@@ -60,7 +60,13 @@ export function createWalker({scene,camera,canvas,gltf,world,motion={},onDiscove
   function updateCamera(dt,snap=false){
     cameraTarget.set(position.x,position.y+.95,position.z);
     offset.set(Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),Math.cos(yaw)*Math.cos(pitch));
-    ray.set(cameraTarget,offset);let boom=distance;
+    let boom=distance;
+    if(conversation){
+      cameraTarget.lerp(new THREE.Vector3(conversation.x,conversation.y+.95,conversation.z),.55);
+      offset.set(position.x-conversation.x,0,position.z-conversation.z).normalize();
+      offset.applyAxisAngle(THREE.Object3D.DEFAULT_UP,-.55);offset.y=.28;offset.normalize();boom=3.7;
+    }
+    ray.set(cameraTarget,offset);
     for(const b of cameraBoxes){if(b.firstYear>year||(b.requiresAsset&&!loadedAssets.has(b.requiresAsset)))continue;if(ray.intersectBox(b.box,hit))boom=Math.min(boom,Math.max(.3,cameraTarget.distanceTo(hit)-.18));}
     cameraPosition.copy(cameraTarget).addScaledVector(offset,boom);
     previousCamera.copy(camera.position);camera.position.lerp(cameraPosition,snap?1:1-Math.exp(-12*dt));
@@ -88,7 +94,7 @@ export function createWalker({scene,camera,canvas,gltf,world,motion={},onDiscove
     }else animate('idle');
     position=next;root.position.set(position.x,position.y,position.z);root.rotation.y=heading;
     shadow.position.set(position.x,position.y+.006,position.z);mixer.update(dt);
-    nearby=DISCOVERIES.filter(p=>p.year<=year).map(p=>({p,d:Math.hypot(p.x-position.x,p.z-position.z)})).filter(v=>v.d<1.55).sort((a,b)=>a.d-b.d)[0]?.p||null;
+    nearby=nearestInteraction(position,year,DISCOVERIES,getResidents(root.position,year));
     if((nearby?.id||'')!==visitSignature){visitSignature=nearby?.id||'';onNearby(nearby);}
     const movedCamera=updateCamera(dt);
     // DOM diagnostics also make collision/animation behaviour reviewable without a debug API.
@@ -100,5 +106,5 @@ export function createWalker({scene,camera,canvas,gltf,world,motion={},onDiscove
     return movedCamera||moved>.0001||!!drag;
   }
   root.visible=false;shadow.visible=false;
-  return {update,setActive,interact,get active(){return active;},get root(){return root;},setYear(value){year=value;position=safePosition(position,world,year,bridgeReady);},setBridgeReady(value){bridgeReady=value;},setAssetReady(id){loadedAssets.add(id);world.colliders=allColliders.filter(b=>!b.requiresAsset||loadedAssets.has(b.requiresAsset));position=safePosition(position,world,year,bridgeReady);},setMuted(value){muted=value;if(value)clear();},setRun(value){heldRun=value;},zoom(factor){distance=THREE.MathUtils.clamp(distance*factor,2.2,7);},pause:clear,dispose(){clear();listeners.forEach(fn=>fn());mixer.stopAllAction();mixer.uncacheRoot(model);scene.remove(root,shadow);}};
+  return {update,setActive,interact,get active(){return active;},get root(){return root;},setConversation(target){conversation=target?.clone()||null;},setYear(value){year=value;position=safePosition(position,world,year,bridgeReady);},setBridgeReady(value){bridgeReady=value;},setAssetReady(id){loadedAssets.add(id);world.colliders=allColliders.filter(b=>!b.requiresAsset||loadedAssets.has(b.requiresAsset));position=safePosition(position,world,year,bridgeReady);},setMuted(value){muted=value;if(value)clear();},setRun(value){heldRun=value;},zoom(factor){distance=THREE.MathUtils.clamp(distance*factor,2.2,7);},pause:clear,dispose(){clear();listeners.forEach(fn=>fn());mixer.stopAllAction();mixer.uncacheRoot(model);scene.remove(root,shadow);}};
 }

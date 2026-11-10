@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {CITY_PROPS} from '../dist/props.js';
+import {RESIDENTS} from '../dist/residents.js';
 const m=JSON.parse(await readFile('dist/assets/models/manifest.json','utf8'));
 const assets=[...m.models,...m.props,...(m.characters||[])];
 assert.equal(m.models.length,5);assert.equal(m.props.length,46);
@@ -20,4 +21,16 @@ const hero=quality.assets.find(q=>q.id==='hero');
 assert.ok(hero?.hasSkin&&hero.bones>=12,'Character must be rigged');
 assert.deepEqual(hero.animations.map(a=>a.name.toLowerCase()).sort(),['idle','run','walk']);
 for(const p of CITY_PROPS)assert.ok(m.props.some(x=>x.id===p.id),`Missing model: ${p.id}`);
-console.log(`Passed: all ${assets.length} model URLs, fingerprints, sizes and street placements.`);
+for(const p of RESIDENTS){
+ const q=quality.assets.find(q=>q.id===p.id);
+ assert.ok(q?.hasSkin&&q.bones>=6,`${p.id} needs its own skeleton`);
+ assert.deepEqual(q.animations.map(a=>a.name.toLowerCase()).sort(),['idle','talk']);
+ assert.equal(CITY_PROPS.find(x=>x.id===p.id)?.positions.length,1,'Each resident has one unique rig');
+}
+assert.equal(m.environment?.length,4,'Four painted views must surround the street');
+for(const a of m.environment){
+ const u=new URL(a.url);assert.equal(u.protocol,'https:');assert.equal(u.username,'');assert.equal(u.password,'');
+ assert.match(a.sha256,/^[a-f0-9]{64}$/);assert.ok(u.pathname.endsWith(`.${a.sha256.slice(0,16)}.png`));
+ assert.equal(a.mimeType,'image/png');assert.ok(a.width>=1300&&a.height>=700&&a.bytes>0);
+}
+console.log(`Passed: ${assets.length} model URLs, nine animated residents, four landscape panels, fingerprints and placements.`);

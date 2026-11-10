@@ -24,4 +24,8 @@ assert.equal((await send(url,{method:'PUT',body:'no'})).status,405);
 assert.equal((await send('https://assets.example/')).status,404);
 assert.equal((await send('https://assets.example/mycity/secrets.json')).status,404);
 assert.equal((await send('https://assets.example/mycity/models/arcade.glb')).status,404);
+const painting='https://assets.example/mycity/landscapes/distant-town.0123456789abcdef.png';
+r=await send(painting,{headers:{Origin:origin}});assert.equal(r.status,200);assert.equal(r.headers.get('Content-Type'),'image/png');assert.match(r.headers.get('Cache-Control'),/immutable/);await r.arrayBuffer();
+assert.equal((await send(painting,{method:'POST',body:'no'})).status,405);
+for(const path of ['landscapes/distant-town.png','landscapes/distant-town.0123456789abcdef.svg','secrets.0123456789abcdef.png'])assert.equal((await send('https://assets.example/mycity/'+path)).status,404);
 console.log('Passed: asset-only routes, read-only methods, CORS isolation, cache reuse, ETag, HEAD and Range.');

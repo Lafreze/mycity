@@ -1,19 +1,22 @@
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {validateCharacter} from './validate-character.mjs';
+import {RESIDENTS} from '../dist/residents.js';
 const m=JSON.parse(await readFile('dist/assets/models/manifest.json','utf8'));
 const origin=process.env.VERIFY_ORIGIN;
 if(!origin)throw new Error('Set VERIFY_ORIGIN to the deployed Railway URL.');
-const results=[],queue=[...m.models,...m.props,...(m.characters||[])];
+const results=[],queue=[...m.models,...m.props,...(m.characters||[]),...(m.environment||[])];
 async function worker(){while(queue.length){const a=queue.shift();
  const r=await fetch(a.url,{headers:{Origin:origin},signal:AbortSignal.timeout(60000)});
  if(r.status!==200)throw new Error(`${a.id}: full download must return HTTP 200, got ${r.status}`);
  if(r.headers.get('access-control-allow-origin')!==origin)throw new Error(`${a.id}: CORS origin mismatch`);
  if(!/immutable/.test(r.headers.get('cache-control')||''))throw new Error(`${a.id}: missing immutable cache policy`);
- if(!(r.headers.get('content-type')||'').startsWith('model/gltf-binary'))throw new Error(`${a.id}: wrong MIME type`);
+ if(!(r.headers.get('content-type')||'').startsWith(a.mimeType||'model/gltf-binary'))throw new Error(`${a.id}: wrong MIME type`);
  const b=Buffer.from(await r.arrayBuffer());
  if(b.length!==a.bytes || createHash('sha256').update(b).digest('hex')!==a.sha256)throw new Error(`${a.id}: content mismatch`);
- results.push({id:a.id,bytes:b.length,status:r.status,sha256:a.sha256,...(a.id==='hero'?{character:validateCharacter(b)}:{})});
+ const resident=RESIDENTS.some(p=>p.id===a.id);
+ if(a.mimeType==='image/png'&&(b.subarray(0,8).toString('hex')!=='89504e470d0a1a0a'||b.readUInt32BE(16)!==a.width||b.readUInt32BE(20)!==a.height))throw new Error(`${a.id}: invalid painting`);
+ results.push({id:a.id,bytes:b.length,status:r.status,sha256:a.sha256,...(a.id==='hero'||resident?{character:validateCharacter(b,resident?{clips:['Idle','Talk'],minBones:6}:undefined)}:{})});
 }}
 await Promise.all([worker(),worker(),worker()]);
 const url=m.models[0].url;
@@ -23,5 +26,5 @@ const head=await fetch(url,{method:'HEAD',headers:{Origin:origin}});if(!head.ok)
 const denied=await fetch(url,{method:'HEAD',headers:{Origin:'https://unrelated.invalid'}});
 if(denied.headers.get('access-control-allow-origin'))throw new Error('Unexpected CORS for unrelated origin');
 await mkdir('output',{recursive:true});
-await writeFile('output/r2-verification.json',JSON.stringify({checkedAt:new Date().toISOString(),origin,version:m.version,models:results.length,bytes:results.reduce((n,x)=>n+x.bytes,0),range:true,head:true,originIsolation:true,results},null,2)+'\n');
-console.log(`Verified ${results.length} models: SHA-256, sizes, MIME, cache, CORS, HEAD, Range and origin isolation.`);
+await writeFile('output/r2-verification.json',JSON.stringify({checkedAt:new Date().toISOString(),origin,version:m.version,assets:results.length,models:results.length-(m.environment?.length||0),paintings:m.environment?.length||0,bytes:results.reduce((n,x)=>n+x.bytes,0),range:true,head:true,originIsolation:true,results},null,2)+'\n');
+console.log(`Verified ${results.length} assets: SHA-256, skeletons/clips, sizes, MIME, cache, CORS, HEAD, Range and origin isolation.`);

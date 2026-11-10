@@ -1,0 +1,29 @@
+{
+  "provider": "Hi3D MCP",
+  "model": "Nano-Banana 2",
+  "createdAt": "2026-11-10",
+  "purpose": "Four painted distant views surrounding the interactive 3D street",
+  "actualPoints": 16,
+  "panels": [
+    {
+      "id": "distant-town",
+      "taskId": "0866d04c830046edb322d094d3d17d83",
+      "actualPoints": 4
+    },
+    {
+      "id": "orchards",
+      "taskId": "f174ee439c2a45a38942b37b1c873f8d",
+      "actualPoints": 4
+    },
+    {
+      "id": "valley",
+      "taskId": "82622caa9828497185a5a69e839813d3",
+      "actualPoints": 4
+    },
+    {
+      "id": "village",
+      "taskId": "9c45d371810f499f8df636609aa7a649",
+      "actualPoints": 4
+    }
+  ]
+}
