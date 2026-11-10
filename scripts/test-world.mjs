@@ -13,7 +13,11 @@ for(const p of CITY_PROPS) {
   assert.ok(!WITHHELD_PROPS.includes(p.id),`Unisolated diorama in scene: ${p.id}`);
   assert.ok(models.has(p.id),`Missing inspected geometry: ${p.id}`);
   p.positions.forEach((position,i)=>{
-    const b=footprint(models.get(p.id),p,i);placed.push({...b,id:p.id});
+    const b=footprint(models.get(p.id),p,i);
+    if(p.id==='stone-bridge'){
+      // The new entrance stairs are narrower than the arch: empty corners are not solid stone.
+      placed.push({...b,minZ:5.4,maxZ:11,id:p.id},{...b,minX:9.85,maxX:11.55,minZ:3.6,maxZ:5.4,id:p.id},{...b,minX:9.85,maxX:11.55,minZ:11,maxZ:12.8,id:p.id});
+    }else placed.push({...b,id:p.id});
     if(!['rowboat','stone-bridge'].includes(p.id))assert.ok(!wet(b),`${p.id} enters the canal: ${JSON.stringify(b)}`);
     if(p.id!=='rowboat')assert.equal(position[1],0,`${p.id} is not grounded`);
   });

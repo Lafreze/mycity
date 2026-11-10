@@ -12,7 +12,7 @@
   <title>MYCITY</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Crect width='80' height='80' rx='20' fill='%233d3023'/%3E%3Cpath d='M17 57V33l14-13 13 13v24M44 57V39l12-10 9 10v18M12 58h58M26 58V43h10v15' fill='none' stroke='%23f4e7ce' stroke-width='4'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://mycity-assets.lafreze-city.workers.dev" crossorigin>
-  <link rel="stylesheet" href="./styles.css?v=3d-only-2">
+  <link rel="stylesheet" href="./styles.css?v=walking-1">
   <script type="importmap">{"imports":{"three":"./vendor/three/three.module.js","three/addons/":"./vendor/three/addons/"}}</script>
 </head>
 <body data-scene-state="loading">
@@ -20,6 +20,7 @@
   <header class="topbar">
     <button id="home" class="brand" aria-label="回到街区全景" data-scene-control disabled>MYCITY</button>
     <div class="glass toolbar">
+      <button id="walk-toggle" aria-label="第三人称漫游" aria-pressed="false" data-scene-control disabled>漫游</button>
       <button id="products-toggle" aria-expanded="false" aria-controls="product-menu">作品</button>
       <span class="divider"></span>
       <button id="night-toggle" class="icon" aria-label="切换夜景" title="夜景" aria-pressed="false" data-scene-control disabled>☾</button>
@@ -30,6 +31,15 @@
     <div class="panel-top"><span>作品</span><button id="close-menu" class="icon" aria-label="关闭作品列表">×</button></div>
     <div id="product-items"></div>
   </aside>
+
+  <div id="walk-hud" hidden>
+    <span id="walk-progress" class="glass" aria-label="探索进度">足迹 0 / 8</span>
+    <span id="walk-hint">WASD 行走 · Shift 快走 · 拖动看周围</span>
+    <button id="walk-interact" class="glass" hidden><kbd>E</kbd><span id="walk-place"></span></button>
+    <div id="walk-stick" aria-label="行走摇杆"><span id="walk-thumb"></span></div>
+    <button id="walk-run" class="glass" aria-label="按住快走">快走</button>
+  </div>
+  <div id="walk-toast" class="glass" role="status" hidden></div>
 
   <div class="dock" aria-label="街区控制">
     <div class="glass timeline" role="group" aria-label="城市年份">
@@ -62,6 +72,6 @@
     <div class="detail-footer"><a id="product-link" class="solid" target="_blank" rel="noopener noreferrer">进入产品 ↗</a><span id="missing-link" class="muted">链接待接入</span><small id="demo-note">示例项目</small></div>
   </dialog>
   <noscript>请启用 JavaScript 以打开三维街区。</noscript>
-  <script type="module" src="./app.js?v=render-cache-1"></script>
+  <script type="module" src="./app.js?v=walking-1"></script>
 </body>
 </html>

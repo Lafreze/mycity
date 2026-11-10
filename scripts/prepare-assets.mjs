@@ -8,7 +8,7 @@ const base=new URL(values.base.replace(/\/$/,'')+'/');
 if(base.protocol!=='https:' || base.username || base.password || base.search || base.hash) throw new Error('Use a public HTTPS asset base without credentials.');
 const manifest=JSON.parse(await readFile('reference/source-models.json','utf8'));
 const plan=[];
-for(const item of [...manifest.models,...manifest.props]){
+for(const item of [...manifest.models,...manifest.props,...(manifest.characters||[])]){
   if(!/^[a-z0-9/-]+\.glb$/.test(item.file) || item.file.includes('..')) throw new Error('Invalid model path');
   const source=path.resolve(values.source,item.file),bytes=await readFile(source);
   if(bytes.readUInt32LE(0)!==0x46546c67 || bytes.readUInt32LE(4)!==2 || bytes.readUInt32LE(8)!==bytes.length) throw new Error(`Invalid GLB: ${item.file}`);

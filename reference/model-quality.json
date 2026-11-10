@@ -557,15 +557,15 @@
     {
       "id": "stone-bridge",
       "file": "props/stone-bridge.glb",
-      "sha256": "e97ba70ff33e1abe37eb276d5ede3215c1c4de98ea138790882189077fa96579",
-      "bytes": 3423544,
-      "vertices": 195797,
+      "sha256": "1b1d801e3674004906b2ff092096cb59e9d13444fb324e4734ee93c551267a3a",
+      "bytes": 3126848,
+      "vertices": 211338,
       "hasNormals": true,
-      "triangles": 307905,
+      "triangles": 315633,
       "size": [
-        1.0000009536743164,
-        0.41261106729507446,
-        0.6511127352714539
+        9.200000762939453,
+        2.310619842261076,
+        3.6462175846099854
       ],
       "textures": [
         [
@@ -1225,6 +1225,112 @@
           1024,
           1024
         ]
+      ]
+    },
+    {
+      "id": "hero",
+      "file": "hero.glb",
+      "sha256": "ea96ea94c6c06ae3b1a694bf03971e4d3d8c4b469f914796bfe78d149fe1a2e0",
+      "bytes": 5061236,
+      "vertices": 323517,
+      "triangles": 600000,
+      "hasNormals": true,
+      "size": [
+        1.4477342367172241,
+        1.550014264782476,
+        0.44633644819259644
+      ],
+      "textures": [
+        [
+          4096,
+          4096
+        ],
+        [
+          4096,
+          4096
+        ]
+      ],
+      "hasSkin": true,
+      "bones": 20,
+      "animations": [
+        {
+          "name": "Idle",
+          "duration": 2,
+          "channels": 60
+        },
+        {
+          "name": "Run",
+          "duration": 0.6,
+          "channels": 60
+        },
+        {
+          "name": "Walk",
+          "duration": 0.7333333333333333,
+          "channels": 60
+        }
+      ],
+      "locomotion": {
+        "walkSpeed": 1.3166144200626961,
+        "runSpeed": 2.666666666666667,
+        "groundOffset": 0.0015,
+        "units": "GLB units per second; multiply speeds and groundOffset by model scale",
+        "walkCycleDuration": 0.7333333333333333,
+        "walkCycleTravel": 0.9655172413793105,
+        "runCycleDuration": 0.6,
+        "runCycleTravel": 1.5999999999999999
+      },
+      "qa": {
+        "Idle": {
+          "duration": 2,
+          "minimumFloor": -0.000008033831363718491,
+          "loopSeamMax": 0,
+          "finite": true
+        },
+        "Walk": {
+          "duration": 0.7333333333333333,
+          "minimumFloor": -0.0011259823804721236,
+          "loopSeamMax": 0,
+          "finite": true
+        },
+        "Run": {
+          "duration": 0.6,
+          "minimumFloor": -0.00045808180584572256,
+          "loopSeamMax": 0,
+          "finite": true
+        }
+      },
+      "surfaceErrorMeters": {
+        "face": {
+          "samples": 10000,
+          "maxMeters": 0.00005993709419271909,
+          "p99Meters": 0.0000390306746703573,
+          "meanMeters": 0.000012948908471633613
+        },
+        "hands": {
+          "samples": 10000,
+          "maxMeters": 0.00006751494947820902,
+          "p99Meters": 0.00003968747427279597,
+          "meanMeters": 0.000012647812754943998
+        },
+        "boots": {
+          "samples": 10000,
+          "maxMeters": 0.00011310813715681434,
+          "p99Meters": 0.000054355950851459104,
+          "meanMeters": 0.000013902780161336558
+        },
+        "whole": {
+          "samples": 10000,
+          "maxMeters": 0.00008136362885124981,
+          "p99Meters": 0.000044357799561112186,
+          "meanMeters": 0.0000121184401650674
+        }
+      },
+      "notes": [
+        "No face/hand/boot silhouette damage seen in matching close-up views.",
+        "Runtime normals transferred from the 2M master to preserve smooth surface shading.",
+        "600K runtime mesh uses original UVs and 4K WebP quality 95 textures.",
+        "All loops are in-place; character root remains at origin.",
+        "0.0015 unit ground offset exceeds measured 0.001126 maximum sole penetration during clip interpolation."
       ]
     }
   ]

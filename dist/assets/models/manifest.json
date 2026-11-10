@@ -168,9 +168,9 @@
     {
       "id": "stone-bridge",
       "file": "props/stone-bridge.glb",
-      "bytes": 3423544,
-      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/models/props/stone-bridge.e97ba70ff33e1abe.glb",
-      "sha256": "e97ba70ff33e1abe37eb276d5ede3215c1c4de98ea138790882189077fa96579"
+      "bytes": 3126848,
+      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/models/props/stone-bridge.1b1d801e36740049.glb",
+      "sha256": "1b1d801e3674004906b2ff092096cb59e9d13444fb324e4734ee93c551267a3a"
     },
     {
       "id": "mooring-bollard",
@@ -366,6 +366,25 @@
     "models": 0,
     "props": 0
   },
-  "updatedAt": "2026-11-05T14:44:38.912Z",
-  "version": "6485584fbc2d2e42"
+  "updatedAt": "2026-11-10T07:51:07.030Z",
+  "version": "545cd46a7c3c2a22",
+  "characters": [
+    {
+      "id": "hero",
+      "file": "hero.glb",
+      "bytes": 5061236,
+      "sha256": "ea96ea94c6c06ae3b1a694bf03971e4d3d8c4b469f914796bfe78d149fe1a2e0",
+      "url": "https://mycity-assets.lafreze-city.workers.dev/mycity/models/hero.ea96ea94c6c06ae3.glb",
+      "locomotion": {
+        "walkSpeed": 1.3166144200626961,
+        "runSpeed": 2.666666666666667,
+        "groundOffset": 0.0015,
+        "units": "GLB units per second; multiply speeds and groundOffset by model scale",
+        "walkCycleDuration": 0.7333333333333333,
+        "walkCycleTravel": 0.9655172413793105,
+        "runCycleDuration": 0.6,
+        "runCycleTravel": 1.5999999999999999
+      }
+    }
+  ]
 }

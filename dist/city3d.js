@@ -4,15 +4,17 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { statusAt } from './products.js';
-import { CITY_PROPS } from './props.js';
-import { CANAL, boatPose } from './world.js';
+import { CITY_PROPS } from './props.js?v=walking-1';
+import { CANAL, boatPose } from './world.js?v=walking-1';
 import { BOAT_WATERLINE } from './boat-waterline.js';
 import { createStaticFrame } from './static-frame.js';
 import { createPerformanceMeter } from './performance-meter.js';
+import { createWalker } from './walker.js?v=walking-1';
+import { DISCOVERIES } from './walking-world.js?v=walking-1';
 
 // Building geometry comes exclusively from the Hi3D GLB assets in the manifest.
 // Simple planes provide the display plinth, street and canal, not replacement buildings.
-export async function createCity3D(container,manifest,products,onSelect,onProgress=()=>{}) {
+export async function createCity3D(container,manifest,products,onSelect,onProgress=()=>{},hooks={}) {
   const scene=new THREE.Scene();
   scene.matrixAutoUpdate=false;
   const mobile=window.innerWidth<600;
@@ -55,6 +57,8 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   }
   // Two separate banks leave an actual opening at the canal. No land plane crosses the water.
   surface(34,14.9,'#d6c6a9',0,-.025,-.55);
+  surface(34,5,'#d6c6a9',0,-.025,-10.5);
+  surface(28,1.2,'#c5b79b',0,-.018,-8.5);
   surface(34,5,'#dfceb0',0,-.025,12);
   surface(34,2.15,'#b6aa94',0,-.018,4.475);
   surface(34,1.6,'#e4d4b9',0,-.014,2.6);
@@ -97,22 +101,25 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   const assetURL=item=>{const url=new URL(item.url||`./assets/models/${item.file}`,location.href);url.searchParams.set('delivery','2');return url.href;};
   const loader=new GLTFLoader();const draco=new DRACOLoader();draco.setWorkerLimit(2);draco.setDecoderPath('./vendor/three/addons/libs/draco/gltf/');loader.setDRACOLoader(draco);
   const buildings=new Map(),pickables=[],lights=[],streetObjects=[],allModels=[];
+  const modelItems=[...manifest.models,...(manifest.characters||[])];
+  const worldRequest=fetch('./navigation.json',{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error('Walking map unavailable');return r.json();});
+  let walker=null;
   let loadedBuildings=0;
-  onProgress({stage:'buildings',loaded:0,total:manifest.models.length,failed:0});
-  const modelResults=await Promise.allSettled(manifest.models.map(async item=>{
+  onProgress({stage:'buildings',loaded:0,total:modelItems.length,failed:0});
+  const [modelResults,worldResult]=await Promise.all([Promise.allSettled(modelItems.map(async item=>{
     const gltf=await loader.loadAsync(assetURL(item));
-    onProgress({stage:'buildings',loaded:++loadedBuildings,total:manifest.models.length,failed:0});
-    return {item,object:gltf.scene};
-  }));
-  if(modelResults.some(result=>result.status==='rejected')) {
-    modelResults.forEach((result,index)=>{if(result.status==='rejected')console.error('Building asset failed:',manifest.models[index].id,result.reason);});
+    onProgress({stage:'buildings',loaded:++loadedBuildings,total:modelItems.length,failed:0});
+    return {item,object:gltf.scene,gltf};
+  })),worldRequest.then(world=>({world}),error=>({error}))]);
+  if(worldResult.error||modelResults.some(result=>result.status==='rejected')) {
+    modelResults.forEach((result,index)=>{if(result.status==='rejected')console.error('City asset failed:',modelItems[index].id,result.reason);});
     const resources=new Set(disposables);
     modelResults.filter(r=>r.status==='fulfilled').forEach(r=>r.value.object.traverse(o=>{
       if(o.geometry)resources.add(o.geometry);
       if(o.material)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{resources.add(m);Object.values(m).forEach(v=>{if(v?.isTexture)resources.add(v);});});
     }));
     resources.forEach(resource=>resource.dispose());staticFrame.dispose();draco.dispose();env.dispose();controls.dispose();renderer.dispose();renderer.domElement.remove();
-    throw new Error('One or more building models could not be loaded');
+    throw worldResult.error||new Error('One or more city models could not be loaded');
   }
   const meshes=modelResults.map(result=>result.value);
 
@@ -185,7 +192,7 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
     const scale=definition.height?definition.height/Math.max(size.y,.01):definition.width/Math.max(size.x,size.z,.01);
     object.position.set(-center.x,-bounds.min.y,-center.z);
     definition.positions.forEach((position,i)=>{
-      const normalized=new THREE.Group();normalized.add(i===0?object:object.clone(true));normalized.scale.setScalar(scale*(definition.varied?.93+Math.sin(i*2.1)*.07:1));normalized.rotation.y=(definition.rotation||0)+(definition.varied?i*.8:0);
+      const normalized=new THREE.Group();normalized.add(i===0?object:object.clone(true));normalized.scale.setScalar(scale*(definition.varied?.93+Math.sin(i*2.1)*.07:1));normalized.rotation.y=definition.rotations?.[i]??((definition.rotation||0)+(definition.varied?i*.8:0));
       const root=new THREE.Group();root.add(normalized);root.position.fromArray(position);scene.add(root);
       if(definition.ground)root.scale.y=.08;
       root.traverse(child=>{if(child.isMesh){child.castShadow=!definition.ground&&definition.motion!=='drift';child.receiveShadow=true;}});
@@ -197,6 +204,8 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
       root.visible=currentYear>=firstYear;streetObjects.push(entry);invalidate(true);
       if(definition.glow){const light=new THREE.PointLight('#ffb852',night?8:0,5,2);light.layers.enable(1);light.position.set(position[0],position[1]+definition.height*.9,position[2]);scene.add(light);lights.push(light);entry.light=light;light.visible=night&&root.visible;}
     });
+    if(item.id==='stone-bridge')walker?.setBridgeReady(true);
+    walker?.setAssetReady(item.id);
   }
   // The first view appears as soon as the buildings load. Props stream in three at a time.
   const propQueue=(manifest.props||[]).filter(item=>CITY_PROPS.some(p=>p.id===item.id));const totalProps=propQueue.length;let loadedProps=0,failedProps=0;
@@ -207,20 +216,40 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   const down={x:0,y:0,active:false};
   function pick(event){const rect=renderer.domElement.getBoundingClientRect();pointer.set((event.clientX-rect.left)/rect.width*2-1,-(event.clientY-rect.top)/rect.height*2+1);raycaster.setFromCamera(pointer,camera);return raycaster.intersectObjects(pickables,false).find(hit=>{const id=hit.object.userData.productId;return buildings.get(id)?.target>0&&(hit.object.visible||hit.object.userData.pickProxy);})?.object.userData.productId;}
   const pointerDown=e=>{down.x=e.clientX;down.y=e.clientY;down.active=true;flight=null;};
-  const pointerUp=e=>{down.active=false;if(Math.hypot(e.clientX-down.x,e.clientY-down.y)>7)return;const id=pick(e);if(id)onSelect(id);};
+  const pointerUp=e=>{down.active=false;if(walker?.active)return;if(Math.hypot(e.clientX-down.x,e.clientY-down.y)>7)return;const id=pick(e);if(id)onSelect(id);};
   const pointerCancel=()=>{down.active=false;};
-  let hoverAt=0;const pointerMove=e=>{if(down.active||e.pointerType==='touch'||performance.now()-hoverAt<90)return;hoverAt=performance.now();const id=pick(e);renderer.domElement.style.cursor=id?'pointer':'grab';if(id!==hovered){buildings.forEach((b,key)=>b.tag.material.color.set(key===id?'#ffe0a0':'#ffffff'));hovered=id;}};
+  let hoverAt=0;const pointerMove=e=>{if(walker?.active||down.active||e.pointerType==='touch'||performance.now()-hoverAt<90)return;hoverAt=performance.now();const id=pick(e);renderer.domElement.style.cursor=id?'pointer':'grab';if(id!==hovered){buildings.forEach((b,key)=>b.tag.material.color.set(key===id?'#ffe0a0':'#ffffff'));hovered=id;}};
   renderer.domElement.addEventListener('pointerdown',pointerDown);renderer.domElement.addEventListener('pointerup',pointerUp);renderer.domElement.addEventListener('pointermove',pointerMove);
   renderer.domElement.addEventListener('pointercancel',pointerCancel);
 
   function resize(){const w=container.clientWidth||container.parentElement.clientWidth,h=container.clientHeight||container.parentElement.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();staticFrame.resize();}
   const resizeObserver=new ResizeObserver(resize);resizeObserver.observe(container);resize();
+  const world=worldResult.world,hero=meshes.find(m=>m.item.id==='hero');
+  if(hero){
+    improveTextureSampling(hero.object);
+    walker=createWalker({scene,camera,canvas:renderer.domElement,gltf:hero.gltf,world,motion:hero.item.locomotion,
+      onMode:value=>{controls.enabled=!value;controls.autoRotate=false;flight=null;camera.fov=value?52:38;camera.updateProjectionMatrix();invalidate();hooks.onMode?.(value);},
+      onDiscovery:place=>hooks.onDiscovery?.(place),onNearby:place=>hooks.onNearby?.(place)});
+    walker.setBridgeReady(streetObjects.some(o=>o.definition.id==='stone-bridge'));
+    new Set(streetObjects.map(o=>o.definition.id)).forEach(id=>walker.setAssetReady(id));
+  }
+  const markerCanvas=document.createElement('canvas');markerCanvas.width=64;markerCanvas.height=64;
+  const markerContext=markerCanvas.getContext('2d');const glow=markerContext.createRadialGradient(32,32,3,32,32,30);glow.addColorStop(0,'#fff6d8');glow.addColorStop(.3,'#eec66bcc');glow.addColorStop(1,'#eec66b00');markerContext.fillStyle=glow;markerContext.fillRect(0,0,64,64);
+  const markerTexture=new THREE.CanvasTexture(markerCanvas);markerTexture.colorSpace=THREE.SRGBColorSpace;disposables.push(markerTexture);
+  const discoveryMarkers=DISCOVERIES.map(p=>{const m=new THREE.SpriteMaterial({map:markerTexture,transparent:true,depthWrite:false});const sprite=new THREE.Sprite(m);sprite.position.set(p.x,1.9,p.z);sprite.scale.setScalar(.23);sprite.layers.set(1);sprite.visible=false;scene.add(sprite);disposables.push(m);return{place:p,sprite};});
+  const fireflyGeometry=new THREE.BufferGeometry(),fireflyPositions=[];
+  for(let i=0;i<32;i++){const park=i<20;fireflyPositions.push((Math.sin(i*7.7)*.5+.5)*(park?12:20)-(park?6:10),.7+(i%5)*.17,park?-9.4-Math.cos(i*2.2)*2:12+Math.sin(i*1.9));}
+  fireflyGeometry.setAttribute('position',new THREE.Float32BufferAttribute(fireflyPositions,3));
+  const fireflyMaterial=new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,uniforms:{time:{value:0}},vertexShader:'uniform float time;varying float light;void main(){vec3 p=position;p.x+=sin(time*.35+position.z)*.18;p.y+=sin(time*.7+position.x)*.14;light=.45+.55*sin(time*1.7+position.x*3.);vec4 v=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*v;gl_PointSize=clamp(18./-v.z,1.5,4.);}',fragmentShader:'varying float light;void main(){float a=1.-smoothstep(.1,.5,length(gl_PointCoord-.5));gl_FragColor=vec4(1.,.77,.25,a*light);}'});
+  const fireflies=new THREE.Points(fireflyGeometry,fireflyMaterial);fireflies.layers.set(1);fireflies.visible=false;scene.add(fireflies);disposables.push(fireflyGeometry,fireflyMaterial);
   renderer.info.autoReset=false;
   const meter=createPerformanceMeter(renderer,container,()=>pick({clientX:container.clientWidth*.45,clientY:container.clientHeight*.48}));
   function tick(){if(!running||disposed)return;frame=requestAnimationFrame(tick);
     const now=performance.now(),delta=lastTick?Math.min((now-lastTick)/1000,.1):0;lastTick=now;
     if(lifeEnabled&&!reducedMotion)lifeTime+=delta;
     const elapsed=lifeTime;
+    fireflies.visible=night;fireflyMaterial.uniforms.time.value=elapsed;
+    discoveryMarkers.forEach(({place,sprite})=>{sprite.visible=!!walker?.active&&currentYear>=place.year&&walker.root.position.distanceTo(sprite.position)<7;});
     if(lifeEnabled&&!reducedMotion&&canal.userData.shader)canal.userData.shader.uniforms.cityWaterTime.value=elapsed;
     let growing=false;
     const blend=reducedMotion?1:1-Math.exp(-8*delta);
@@ -249,30 +278,33 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
       uniforms.cityBoatPresent.value=boat?.root.visible?1:0;
       if(boat)uniforms.cityBoatXZ.value.set(boat.root.position.x,boat.root.position.z);
     }
+    const walkingChanged=walker?.update(delta)||false;
     const flying=!!flight;
     if(flight){camera.position.lerp(flight.position,blend);controls.target.lerp(flight.target,blend);if(camera.position.distanceTo(flight.position)<.03)flight=null;}
-    const cameraChanged=controls.update(delta);
+    const cameraChanged=walker?.active?walkingChanged:controls.update(delta);
     if(shadowDirty&&(now-lastShadowUpdate>250||(!growing&&loadedProps+failedProps===totalProps))){
       renderer.shadowMap.needsUpdate=true;shadowDirty=false;lastShadowUpdate=now;staticFrame.invalidate();
     }
     renderer.info.reset();meter?.begin();staticFrame.render(cameraChanged||flying||growing);meter?.end();
   }
-  function setYear(year){invalidate(true);currentYear=year;buildings.forEach(b=>{const status=statusAt(b.product,year);b.target=status==='future'?0:1;if(b.baseColor)b.root.traverse(o=>{if(o.isMesh)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{if(m.userData.cityBaseColor)m.color.copy(m.userData.cityBaseColor).multiplyScalar(status==='archived'?.65:1);});});});streetObjects.forEach(o=>{o.root.visible=year>=o.firstYear;if(o.light)o.light.visible=night&&o.root.visible;});updateJournal(year);}
+  function setYear(year){invalidate(true);currentYear=year;walker?.setYear(year);buildings.forEach(b=>{const status=statusAt(b.product,year);b.target=status==='future'?0:1;if(b.baseColor)b.root.traverse(o=>{if(o.isMesh)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{if(m.userData.cityBaseColor)m.color.copy(m.userData.cityBaseColor).multiplyScalar(status==='archived'?.65:1);});});});streetObjects.forEach(o=>{o.root.visible=year>=o.firstYear;if(o.light)o.light.visible=night&&o.root.visible;});updateJournal(year);}
   function setNight(value){invalidate();night=value;scene.background.copy(night?nightColor:dayColor);scene.fog.color.copy(scene.background);hemi.intensity=night?.5:1.6;sun.intensity=night?.35:2.5;fill.intensity=night?.7:.6;scene.environmentIntensity=night?.28:.45;sun.color.set(night?'#a1b8ed':'#ffe1a8');renderer.toneMappingExposure=night?.9:1.05;lights.forEach(light=>{light.intensity=night?8:0;light.visible=night;});canal.material.color.set(night?'#273d55':'#789f9c');}
-  function focus(id){selectedId=id;const b=buildings.get(id);if(!b)return;const h=Math.max(4,b.height);flight={target:b.root.position.clone().add(new THREE.Vector3(0,h*.5,0)),position:b.root.position.clone().add(new THREE.Vector3(-h*1.15,h*.95,h*1.85))};}
+  function focus(id){selectedId=id;const b=buildings.get(id);if(!b||walker?.active)return;const h=Math.max(4,b.height);flight={target:b.root.position.clone().add(new THREE.Vector3(0,h*.5,0)),position:b.root.position.clone().add(new THREE.Vector3(-h*1.15,h*.95,h*1.85))};}
   function view(name){
+    walker?.setActive(false);
     controls.autoRotate=false;
     const boat=streetObjects.find(o=>o.definition.id==='rowboat');
     const x=boat?.root.position.x||0;
     const presets={canal:{position:new THREE.Vector3(x-3,9.5,16),target:new THREE.Vector3(x,.1,8.2)},overhead:{position:new THREE.Vector3(0,35,5),target:new THREE.Vector3(0,0,4)}};
     flight=presets[name]||null;
   }
-  function reset(){flight={position:initialPosition.clone(),target:initialTarget.clone()};}
-  function zoom(factor){const delta=camera.position.clone().sub(controls.target).multiplyScalar(factor);const length=THREE.MathUtils.clamp(delta.length(),controls.minDistance,controls.maxDistance);flight={position:controls.target.clone().add(delta.setLength(length)),target:controls.target.clone()};}
+  function reset(){walker?.setActive(false);flight={position:initialPosition.clone(),target:initialTarget.clone()};}
+  function zoom(factor){if(walker?.active){walker.zoom(factor);return;}const delta=camera.position.clone().sub(controls.target).multiplyScalar(factor);const length=THREE.MathUtils.clamp(delta.length(),controls.minDistance,controls.maxDistance);flight={position:controls.target.clone().add(delta.setLength(length)),target:controls.target.clone()};}
   function resume(){if(running||disposed)return;running=true;lastTick=0;resize();tick();}
-  function pause(){running=false;cancelAnimationFrame(frame);}
-  function dispose(){pause();disposed=true;renderer.domElement.removeEventListener('webglcontextrestored',contextRestored);resizeObserver.disconnect();controls.dispose();renderer.domElement.removeEventListener('pointerdown',pointerDown);renderer.domElement.removeEventListener('pointerup',pointerUp);renderer.domElement.removeEventListener('pointermove',pointerMove);renderer.domElement.removeEventListener('pointercancel',pointerCancel);meter?.dispose();staticFrame.dispose();const resources=new Set(disposables);scene.traverse(o=>{if(o.geometry)resources.add(o.geometry);if(o.material)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{resources.add(m);Object.values(m).forEach(v=>{if(v?.isTexture)resources.add(v);});});});resources.forEach(r=>r.dispose());env.dispose();renderer.dispose();renderer.domElement.remove();}
+  function pause(){running=false;walker?.pause();cancelAnimationFrame(frame);}
+  function dispose(){pause();disposed=true;renderer.domElement.removeEventListener('webglcontextrestored',contextRestored);resizeObserver.disconnect();controls.dispose();renderer.domElement.removeEventListener('pointerdown',pointerDown);renderer.domElement.removeEventListener('pointerup',pointerUp);renderer.domElement.removeEventListener('pointermove',pointerMove);renderer.domElement.removeEventListener('pointercancel',pointerCancel);meter?.dispose();staticFrame.dispose();const resources=new Set(disposables);scene.traverse(o=>{if(o.geometry)resources.add(o.geometry);if(o.material)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{resources.add(m);Object.values(m).forEach(v=>{if(v?.isTexture)resources.add(v);});});});resources.forEach(r=>r.dispose());walker?.dispose();env.dispose();renderer.dispose();renderer.domElement.remove();}
   function setLife(value){lifeEnabled=value;}
-  function setOrbit(value){controls.autoRotate=value;controls.autoRotateSpeed=.28;}
-  return {setYear,setNight,focus,reset,zoom,resume,pause,dispose,setLife,setOrbit,view,streetReady};
+  function setOrbit(value){if(value)walker?.setActive(false);controls.autoRotate=value;controls.autoRotateSpeed=.28;}
+  function setWalking(value){if(!walker)return false;if(value)walker.setActive(true);else reset();return true;}
+  return {setYear,setNight,focus,reset,zoom,resume,pause,dispose,setLife,setOrbit,view,streetReady,setWalking,interact:()=>walker?.interact(),setMuted:value=>walker?.setMuted(value),setRun:value=>walker?.setRun(value)};
 }

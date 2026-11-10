@@ -2,9 +2,11 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {CITY_PROPS} from '../dist/props.js';
 const m=JSON.parse(await readFile('dist/assets/models/manifest.json','utf8'));
-const assets=[...m.models,...m.props];
+const assets=[...m.models,...m.props,...(m.characters||[])];
 assert.equal(m.models.length,5);assert.equal(m.props.length,46);
-assert.equal(new Set(assets.map(x=>x.id)).size,51);
+assert.equal(m.characters?.length,1,'The third-person entry point requires its character');
+assert.equal(m.characters[0].id,'hero');
+assert.equal(new Set(assets.map(x=>x.id)).size,51+(m.characters?.length||0));
 for(const a of assets){
  const u=new URL(a.url);
  assert.equal(u.protocol,'https:');assert.ok(!u.hostname.endsWith('.invalid'),'Asset host is not ready');assert.equal(u.username,'');assert.equal(u.password,'');
@@ -14,5 +16,8 @@ for(const a of assets){
 }
 const quality=JSON.parse(await readFile('reference/model-quality.json','utf8'));
 for(const a of assets){const q=quality.assets.find(q=>q.id===a.id);assert.equal(q?.sha256,a.sha256,`Quality audit is stale: ${a.id}`);assert.equal(q.bytes,a.bytes);}
+const hero=quality.assets.find(q=>q.id==='hero');
+assert.ok(hero?.hasSkin&&hero.bones>=12,'Character must be rigged');
+assert.deepEqual(hero.animations.map(a=>a.name.toLowerCase()).sort(),['idle','run','walk']);
 for(const p of CITY_PROPS)assert.ok(m.props.some(x=>x.id===p.id),`Missing model: ${p.id}`);
-console.log('Passed: all 51 model URLs, fingerprints, sizes and street placements.');
+console.log(`Passed: all ${assets.length} model URLs, fingerprints, sizes and street placements.`);

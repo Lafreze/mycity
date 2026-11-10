@@ -780,6 +780,57 @@
       "runtime_file": "dist/assets/models/props/street-musician.glb",
       "runtime_bytes": 223080,
       "runtime_sha256": "8fae1a01f7e48464f5a0915e873c6b9a9b023f98cef5f20252a245c40cc30cad"
+    },
+    {
+      "id": "hero",
+      "kind": "character",
+      "provider": "Hi3D MCP",
+      "version": "v3.0",
+      "quality": "high_quality",
+      "license": "private",
+      "image_task_id": "86535f6b62ad4c66ab26ba07326a24fd",
+      "model_task_id": "8a9041c6dac74d12abac316008fa3856",
+      "model_page_url": "https://www.hi3d.ai/3d-model/8a9041c6dac74d12abac316008fa3856",
+      "description": "Teal-jacket traveler with backpack, four consistent T-pose references.",
+      "model_prompt": "One animation-ready humanoid inventor character in a symmetrical T pose. Match all reference views. Preserve separate arms, legs, fingers, boots and backpack. No base or surrounding ground. Full-body textured PBR asset, clean continuous body suitable for armature skinning.",
+      "status": "succeeded",
+      "image_points": 8,
+      "model_points": 45,
+      "original_file": "../character-work/hero-original.glb",
+      "original_bytes": 48012988,
+      "edited_with": "Blender MCP",
+      "recorded_at": "2026-11-10",
+      "original_triangles": 2000000,
+      "original_texture_size": [
+        8192,
+        8192
+      ],
+      "runtime_file": "hero.glb",
+      "runtime_bytes": 5061236,
+      "runtime_sha256": "ea96ea94c6c06ae3b1a694bf03971e4d3d8c4b469f914796bfe78d149fe1a2e0",
+      "runtime_triangles": 600000,
+      "runtime_texture_size": [
+        4096,
+        4096
+      ],
+      "bones": 20,
+      "animations": [
+        {
+          "name": "Idle",
+          "duration": 2,
+          "channels": 60
+        },
+        {
+          "name": "Run",
+          "duration": 0.6,
+          "channels": 60
+        },
+        {
+          "name": "Walk",
+          "duration": 0.7333333333333333,
+          "channels": 60
+        }
+      ]
     }
   ],
   "failure_history": [

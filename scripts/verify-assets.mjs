@@ -1,9 +1,10 @@
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
+import {validateCharacter} from './validate-character.mjs';
 const m=JSON.parse(await readFile('dist/assets/models/manifest.json','utf8'));
 const origin=process.env.VERIFY_ORIGIN;
 if(!origin)throw new Error('Set VERIFY_ORIGIN to the deployed Railway URL.');
-const results=[],queue=[...m.models,...m.props];
+const results=[],queue=[...m.models,...m.props,...(m.characters||[])];
 async function worker(){while(queue.length){const a=queue.shift();
  const r=await fetch(a.url,{headers:{Origin:origin},signal:AbortSignal.timeout(60000)});
  if(r.status!==200)throw new Error(`${a.id}: full download must return HTTP 200, got ${r.status}`);
@@ -12,7 +13,7 @@ async function worker(){while(queue.length){const a=queue.shift();
  if(!(r.headers.get('content-type')||'').startsWith('model/gltf-binary'))throw new Error(`${a.id}: wrong MIME type`);
  const b=Buffer.from(await r.arrayBuffer());
  if(b.length!==a.bytes || createHash('sha256').update(b).digest('hex')!==a.sha256)throw new Error(`${a.id}: content mismatch`);
- results.push({id:a.id,bytes:b.length,status:r.status,sha256:a.sha256});
+ results.push({id:a.id,bytes:b.length,status:r.status,sha256:a.sha256,...(a.id==='hero'?{character:validateCharacter(b)}:{})});
 }}
 await Promise.all([worker(),worker(),worker()]);
 const url=m.models[0].url;

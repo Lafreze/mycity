@@ -264,5 +264,22 @@
     "models": 0,
     "props": 0
   },
-  "updatedAt": "2026-11-05T09:21:52.754108+00:00"
+  "updatedAt": "2026-11-10T07:51:07.030Z",
+  "characters": [
+    {
+      "id": "hero",
+      "file": "hero.glb",
+      "bytes": 5061236,
+      "locomotion": {
+        "walkSpeed": 1.3166144200626961,
+        "runSpeed": 2.666666666666667,
+        "groundOffset": 0.0015,
+        "units": "GLB units per second; multiply speeds and groundOffset by model scale",
+        "walkCycleDuration": 0.7333333333333333,
+        "walkCycleTravel": 0.9655172413793105,
+        "runCycleDuration": 0.6,
+        "runCycleTravel": 1.5999999999999999
+      }
+    }
+  ]
 }
