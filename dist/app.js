@@ -1,5 +1,6 @@
 import { CITY, PRODUCTS, STATUS, statusAt } from './products.js';
-import { createCity3D } from './city3d.js?v=neighbors-3';
+import { createCity3D } from './city3d.js?v=mobile-memory-1';
+import { browserQualityProfile, includeStreetAsset } from './quality-profile.js';
 import {DISCOVERIES} from './walking-world.js?v=neighbors-3';
 
 import {RESIDENTS,residentById,greetingFor} from './residents.js?v=neighbors-3';
@@ -7,12 +8,14 @@ import {RESIDENTS,residentById,greetingFor} from './residents.js?v=neighbors-3';
 const $=selector=>document.querySelector(selector);
 const state={year:CITY.lastYear,night:false,playing:false,selected:null};
 let city,loading=false,timer,lastTrigger;
-let walking=false,toastTimer,currentResident=null;
+let walking=false,toastTimer,currentResident=null,retryLow=false;
+let quality=browserQualityProfile();
+let availableResidents=RESIDENTS.map(r=>r.id);
 const met=new Set();
 try{const saved=JSON.parse(localStorage.getItem('mycity-neighbors')||'[]');if(Array.isArray(saved))saved.filter(id=>residentById(id)).forEach(id=>met.add(id));}catch{}
 const visited=new Set();
 try{const saved=JSON.parse(localStorage.getItem('mycity-walk-stamps')||'[]');if(Array.isArray(saved))saved.filter(id=>DISCOVERIES.some(p=>p.id===id)).forEach(id=>visited.add(id));}catch{}
-function updateWalkProgress(){$('#walk-progress').textContent=`足迹 ${visited.size}/${DISCOVERIES.length} · 邻里 ${met.size}/${RESIDENTS.length}`;}
+function updateWalkProgress(){$('#walk-progress').textContent=`足迹 ${visited.size}/${DISCOVERIES.length} · 邻里 ${[...met].filter(id=>availableResidents.includes(id)).length}/${availableResidents.length}`;}
 function walkingMode(value){walking=value;document.body.classList.toggle('walking',value);$('#walk-hud').hidden=!value;$('#walk-toggle').setAttribute('aria-pressed',String(value));$('#walk-toggle').textContent=value?'全景':'漫游';$('#walk-toggle').setAttribute('aria-label',value?'切换街区全景':'第三人称漫游');$('#orbit-toggle').setAttribute('aria-pressed','false');if(value)stopTimeline();else{clearTimeout(toastTimer);$('#walk-toast').hidden=true;}}
 function nearbyPlace(place){$('#walk-interact').hidden=!place;if(place)$('#walk-place').textContent=place.label;}
 function discover(place){
@@ -88,8 +91,18 @@ function reportProgress(p){
   $('#asset-label').textContent=complete?'部分细节未载入':`细节 ${p.loaded}/${p.total}`;
   $('#retry-assets').hidden=!complete||!p.failed;
 }
+function contextFailure(restored=false){
+  retryLow=true;stopTimeline();city?.pause();city?.setMuted(true);
+  for(const dialog of document.querySelectorAll('dialog[open]'))dialog.close();
+  document.body.dataset.sceneState='error';$('#loading').hidden=false;$('#load-state').hidden=true;$('#load-error').hidden=false;
+  $('#error-message').textContent=restored?'绘图已恢复，请重新载入轻量街区。':'设备暂时无法继续绘制街区，请用轻量模式重试。';
+  $('#retry').textContent='轻量模式重试';
+  document.querySelectorAll('[data-scene-control]').forEach(b=>b.disabled=true);
+}
 async function boot(){
   if(loading)return;loading=true;if($('#resident-dialog').open)$('#resident-dialog').close();stopTimeline();city?.dispose();city=null;walkingMode(false);nearbyPlace(null);
+  quality=browserQualityProfile(retryLow?'?quality=low':location.search);
+  availableResidents=RESIDENTS.filter(r=>includeStreetAsset(r.id,quality)).map(r=>r.id);updateWalkProgress();
   document.body.dataset.sceneState='loading';$('#loading').hidden=false;$('#load-state').hidden=false;$('#load-error').hidden=true;$('#asset-status').hidden=true;
   $('#loading-label').textContent='载入街区';$('#loading-progress').value=0;
   document.querySelectorAll('[data-scene-control]').forEach(b=>b.disabled=true);
@@ -97,14 +110,14 @@ async function boot(){
     const response=await fetch('./assets/models/manifest.json',{cache:'no-cache'});
     if(!response.ok)throw new Error(`Manifest: HTTP ${response.status}`);
     const manifest=await response.json();if(!manifest.models?.length)throw new Error('No buildings in manifest');
-    city=await createCity3D($('#scene3d'),manifest,PRODUCTS,showProduct,reportProgress,{onMode:walkingMode,onDiscovery:discover,onNearby:nearbyPlace,onResident:showResident});
+    city=await createCity3D($('#scene3d'),manifest,PRODUCTS,showProduct,reportProgress,{quality,onMode:walkingMode,onDiscovery:discover,onNearby:nearbyPlace,onResident:showResident,onContextLost:contextFailure,onContextRestored:()=>contextFailure(true)});
     city.setYear(state.year);city.setNight(state.night);city.setWalking(true);if(state.selected)city.focus(state.selected);if(!document.hidden)city.resume();
     $('#loading').hidden=true;document.body.dataset.sceneState='ready';
     document.querySelectorAll('[data-scene-control]').forEach(b=>b.disabled=false);
   }catch(error){
     console.error('City load failed:',error);city?.dispose();city=null;
     $('#load-state').hidden=true;$('#load-error').hidden=false;document.body.dataset.sceneState='error';
-    $('#error-message').textContent='街区暂时未能加载，请重试。';
+    $('#error-message').textContent=retryLow?'设备暂时无法继续绘制街区，请用轻量模式重试。':'街区暂时未能加载，请检查网络后重试。';
   }finally{loading=false;}
 }
 function reset(){toggleMenu(false);city?.focus(null);city?.setOrbit(false);city?.reset();$('#orbit-toggle').setAttribute('aria-pressed','false');}

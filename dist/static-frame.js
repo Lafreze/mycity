@@ -3,10 +3,10 @@ import * as THREE from 'three';
 // Cache the full-resolution static street AND its depth. Animated water/boat still
 // use real geometry and depth testing. Any camera/scene change renders the street again.
 // No image assets, simplified meshes, texture reductions or lower pixel ratio.
-export function createStaticFrame(renderer,scene,camera){
+export function createStaticFrame(renderer,scene,camera,{enabled=true}={}){
   camera.layers.enable(1);
-  const supported=renderer.extensions.has('EXT_color_buffer_float');
-  if(!supported)return {invalidate(){},resize(){},dispose(){},render(){renderer.render(scene,camera);}};
+  const supported=enabled&&renderer.extensions.has('EXT_color_buffer_float');
+  if(!supported)return {settings:{enabled:false,samples:0},invalidate(){},resize(){},dispose(){},render(){renderer.render(scene,camera);}};
   const size=new THREE.Vector2();
   const target=new THREE.WebGLRenderTarget(1,1,{
     type:THREE.HalfFloatType,format:THREE.RGBAFormat,
@@ -37,6 +37,7 @@ export function createStaticFrame(renderer,scene,camera){
   quad.frustumCulled=false;copyScene.add(quad);
   let dirty=true;
   return {
+    settings:{enabled:true,samples:target.samples},
     invalidate(){dirty=true;},
     resize(){renderer.getDrawingBufferSize(size);target.setSize(size.x,size.y);dirty=true;},
     render(moving=false){

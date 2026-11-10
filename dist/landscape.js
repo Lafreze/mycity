@@ -1,9 +1,10 @@
 import * as THREE from 'three';
+import { resizeTextures, mapSettledLimit, disposeResources } from './asset-memory.js';
 
 // A painted distant landscape surrounds the playable 3D street. The river and
 // both banks continue out to it; the painting never replaces walkable geometry.
-export function createLandscape(scene,canal){
-  const resources=[],night={value:0};
+export function createLandscape(scene,canal,quality={low:false,landscapeTextureSize:Infinity}){
+  const resources=[],night={value:0};let disposed=false;
   const terrainMaterial=new THREE.ShaderMaterial({transparent:true,depthWrite:false,toneMapped:false,
     uniforms:{night,stone:{value:new THREE.Color('#e2d4b7')},grass:{value:new THREE.Color('#adb68a')}},
     vertexShader:'varying vec3 landscapeWorld;void main(){landscapeWorld=(modelMatrix*vec4(position,1.)).xyz;gl_Position=projectionMatrix*viewMatrix*vec4(landscapeWorld,1.);}',
@@ -56,17 +57,21 @@ export function createLandscape(scene,canal){
   return {
     async load(assets){
       if(!assets?.length)return;
-      const results=await Promise.allSettled(assets.slice(0,4).map(async(asset,i)=>{
+      const results=await mapSettledLimit(assets.slice(0,4),quality.low?1:4,async(asset,i)=>{
+        if(disposed)throw new Error('Landscape disposed');
         const texture=await new THREE.TextureLoader().loadAsync(asset.url);
-        texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=4;
+        if(disposed){disposeResources([texture]);throw new Error('Landscape disposed');}
+        texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=quality.low?2:4;
+        resizeTextures([texture],quality.landscapeTextureSize);
         skyMaterial.uniforms['painting'+i].value=texture;resources.push(texture);
         return texture;
-      }));
+      });
       const fallback=results.find(r=>r.status==='fulfilled')?.value;
       if(!fallback){console.warn('Distant landscape unavailable');return;}
       for(let i=0;i<4;i++)if(!skyMaterial.uniforms['painting'+i].value)skyMaterial.uniforms['painting'+i].value=fallback;
       skyMaterial.uniforms.hasPainting.value=1;
     },
+    dispose(release=true){if(disposed)return;disposed=true;if(release)disposeResources(resources);resources.length=0;},
     setNight(value){skyMaterial.uniforms.night.value=value?1:0;},
     get resources(){return resources;}
   };

@@ -41,3 +41,6 @@ renderer.extensions.has=()=>false;calls=[];
 const fallback=createStaticFrame(renderer,scene,new THREE.PerspectiveCamera());fallback.render();
 assert.equal(calls.length,1);assert.equal(calls[0].mask,3,'Unsupported HDR devices still show water and boat');
 console.log('Passed: static reuse, depth occlusion, full geometry during camera motion, invalidation, full resolution, antialiasing, disposal and fallback.');
+renderer.extensions.has=()=>{throw new Error('Disabled cache must not inspect or allocate HDR targets');};calls=[];
+const mobile=createStaticFrame(renderer,scene,new THREE.PerspectiveCamera(),{enabled:false});
+mobile.resize();mobile.render();assert.equal(calls.length,1);assert.equal(calls[0].mask,3);assert.equal(mobile.settings.enabled,false);mobile.dispose();

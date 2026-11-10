@@ -12,19 +12,34 @@ import { createPerformanceMeter } from './performance-meter.js';
 import { createWalker } from './walker.js?v=neighbors-3';
 import { createLandscape } from './landscape.js?v=neighbors-3';
 import { createNeighbors } from './neighbors.js?v=neighbors-3';
+import { browserQualityProfile, includeStreetAsset } from './quality-profile.js';
+import { objectResources, disposeResources, resizeTextures, mapSettledLimit, resourceBytes } from './asset-memory.js';
 import { DISCOVERIES } from './walking-world.js?v=neighbors-3';
 
 // Building geometry comes exclusively from the Hi3D GLB assets in the manifest.
 // Simple planes provide the display plinth, street and canal, not replacement buildings.
 export async function createCity3D(container,manifest,products,onSelect,onProgress=()=>{},hooks={}) {
-  const scene=new THREE.Scene();
+  const quality=hooks.quality||browserQualityProfile();
+  const scene=new THREE.Scene(),disposables=[],cleanup=[],modelRoots=new Set(),assetStats=[];
+  const manager=new THREE.LoadingManager();
+  let activeLoads=0,landscape=null;
+  const debugEnabled=new URLSearchParams(location.search).has('debug');
+  let running=false,frame=0,disposed=false,contextLost=false,walker=null;
+  function dispose(){
+    if(disposed)return;disposed=true;running=false;cancelAnimationFrame(frame);manager.abort();
+    const resources=new Set([...disposables,...(landscape?.resources||[])]);objectResources(scene,resources);
+    for(const root of modelRoots)objectResources(root,resources);
+    disposeResources(resources);cleanup.reverse().forEach(fn=>fn());modelRoots.clear();scene.clear();
+  }
+  try {
   scene.matrixAutoUpdate=false;
   const mobile=window.innerWidth<600;
   const dayColor=new THREE.Color('#e7ddcb'),nightColor=new THREE.Color('#162339');
   scene.background=dayColor.clone();scene.fog=new THREE.Fog(dayColor,55,110);
-  const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});
-  renderer.setPixelRatio(Math.min(devicePixelRatio,mobile?1.5:2));
-  renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
+  const renderer=new THREE.WebGLRenderer({antialias:quality.antialias,alpha:false});
+  cleanup.push(()=>{renderer.dispose();renderer.forceContextLoss();renderer.domElement.remove();});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,quality.pixelRatioCap));
+  renderer.shadowMap.enabled=quality.shadows;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
   renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
   renderer.outputColorSpace=THREE.SRGBColorSpace;
   container.appendChild(renderer.domElement);
@@ -32,29 +47,37 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   const initialPosition=new THREE.Vector3(mobile?-46:-19,mobile?31:17,mobile?40:32);
   const initialTarget=new THREE.Vector3(0,1,3.3);
   camera.position.copy(initialPosition);
-  const controls=new OrbitControls(camera,renderer.domElement);
+  const controls=new OrbitControls(camera,renderer.domElement);cleanup.push(()=>controls.dispose());
   controls.target.copy(initialTarget);controls.enableDamping=true;controls.dampingFactor=.07;
   controls.maxPolarAngle=Math.PI*.47;controls.minPolarAngle=.2;controls.minDistance=2.2;controls.maxDistance=70;
   controls.enablePan=true;controls.autoRotate=false;
   const hemi=new THREE.HemisphereLight('#fff5d8','#6c5748',1.6);scene.add(hemi);
-  const sun=new THREE.DirectionalLight('#ffe1a8',2.5);sun.position.set(-10,20,12);sun.castShadow=true;
-  sun.shadow.mapSize.set(4096,4096);Object.assign(sun.shadow.camera,{left:-25,right:25,top:24,bottom:-24,near:.5,far:65});sun.shadow.bias=-.0005;scene.add(sun);
+  const sun=new THREE.DirectionalLight('#ffe1a8',2.5);sun.position.set(-10,20,12);sun.castShadow=quality.shadows;
+  sun.shadow.mapSize.set(quality.shadowMapSize,quality.shadowMapSize);Object.assign(sun.shadow.camera,{left:-25,right:25,top:24,bottom:-24,near:.5,far:65});sun.shadow.bias=-.0005;scene.add(sun);
   const fill=new THREE.DirectionalLight('#b6d6ee',.6);fill.position.set(10,8,-9);scene.add(fill);
   const pmrem=new THREE.PMREMGenerator(renderer);const room=new RoomEnvironment();
-  const env=pmrem.fromScene(room,.04);scene.environment=env.texture;scene.environmentIntensity=.45;room.dispose();pmrem.dispose();
+  const env=pmrem.fromScene(room,.04);scene.environment=env.texture;scene.environmentIntensity=.45;room.dispose();pmrem.dispose();cleanup.push(()=>{sun.shadow.dispose();env.dispose();});
 
-  const disposables=[];
-  const neighbors=createNeighbors(scene);disposables.push(...neighbors.resources);
-  const landscape=createLandscape(scene,CANAL);
-  const landscapeRequest=landscape.load(manifest.environment).then(()=>null,error=>error);
-  const staticFrame=createStaticFrame(renderer,scene,camera);
+  const neighbors=createNeighbors(scene);disposables.push(...neighbors.resources);cleanup.push(()=>neighbors.dispose());
+  landscape=createLandscape(scene,CANAL,quality);
+  cleanup.push(()=>landscape.dispose(false));
+  const loadLandscape=()=>landscape.load(manifest.environment).then(()=>null,error=>error);
+  const landscapeRequest=quality.low?null:loadLandscape();
+  const staticFrame=createStaticFrame(renderer,scene,camera,{enabled:quality.staticFrame});cleanup.push(()=>staticFrame.dispose());
   for(const light of [hemi,sun,fill])light.layers.enable(1);
   let shadowDirty=true,lastShadowUpdate=-Infinity;
   const invalidate=(shadow=false)=>{staticFrame.invalidate();shadowDirty ||= shadow;};
-  const contextRestored=()=>invalidate(true);
+  const onContextLost=event=>{
+    event.preventDefault();if(disposed)return;contextLost=true;running=false;cancelAnimationFrame(frame);walker?.pause();manager.abort();hooks.onContextLost?.();
+  };
+  // Restoration does not restart uploads into an exhausted context. The user can
+  // retry with a fresh renderer and the low profile, even before restoration.
+  const contextRestored=()=>{if(!disposed){invalidate(true);hooks.onContextRestored?.();}};
+  renderer.domElement.addEventListener('webglcontextlost',onContextLost);
   renderer.domElement.addEventListener('webglcontextrestored',contextRestored);
+  cleanup.push(()=>{renderer.domElement.removeEventListener('webglcontextlost',onContextLost);renderer.domElement.removeEventListener('webglcontextrestored',contextRestored);});
   const freezeLocal=object=>object.traverse(o=>{o.updateMatrix();o.matrixAutoUpdate=false;});
-  const anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
+  const anisotropy=Math.min(quality.low?2:8,renderer.capabilities.getMaxAnisotropy());
   function improveTextureSampling(object){object.traverse(o=>{if(!o.isMesh)return;for(const m of (Array.isArray(o.material)?o.material:[o.material]))for(const v of Object.values(m))if(v?.isTexture)v.anisotropy=anisotropy;});}
   function surface(w,h,color,x,y,z,roughness=1) {
     const geometry=new THREE.PlaneGeometry(w,h),material=new THREE.MeshStandardMaterial({color,roughness});
@@ -104,28 +127,36 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   // Bypass responses cached before the new domain was allowed by the asset origin policy.
   // The Worker ignores this query for its shared object cache; GLB fingerprints are unchanged.
   const assetURL=item=>{const url=new URL(item.url||`./assets/models/${item.file}`,location.href);url.searchParams.set('delivery','2');return url.href;};
-  const loader=new GLTFLoader();const draco=new DRACOLoader();draco.setWorkerLimit(2);draco.setDecoderPath('./vendor/three/addons/libs/draco/gltf/');loader.setDRACOLoader(draco);
-  const buildings=new Map(),pickables=[],lights=[],streetObjects=[],allModels=[];
+  const loader=new GLTFLoader(manager);const draco=new DRACOLoader(manager);draco.setWorkerLimit(quality.dracoWorkers);draco.setDecoderPath('./vendor/three/addons/libs/draco/gltf/');loader.setDRACOLoader(draco);cleanup.push(()=>{if(!activeLoads)draco.dispose();});
+  async function loadModel(item,maxTextureSize){
+    if(disposed||contextLost)throw new Error('Scene stopped');
+    activeLoads++;
+    try {
+    const gltf=await loader.loadAsync(assetURL(item));
+    if(disposed||contextLost){disposeResources(objectResources(gltf.scene));throw new Error('Scene stopped');}
+    modelRoots.add(gltf.scene);
+    const resources=objectResources(gltf.scene);
+    resizeTextures([...resources].filter(r=>r.isTexture),maxTextureSize);
+    if(debugEnabled)assetStats.push({id:item.id,...resourceBytes(resources)});
+    // Low mode drops GLTF parser caches and the compressed buffer after parsing.
+    return quality.low?{scene:gltf.scene,animations:gltf.animations}:gltf;
+    }finally{activeLoads--;if(disposed&&!activeLoads)draco.dispose();}
+  }
+  const buildings=new Map(),pickables=[],lights=[],streetObjects=[];
   const modelItems=[...manifest.models,...(manifest.characters||[])];
   const worldRequest=fetch('./navigation.json',{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error('Walking map unavailable');return r.json();});
-  let walker=null;
   let loadedBuildings=0;
   onProgress({stage:'buildings',loaded:0,total:modelItems.length,failed:0});
-  const [modelResults,worldResult,landscapeError]=await Promise.all([Promise.allSettled(modelItems.map(async item=>{
-    const gltf=await loader.loadAsync(assetURL(item));
+  const [modelResults,worldResult,landscapeError]=await Promise.all([mapSettledLimit(modelItems,quality.modelConcurrency,async item=>{
+    const gltf=await loadModel(item,quality.modelTextureSize);
     onProgress({stage:'buildings',loaded:++loadedBuildings,total:modelItems.length,failed:0});
     return {item,object:gltf.scene,gltf};
-  })),worldRequest.then(world=>({world}),error=>({error})),landscapeRequest]);
-  disposables.push(...landscape.resources);
-  if(landscapeError||worldResult.error||modelResults.some(result=>result.status==='rejected')) {
+  }),worldRequest.then(world=>({world}),error=>({error})),landscapeRequest]);
+  const deferredLandscapeError=quality.low&&!contextLost?await loadLandscape():null;
+  if(disposed||contextLost)throw new Error('Scene stopped');
+  if(deferredLandscapeError||landscapeError||worldResult.error||modelResults.some(result=>result.status==='rejected')) {
     modelResults.forEach((result,index)=>{if(result.status==='rejected')console.error('City asset failed:',modelItems[index].id,result.reason);});
-    const resources=new Set(disposables);
-    modelResults.filter(r=>r.status==='fulfilled').forEach(r=>r.value.object.traverse(o=>{
-      if(o.geometry)resources.add(o.geometry);
-      if(o.material)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{resources.add(m);Object.values(m).forEach(v=>{if(v?.isTexture)resources.add(v);});});
-    }));
-    resources.forEach(resource=>resource.dispose());staticFrame.dispose();draco.dispose();env.dispose();controls.dispose();renderer.dispose();renderer.domElement.remove();
-    throw landscapeError||worldResult.error||new Error('One or more city models could not be loaded');
+    throw deferredLandscapeError||landscapeError||worldResult.error||new Error('One or more city models could not be loaded');
   }
   const meshes=modelResults.map(result=>result.value);
 
@@ -166,7 +197,7 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   }
 
   function addBuilding(item,object,p,archived=false) {
-    improveTextureSampling(object);allModels.push(object);object.updateMatrix();
+    improveTextureSampling(object);object.updateMatrix();
     const box=new THREE.Box3().setFromObject(object),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());
     const scale=(item.width||4.2)/Math.max(size.x,size.z);
     object.position.set(-center.x,-box.min.y,-center.z);
@@ -188,12 +219,12 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   meshes.forEach(({item,object})=>{const p=products.find(p=>p.id===item.id);if(p)addBuilding(item,object,p);});
   const archive=products.find(p=>p.id==='archive'),source=meshes.find(m=>m.item.id==='chess');
   if(archive&&source){const copy=source.object.clone(true);copy.position.set(0,0,0);addBuilding({...source.item,width:2.8},copy,archive,true);}
-  let running=false,frame=0,night=false,flight=null,hovered=null,selectedId=null,disposed=false,currentYear=2026,lifeEnabled=true,lifeTime=0,lastTick=0;
+  let night=false,flight=null,hovered=null,selectedId=null,currentYear=2026,lifeEnabled=true,lifeTime=0,lastTick=0;
   const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 
   function placeStreetAsset(item,object,definition,index,animations=[]) {
-    improveTextureSampling(object);allModels.push(object);
+    improveTextureSampling(object);
     const bounds=new THREE.Box3().setFromObject(object),size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
     const scale=definition.height?definition.height/Math.max(size.y,.01):definition.width/Math.max(size.x,size.z,.01);
     object.position.set(-center.x,-bounds.min.y,-center.z);
@@ -219,9 +250,19 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
     walker?.setAssetReady(item.id);
   }
   // The first view appears as soon as the buildings load. Props stream in three at a time.
-  const propQueue=(manifest.props||[]).filter(item=>CITY_PROPS.some(p=>p.id===item.id));const totalProps=propQueue.length;let loadedProps=0,failedProps=0;
-  async function propWorker(){while(propQueue.length&&!disposed){const item=propQueue.shift();try{const definition=CITY_PROPS.find(p=>p.id===item.id);if(!definition)continue;const gltf=await loader.loadAsync(assetURL(item));if(disposed){gltf.scene.traverse(o=>{o.geometry?.dispose();if(o.material)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{Object.values(m).forEach(v=>{if(v?.isTexture)v.dispose();});m.dispose();});});return;}placeStreetAsset(item,gltf.scene,definition,CITY_PROPS.indexOf(definition),gltf.animations);loadedProps++;}catch(error){failedProps++;console.warn('Street asset unavailable:',item.id,error);}onProgress({stage:'street',loaded:loadedProps,total:totalProps,failed:failedProps});}}
-  const streetReady=Promise.all([propWorker(),propWorker(),propWorker()]).finally(()=>{draco.dispose();invalidate(true);});
+  const propQueue=(manifest.props||[]).filter(item=>CITY_PROPS.some(p=>p.id===item.id)&&includeStreetAsset(item.id,quality));const totalProps=propQueue.length;let loadedProps=0,failedProps=0;
+  async function propWorker(){
+    while(propQueue.length&&!disposed&&!contextLost){
+      const item=propQueue.shift();
+      try{
+        const definition=CITY_PROPS.find(p=>p.id===item.id);
+        const gltf=await loadModel(item,quality.propTextureSize);
+        placeStreetAsset(item,gltf.scene,definition,CITY_PROPS.indexOf(definition),gltf.animations);loadedProps++;
+      }catch(error){if(disposed||contextLost)return;failedProps++;console.warn('Street asset unavailable:',item.id,error);}
+      onProgress({stage:'street',loaded:loadedProps,total:totalProps,failed:failedProps});
+    }
+  }
+  const streetReady=Promise.all(Array.from({length:quality.propConcurrency},propWorker)).finally(()=>{draco.dispose();if(!disposed)invalidate(true);});
   const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
   raycaster.layers.enable(1);
   const down={x:0,y:0,active:false};
@@ -239,15 +280,17 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   let hoverAt=0;const pointerMove=e=>{if(walker?.active||down.active||e.pointerType==='touch'||performance.now()-hoverAt<90)return;hoverAt=performance.now();const id=pick(e);renderer.domElement.style.cursor=id?'pointer':'grab';if(id!==hovered){buildings.forEach((b,key)=>b.tag.material.color.set(key===id?'#ffe0a0':'#ffffff'));hovered=id;neighbors.setHovered(id?.startsWith('resident:')?id.slice(9):null);}};
   renderer.domElement.addEventListener('pointerdown',pointerDown);renderer.domElement.addEventListener('pointerup',pointerUp);renderer.domElement.addEventListener('pointermove',pointerMove);
   renderer.domElement.addEventListener('pointercancel',pointerCancel);
+  cleanup.push(()=>{for(const [name,fn] of [['pointerdown',pointerDown],['pointerup',pointerUp],['pointermove',pointerMove],['pointercancel',pointerCancel]])renderer.domElement.removeEventListener(name,fn);});
 
   function resize(){const w=container.clientWidth||container.parentElement.clientWidth,h=container.clientHeight||container.parentElement.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();staticFrame.resize();}
-  const resizeObserver=new ResizeObserver(resize);resizeObserver.observe(container);resize();
+  const resizeObserver=new ResizeObserver(resize);resizeObserver.observe(container);cleanup.push(()=>resizeObserver.disconnect());resize();
   const world=worldResult.world,hero=meshes.find(m=>m.item.id==='hero');
   if(hero){
     improveTextureSampling(hero.object);
     walker=createWalker({scene,camera,canvas:renderer.domElement,gltf:hero.gltf,world,motion:hero.item.locomotion,getResidents:(p,y)=>neighbors.nearby(p,y),
       onMode:value=>{controls.enabled=!value;controls.autoRotate=false;flight=null;camera.fov=value?52:38;camera.updateProjectionMatrix();invalidate();hooks.onMode?.(value);},
       onDiscovery:place=>hooks.onDiscovery?.(place),onNearby:place=>hooks.onNearby?.(place)});
+    cleanup.push(()=>walker.dispose());
     walker.setBridgeReady(streetObjects.some(o=>o.definition.id==='stone-bridge'));
     new Set(streetObjects.map(o=>o.definition.id)).forEach(id=>walker.setAssetReady(id));
   }
@@ -262,7 +305,8 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   const fireflies=new THREE.Points(fireflyGeometry,fireflyMaterial);fireflies.layers.set(1);fireflies.visible=false;scene.add(fireflies);disposables.push(fireflyGeometry,fireflyMaterial);
   renderer.info.autoReset=false;
   const meter=createPerformanceMeter(renderer,container,()=>pick({clientX:container.clientWidth*.45,clientY:container.clientHeight*.48}));
-  function tick(){if(!running||disposed)return;frame=requestAnimationFrame(tick);
+  cleanup.push(()=>meter?.dispose());
+  function tick(){if(!running||disposed||contextLost)return;frame=requestAnimationFrame(tick);
     const now=performance.now(),delta=lastTick?Math.min((now-lastTick)/1000,.1):0;lastTick=now;
     if(lifeEnabled&&!reducedMotion)lifeTime+=delta;
     const elapsed=lifeTime;
@@ -319,9 +363,8 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   }
   function reset(){walker?.setActive(false);flight={position:initialPosition.clone(),target:initialTarget.clone()};}
   function zoom(factor){if(walker?.active){walker.zoom(factor);return;}const delta=camera.position.clone().sub(controls.target).multiplyScalar(factor);const length=THREE.MathUtils.clamp(delta.length(),controls.minDistance,controls.maxDistance);flight={position:controls.target.clone().add(delta.setLength(length)),target:controls.target.clone()};}
-  function resume(){if(running||disposed)return;running=true;lastTick=0;resize();tick();}
+  function resume(){if(running||disposed||contextLost)return;running=true;lastTick=0;resize();tick();}
   function pause(){running=false;walker?.pause();cancelAnimationFrame(frame);}
-  function dispose(){pause();disposed=true;renderer.domElement.removeEventListener('webglcontextrestored',contextRestored);resizeObserver.disconnect();controls.dispose();renderer.domElement.removeEventListener('pointerdown',pointerDown);renderer.domElement.removeEventListener('pointerup',pointerUp);renderer.domElement.removeEventListener('pointermove',pointerMove);renderer.domElement.removeEventListener('pointercancel',pointerCancel);meter?.dispose();staticFrame.dispose();const resources=new Set(disposables);scene.traverse(o=>{if(o.geometry)resources.add(o.geometry);if(o.material)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{resources.add(m);Object.values(m).forEach(v=>{if(v?.isTexture)resources.add(v);});});});resources.forEach(r=>r.dispose());neighbors.dispose();walker?.dispose();env.dispose();renderer.dispose();renderer.domElement.remove();}
   function setTalking(id){
     neighbors.setTalking(id);
     const person=id&&neighbors.getTarget(id);
@@ -331,5 +374,19 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   function setLife(value){lifeEnabled=value;}
   function setOrbit(value){if(value)walker?.setActive(false);controls.autoRotate=value;controls.autoRotateSpeed=.28;}
   function setWalking(value){if(!walker)return false;if(value)walker.setActive(true);else reset();return true;}
+  if(debugEnabled){
+    const debug={ready:false,snapshot(){
+      const resources=objectResources(scene);for(const root of modelRoots)objectResources(root,resources);
+      return {quality,contextLost,loadedProps,failedProps,totalProps,assets:assetStats,
+        memory:{...renderer.info.memory},render:{...renderer.info.render},...resourceBytes(resources),
+        drawingBuffer:[renderer.domElement.width,renderer.domElement.height],
+        antialias:renderer.getContext().getContextAttributes()?.antialias,
+        staticFrame:staticFrame.settings,shadowMap:renderer.shadowMap.enabled?sun.shadow.mapSize.toArray():null,
+        residents:streetObjects.filter(o=>o.definition.person).map(o=>o.definition.id)};
+    },loseContext:()=>renderer.forceContextLoss(),restoreContext:()=>renderer.forceContextRestore(),dispose};
+    window.__mycityDebug=debug;streetReady.then(()=>{debug.ready=!disposed&&!contextLost;});
+    cleanup.push(()=>{if(window.__mycityDebug===debug)delete window.__mycityDebug;});
+  }
   return {setYear,setNight,focus,reset,zoom,resume,pause,dispose,setLife,setOrbit,view,streetReady,setWalking,setTalking,interact:()=>walker?.interact(),setMuted:value=>walker?.setMuted(value),setRun:value=>walker?.setRun(value)};
+  } catch(error){dispose();throw error;}
 }
