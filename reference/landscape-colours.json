@@ -1,0 +1,71 @@
+{
+  "source": "valley",
+  "sha256": "932381f810244d4b875220a64ae98a126ea284cde6f1df2f030af91991f2ca5d",
+  "size": [
+    1376,
+    768
+  ],
+  "method": "Per-channel median, sRGB bytes, rectangles [left, top, right exclusive, bottom exclusive] in original PNG; no image edits.",
+  "samples": [
+    {
+      "name": "waterNear",
+      "rectangle": [
+        842,
+        736,
+        860,
+        745
+      ],
+      "srgb": [
+        181,
+        189,
+        176
+      ],
+      "hex": "#b5bdb0"
+    },
+    {
+      "name": "waterMiddle",
+      "rectangle": [
+        822,
+        596,
+        839,
+        605
+      ],
+      "srgb": [
+        209,
+        204,
+        180
+      ],
+      "hex": "#d1ccb4"
+    },
+    {
+      "name": "waterDistance",
+      "rectangle": [
+        602,
+        547,
+        623,
+        554
+      ],
+      "srgb": [
+        221,
+        220,
+        196
+      ],
+      "hex": "#dddcc4"
+    },
+    {
+      "name": "haze",
+      "rectangle": [
+        670,
+        433,
+        710,
+        449
+      ],
+      "srgb": [
+        226,
+        220,
+        196
+      ],
+      "hex": "#e2dcc4"
+    }
+  ]
+}

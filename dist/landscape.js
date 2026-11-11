@@ -1,67 +1,79 @@
 import * as THREE from 'three';
 import { resizeTextures, mapSettledLimit, disposeResources } from './asset-memory.js';
-import { HORIZON, HORIZON_GLSL } from './world.js?v=neighbors-3';
+import { LANDSCAPE, PAINTING_GLSL, RIVER_SKIRT_GLSL, WATER_JOIN_GLSL } from './landscape-projection.js';
 
 // A painted distant landscape surrounds the playable 3D street. The river and
 // both banks continue out to it; the painting never replaces walkable geometry.
 export function createLandscape(scene,canal,quality={low:false,landscapeTextureSize:Infinity}){
   const resources=[],night={value:0};let disposed=false;
+  const uniforms={painting0:{value:null},painting1:{value:null},painting2:{value:null},painting3:{value:null},night,hasPainting:{value:0},
+    cityHaze:{value:new THREE.Color(LANDSCAPE.haze)},cityWaterNear:{value:new THREE.Color(LANDSCAPE.waterNear)},
+    cityWaterMiddle:{value:new THREE.Color(LANDSCAPE.waterMiddle)},cityWaterDistance:{value:new THREE.Color(LANDSCAPE.waterDistance)}};
+  const vertexShader='varying vec3 landscapeWorld;void main(){landscapeWorld=(modelMatrix*vec4(position,1.)).xyz;gl_Position=projectionMatrix*viewMatrix*vec4(landscapeWorld,1.);}';
   const terrainMaterial=new THREE.ShaderMaterial({transparent:true,depthWrite:false,toneMapped:false,
-    uniforms:{night,stone:{value:new THREE.Color('#e2d4b7')},grass:{value:new THREE.Color('#adb68a')}},
-    vertexShader:'varying vec3 landscapeWorld;void main(){landscapeWorld=(modelMatrix*vec4(position,1.)).xyz;gl_Position=projectionMatrix*viewMatrix*vec4(landscapeWorld,1.);}',
-    fragmentShader:`varying vec3 landscapeWorld;uniform float night;uniform vec3 stone;uniform vec3 grass;
-    ${HORIZON_GLSL}
+    uniforms:{...uniforms,stone:{value:new THREE.Color('#e2d4b7')}},vertexShader,
+    fragmentShader:`varying vec3 landscapeWorld;uniform vec3 stone;
+    ${PAINTING_GLSL}
+    ${RIVER_SKIRT_GLSL}
+    ${WATER_JOIN_GLSL}
     void main(){
       vec2 p=landscapeWorld.xz;
-      float edge=max(max(abs(p.x)-17.0,-13.0-p.y),p.y-14.5);
-      float grain=fract(sin(dot(floor(p*12.),vec2(12.9898,78.233)))*43758.5453);
-      vec3 color=mix(stone,grass*(.97+.06*grain),smoothstep(0.,9.,edge));
-      color=mix(color,color*vec3(.10,.14,.27),night);
-      float fade=cityHorizonAlpha(landscapeWorld);
-      gl_FragColor=vec4(color,fade);
+      float edge=max(max(abs(p.x)-17.,-13.-p.y),p.y-14.5);
+      // Existing mip levels give near soil broad painting colours without
+      // translucent-looking silhouettes of distant trees. Far samples become
+      // sharp and exactly match the sky; no second lookup or blur texture.
+      float blur=${LANDSCAPE.foregroundBlur}*(1.-smoothstep(-2.,6.,edge));
+      vec3 painted=cityPaintedBackground(landscapeWorld,blur);
+      vec3 paving=mix(stone,stone*vec3(.10,.14,.27),night);
+      // Reveal the painting's real foreground details, not a featureless grass
+      // colour. At the outer skirt this is exactly the sky's same-ray sample.
+      float grain=sin(p.x*.43+sin(p.y*.31))*sin(p.y*.57+p.x*.12);
+      float blend=smoothstep(${LANDSCAPE.paintStart.toFixed(1)},${LANDSCAPE.paintEnd.toFixed(1)},edge+grain*.7);
+      vec3 color=mix(paving,painted,blend);
+      // Project the hole/bank onto the ACTUAL water plane. Cutting it directly
+      // in the higher/sloping ground left a dark crescent along the near bank.
+      vec2 waterP=(cameraPosition+(landscapeWorld-cameraPosition)*(${(canal.y??-.23).toFixed(4)}-cameraPosition.y)/(landscapeWorld.y-cameraPosition.y)).xz;
+      float nearAlpha=cityNearWaterAlpha(waterP.x);
+      float river=mix(cityBankMask(waterP),cityRiverMask(waterP),step(${LANDSCAPE.nearWaterEnd.toFixed(1)},abs(waterP.x)));
+      // Composite once across the overlap: A + (1-A)*D*R == R, where
+      // D is dynamic end alpha and R the desired bank coverage. Avoid both a
+      // subpixel gap at X=20 and a brighter double-painted bank in the overlap.
+      float cachedRiver=cityCachedRiverMask(river,nearAlpha);
+      vec3 water=mix(cityRiverColor(waterP.x),painted,smoothstep(22.,30.,abs(waterP.x)));
+      color=mix(color,water,cachedRiver);
+      // Only the swept hull corridor needs an opening. Keep opaque soil under
+      // the feathered banks, hiding the background's ghost trees. The hole's
+      // hard edges lie strictly inside fully opaque water, beyond the hull.
+      float hole=cityGroundHole(waterP);
+      gl_FragColor=vec4(color,1.-hole);
       #include <colorspace_fragment>
     }`});
-  resources.push(terrainMaterial);
-  for(const [minZ,maxZ] of [[-210,canal.minZ],[canal.maxZ,210]]){
-    const geometry=new THREE.PlaneGeometry(420,maxZ-minZ),ground=new THREE.Mesh(geometry,terrainMaterial);
-    ground.rotation.x=-Math.PI/2;ground.position.set(0,-.08,(minZ+maxZ)/2);ground.renderOrder=-900;scene.add(ground);resources.push(geometry);
+  // A small skirt slopes to water level outside town. Exact breakpoints keep
+  // all walkable banks unchanged; no animated vertices or new texture buffers.
+  const xs=[-210,-40,-30,-20,-17,17,20,30,40,210],vertices=[],indices=[];
+  for(const x of xs){
+    const t=THREE.MathUtils.smoothstep(Math.abs(x),17,20),y=THREE.MathUtils.lerp(-.08,canal.y??-.23,t);
+    vertices.push(x,y,-210,x,y,210);
   }
-  const skyMaterial=new THREE.ShaderMaterial({side:THREE.BackSide,depthWrite:false,toneMapped:false,
-    uniforms:{painting0:{value:null},painting1:{value:null},painting2:{value:null},painting3:{value:null},night,hasPainting:{value:0}},
-    vertexShader:'varying vec3 domePosition;void main(){domePosition=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
-    fragmentShader:`varying vec3 domePosition;uniform sampler2D painting0;uniform sampler2D painting1;uniform sampler2D painting2;uniform sampler2D painting3;uniform float night;uniform float hasPainting;
+  for(let i=0;i<xs.length-1;i++){const a=i*2;indices.push(a,a+1,a+2,a+1,a+3,a+2);}
+  const groundGeometry=new THREE.BufferGeometry();groundGeometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));groundGeometry.setIndex(indices);
+  const ground=new THREE.Mesh(groundGeometry,terrainMaterial);ground.renderOrder=-900;scene.add(ground);resources.push(groundGeometry,terrainMaterial);
+  const skyMaterial=new THREE.ShaderMaterial({side:THREE.BackSide,depthWrite:false,toneMapped:false,uniforms,vertexShader,
+    fragmentShader:`varying vec3 landscapeWorld;
+      ${PAINTING_GLSL}
       float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
-      vec3 panel(float i,vec2 uv){
-        if(i<.5)return texture2D(painting0,uv).rgb;
-        if(i<1.5)return texture2D(painting1,uv).rgb;
-        if(i<2.5)return texture2D(painting2,uv).rgb;
-        return texture2D(painting3,uv).rgb;
-      }
       void main(){
-        vec3 d=normalize(domePosition);float angle=asin(d.y);
-        // +X is downstream. At that heading the valley's painted river is at
-        // u=.54, v=.38, instead of the former village hillside (u=.43).
-        vec2 uv=vec2(fract(atan(d.x,d.z)/6.2831853+${HORIZON.paintingYaw}),clamp(.38+angle*1.3,.002,.998));
-        float sector=floor(uv.x*4.),x=fract(uv.x*4.);
-        // Overlap neighboring edges. Four detailed views cover the full horizon.
-        vec3 color=panel(sector,vec2(.18+x*.82,uv.y));
-        color=mix(color,panel(mod(sector+1.,4.),vec2(max(0.,x-.82),uv.y)),smoothstep(.82,1.,x));
-        // The opposite mouth also dissolves into a river, using the same valley
-        // texture in a feathered sector. No extra image/GPU texture is allocated.
-        float upstream=step(d.x,0.)*(1.-smoothstep(.08,.40,abs(d.z)));
-        color=mix(color,panel(2.,vec2(clamp(.54-d.z*1.25,.002,.998),uv.y)),upstream);
-        color=mix(vec3(.65,.73,.74),color,hasPainting);
-        color=mix(color,vec3(.43,.58,.64),smoothstep(.44,.75,angle));
-        color=mix(color,color*vec3(.10,.14,.27),night);
-        vec2 starUV=vec2(uv.x*520.,angle*180.),cell=floor(starUV);
+        vec3 d=cityDomeDirection(landscapeWorld);float angle=asin(clamp(d.y,-1.,1.));
+        vec3 color=cityPaintedBackground(landscapeWorld,0.);
+        vec2 starUV=vec2(atan(d.x,d.z)*82.76,angle*180.),cell=floor(starUV);
         float star=step(.996,hash(cell))*(1.-smoothstep(.015,.17,length(fract(starUV)-.5)))*smoothstep(.04,.2,angle);
         color+=vec3(.8,.85,1.)*star*night;
         gl_FragColor=vec4(color,1.);
         #include <colorspace_fragment>
       }`
   });
-  const geometry=new THREE.SphereGeometry(240,64,32),sky=new THREE.Mesh(geometry,skyMaterial);
-  sky.renderOrder=-1000;sky.frustumCulled=false;scene.add(sky);resources.push(geometry,skyMaterial);
+  const geometry=new THREE.SphereGeometry(LANDSCAPE.radius,64,32),sky=new THREE.Mesh(geometry,skyMaterial);
+  sky.position.z=LANDSCAPE.centerZ;sky.renderOrder=-1000;sky.frustumCulled=false;scene.add(sky);resources.push(geometry,skyMaterial);
   return {
     async load(assets){
       if(!assets?.length)return;
@@ -81,6 +93,7 @@ export function createLandscape(scene,canal,quality={low:false,landscapeTextureS
     },
     dispose(release=true){if(disposed)return;disposed=true;if(release)disposeResources(resources);resources.length=0;},
     setNight(value){skyMaterial.uniforms.night.value=value?1:0;},
+    get waterUniforms(){return {cityWaterNear:uniforms.cityWaterNear,night};},
     get resources(){return resources;}
   };
 }

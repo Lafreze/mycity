@@ -2,12 +2,6 @@
 // X follows the current; Z runs from the shops toward the opposite bank.
 export const CANAL = Object.freeze({minX:-20,maxX:20,minZ:6.9,maxZ:9.5,y:-.23,flowSpeed:.12});
 export const BRIDGE = Object.freeze({x:10.9,z:8.2,width:9.2});
-// Fade all three waterfront surfaces together, beyond the playable banks.
-// Keeping this camera-relative also works from the far bank and overview camera.
-export const HORIZON = Object.freeze({fadeStart:32,fadeEnd:78,paintingYaw:.36});
-export const HORIZON_GLSL = `float cityHorizonAlpha(vec3 p){
-  return 1.0-smoothstep(${HORIZON.fadeStart.toFixed(1)},${HORIZON.fadeEnd.toFixed(1)},length(p.xz-cameraPosition.xz));
-}`;
 // Shared visible pavement heights. Physics uses a flat zero-height street, but
 // soles/contact shadows should meet these surfaces instead of hovering 1–2 cm.
 export const STREET_SURFACES = Object.freeze([

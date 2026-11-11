@@ -38,7 +38,8 @@ export function createStaticFrame(renderer,scene,camera,{enabled=true,low=false}
 #include <tonemapping_fragment>
 #else
   gl_FragColor.rgb = ACESFilmicToneMapping(gl_FragColor.rgb);
-#endif`);
+#endif
+`);
         };
         m.customProgramCacheKey=()=>cacheKey+'|city-ldr-v1';m.needsUpdate=true;
         restore.push(()=>{m.onBeforeCompile=before;m.customProgramCacheKey=key;m.needsUpdate=true;});

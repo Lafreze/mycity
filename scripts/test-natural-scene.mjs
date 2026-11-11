@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {spawnSync} from 'node:child_process';
 import * as THREE from '../dist/vendor/three/three.module.js';
-import {HORIZON,HORIZON_GLSL,streetSurfaceY,contactFloorY} from '../dist/world.js';
+import {streetSurfaceY,contactFloorY} from '../dist/world.js';
+import {LANDSCAPE,PAINTING_GLSL} from '../dist/landscape-projection.js';
 import {instrumentCity,instrumentWalker,instrumentNeighbors} from './scene-shot-hooks.mjs';
 const moduleURL=code=>'data:text/javascript;base64,'+Buffer.from(code).toString('base64');
 const three=new URL('../dist/vendor/three/three.module.js',import.meta.url).href;
@@ -12,6 +13,7 @@ async function browserModule(file){
   source=source.replace("'./world.js?v=neighbors-3'",JSON.stringify(new URL('../dist/world.js',import.meta.url).href));
   source=source.replace("'./walking-world.js?v=neighbors-3'",JSON.stringify(new URL('../dist/walking-world.js',import.meta.url).href));
   source=source.replace("'./asset-memory.js'",JSON.stringify(new URL('../dist/asset-memory.js',import.meta.url).href));
+  source=source.replace("'./landscape-projection.js'",JSON.stringify(new URL('../dist/landscape-projection.js',import.meta.url).href));
   return import(moduleURL(source));
 }
 const {FIGURE_BASES,groundFigure}=await browserModule('figure-grounding.js');
@@ -61,16 +63,16 @@ assert.equal(cache.settings.rebuilds,1,'Wind/birds must not invalidate the stree
 life.update(10,true);assert.equal(scene.children[0].visible,false);cache.dispose();life.resources.forEach(r=>r.dispose());
 
 const {createLandscape}=await browserModule('landscape.js');const landscapeScene=new THREE.Scene();const landscape=createLandscape(landscapeScene,{minZ:6.9,maxZ:9.5});
-assert.ok(HORIZON.fadeStart>32-1&&HORIZON.fadeEnd<90);
+assert.ok(LANDSCAPE.waterFadeEnd<=40,'Fade the geometric river before it becomes a horizon tip');
 const terrain=landscapeScene.children[0].material,sky=landscapeScene.children.at(-1).material;
-assert.ok(terrain.fragmentShader.includes(HORIZON_GLSL));assert.equal(terrain.depthWrite,false);
-assert.match(sky.fragmentShader,/panel\(2\./,'The upstream mouth uses the existing river painting');
+assert.ok(terrain.fragmentShader.includes(PAINTING_GLSL));assert.equal(terrain.depthWrite,false);
+assert.match(sky.fragmentShader,/cityPanel\(2\./,'Both mouths use the existing river painting');
 landscape.setNight(true);assert.equal(terrain.uniforms.night.value,1);assert.equal(sky.uniforms.night.value,1);landscape.dispose();
 
 const city=await readFile('dist/city3d.js','utf8');
 assert.doesNotMatch(city,/journalSign|journalCanvas|discoveryMarkers/,'No floating journal/dialog panels or building markers');
 assert.match(city,/b\.tag\.visible=!walker\?\.active&&/,'Overview selection cannot leak a nameplate into walking');
-assert.match(city,/diffuseColor\.a \*= cityHorizonAlpha/);assert.match(city,/canal\.material\.depthWrite=false/);
+assert.match(city,/diffuseColor\.a \*= cityBankMask\(cityWaterWorld.xz\)\*cityNearWaterAlpha/);assert.match(city,/canal\.material\.depthWrite=false/);
 assert.doesNotMatch(city,/surface\(420.*435955/,'No opaque riverbed survives beneath the fading water');
 
 assert.equal(streetSurfaceY(-8.8,4.7),-.018);assert.equal(streetSurfaceY(-4.5,2.9),-.014);assert.equal(streetSurfaceY(-10.5,12),-.025);

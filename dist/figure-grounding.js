@@ -44,8 +44,8 @@ export function groundFigure(model,asset){
       before.call(this,shader,...args);
       shader.uniforms.cityFigureCut={value:spec.cutY};
       // Bind-space height follows the original skin, even during an idle gesture.
-      shader.vertexShader='varying float cityFigureHeight;\n'+shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\ncityFigureHeight=position.y;');
-      shader.fragmentShader='varying float cityFigureHeight;uniform float cityFigureCut;\n'+shader.fragmentShader.replace('#include <clipping_planes_fragment>','#include <clipping_planes_fragment>\nif(cityFigureHeight<cityFigureCut)discard;');
+      shader.vertexShader='varying float cityFigureHeight;\n'+shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\ncityFigureHeight=position.y;\n');
+      shader.fragmentShader='varying float cityFigureHeight;uniform float cityFigureCut;\n'+shader.fragmentShader.replace('#include <clipping_planes_fragment>','#include <clipping_planes_fragment>\nif(cityFigureHeight<cityFigureCut)discard;\n');
     };
     material.customProgramCacheKey=()=>key+'|figure-base-v1';material.needsUpdate=true;
   }

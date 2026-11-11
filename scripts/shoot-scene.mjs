@@ -117,6 +117,7 @@ try{
             result.phase='validation';
             assert.deepEqual(state.errors,[],'Browser errors (including shader compilation) must be reviewed');
             assert.equal(result.snapshot.failedProps,0,'A missing model invalidates a visual comparison');
+            if(result.snapshot.staticFrame?.enabled)assert.equal(result.frameSample.cacheRebuilds,0,'A settled shot must reuse the static scene cache');
             result.phase='complete';
             console.log(JSON.stringify({profile,shot:shot.name,quality:result.snapshot.quality.name,frameSample:result.frameSample,heapMiB:result.heap?.used/2**20}));
           }finally{

@@ -5,12 +5,13 @@ import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { statusAt } from './products.js';
 import { CITY_PROPS } from './props.js?v=neighbors-3';
-import { CANAL, boatPose, HORIZON_GLSL, STREET_SURFACES, streetSurfaceY } from './world.js?v=neighbors-3';
+import { CANAL, boatPose, STREET_SURFACES, streetSurfaceY } from './world.js?v=neighbors-3';
 import { BOAT_WATERLINE } from './boat-waterline.js';
 import { createStaticFrame } from './static-frame.js';
 import { createPerformanceMeter } from './performance-meter.js';
 import { createWalker } from './walker.js?v=neighbors-3';
 import { createLandscape } from './landscape.js?v=neighbors-3';
+import { LANDSCAPE, WATER_JOIN_GLSL } from './landscape-projection.js';
 import { createNeighbors } from './neighbors.js?v=neighbors-3';
 import { browserQualityProfile, includeStreetAsset } from './quality-profile.js';
 import { objectResources, disposeResources, resizeTextures, mapSettledLimit, resourceBytes, releaseStaticGeometryAfterUpload } from './asset-memory.js';
@@ -94,35 +95,43 @@ export async function createCity3D(container,manifest,products,onSelect,onProgre
   for(const dimensions of STREET_SURFACES)surface(...dimensions);
   // No infinite opaque riverbed underneath the fade: it would leave a dark stripe
   // across the painting after the water becomes transparent.
-  const canal=surface(420,CANAL.maxZ-CANAL.minZ,'#719b94',0,CANAL.y,8.2,.2);
+  // Only the town canal moves. Its continuation lives in the cached skirt.
+  const canal=surface(LANDSCAPE.nearWaterEnd*2,CANAL.maxZ-CANAL.minZ,'#719b94',0,CANAL.y,8.2,.2);
   canal.layers.set(1);
   canal.material.transparent=true;canal.material.depthWrite=false;
   canal.material.onBeforeCompile=shader=>{
     shader.uniforms.cityWaterTime={value:0};
     shader.uniforms.cityBoatXZ={value:new THREE.Vector2()};
     shader.uniforms.cityBoatPresent={value:0};
+    Object.assign(shader.uniforms,landscape.waterUniforms);
     // A water plane must exclude the dry interior of a floating hull, even below sea level.
     // The mask follows the measured waterline, inset slightly to stay within the wood.
     const hullClip=BOAT_WATERLINE.slice(0,-1).map((a,i)=>{
       const b=BOAT_WATERLINE[i+1];
       return `if(hull.x>=${a[0].toFixed(5)}&&hull.x<${b[0].toFixed(5)}){float t=(hull.x-(${a[0].toFixed(5)}))/${(b[0]-a[0]).toFixed(5)};vec2 sides=mix(vec2(${a[1].toFixed(5)},${a[2].toFixed(5)}),vec2(${b[1].toFixed(5)},${b[2].toFixed(5)}),t);if(hull.y>sides.x+0.015&&hull.y<sides.y-0.015)discard;}`;
     }).join('\n');
-    shader.vertexShader='varying vec2 cityWaterUv; varying vec3 cityWaterWorld;\n'+shader.vertexShader.replace('#include <uv_vertex>','#include <uv_vertex>\ncityWaterUv = uv;').replace('#include <begin_vertex>','#include <begin_vertex>\ncityWaterWorld = (modelMatrix * vec4(transformed,1.0)).xyz;');
-    shader.fragmentShader='varying vec2 cityWaterUv; varying vec3 cityWaterWorld; uniform float cityWaterTime; uniform vec2 cityBoatXZ; uniform float cityBoatPresent;\n'+HORIZON_GLSL+'\n'+shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
+    shader.vertexShader='varying vec3 cityWaterWorld;\n'+shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\ncityWaterWorld = (modelMatrix * vec4(transformed,1.0)).xyz;\n');
+    shader.fragmentShader='varying vec3 cityWaterWorld; uniform float cityWaterTime; uniform vec2 cityBoatXZ; uniform float cityBoatPresent; uniform vec3 cityWaterNear; uniform float night;\n'+WATER_JOIN_GLSL+shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
       vec2 hull=cityWaterWorld.xz-cityBoatXZ;
       if(cityBoatPresent>0.5 && abs(hull.x)<1.4 && abs(hull.y)<0.6){${hullClip}}
       float ripple = 0.5 + 0.5 * sin(cityWaterWorld.x * 6.0 - cityWaterTime * 0.72 + sin(cityWaterWorld.z * 26.92 + cityWaterTime * 0.3));
       float crossRipple = 0.5 + 0.5 * sin(cityWaterWorld.z * 69.23 - cityWaterTime * 0.7 + cityWaterWorld.x * .5);
       diffuseColor.rgb += vec3(0.065, 0.075, 0.07) * pow(ripple * crossRipple, 9.0);
-      diffuseColor.a *= cityHorizonAlpha(cityWaterWorld);
-    `).replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
+      float riverEnd=smoothstep(${LANDSCAPE.nearWaterStart.toFixed(1)},${LANDSCAPE.nearWaterEnd.toFixed(1)},abs(cityWaterWorld.x));
+      diffuseColor.a *= cityBankMask(cityWaterWorld.xz)*cityNearWaterAlpha(cityWaterWorld.x);
+`).replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
       ${quality.low?'':`// Small flowing normal ripples catch the existing sun; no extra pass.
       vec3 slope=vec3(sin(cityWaterWorld.x*3.-cityWaterTime*.72)*.025,0.,sin(cityWaterWorld.z*9.+cityWaterWorld.x-cityWaterTime*.4)*.018);
       normal=normalize(normal+(viewMatrix*vec4(slope,0.)).xyz);`}
-    `);
+`).replace('#include <tonemapping_fragment>',`#include <tonemapping_fragment>
+      // Match the unlit painting in display-linear space, AFTER water lighting
+      // and tone mapping. No painting sampler or new per-frame CPU update.
+      vec3 paintedWater=mix(cityWaterNear,cityWaterNear*vec3(.10,.14,.27),night);
+      gl_FragColor.rgb=mix(gl_FragColor.rgb,paintedWater,.35+.65*riverEnd);
+`);
     canal.userData.shader=shader;
   };
-  canal.material.customProgramCacheKey=()=> 'product-city-water-v4-'+quality.name;
+  canal.material.customProgramCacheKey=()=> 'product-city-water-v7-'+quality.name;
   // Pavement seams stay flush with the street.
   for(let x=-16;x<17;x+=.8) surface(.012,2.1,'#c8baa1',x,-.01,4.475);
   for(let z=3.55;z<5.5;z+=.45) surface(34,.014,'#c8baa1',0,-.009,z);
